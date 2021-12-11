@@ -1,0 +1,4 @@
+dim: 2
+boxes: 25 25 
+box_size: 10 10
+fill: 1

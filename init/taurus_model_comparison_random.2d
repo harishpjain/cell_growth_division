@@ -1,0 +1,265 @@
+dimension of world:   2
+parallel->log main rank: 1
+number of cells: 150
+
+postfix: 
+output:  /scratch/ws/1/haja565a-workspace2/master_thesis/output700v11b
+macroMesh->macro file name:       ./macro/macro_100_100.per.2d
+%macroMesh->macro file name:       ./macro/circle_macro.2d
+macroMesh->periodic file:         ./macro/macro_100_100.per
+macroMesh->check: 1
+macroMesh->global refinements:        4
+macroMesh->dimension: [100,100]
+
+macroMesh->phase->interface refinements: 10
+macroMesh->phase->bulk refinements: 6
+macroMesh->phase->outer refinements: 0
+
+macroMesh->global->interface refinements: 10
+macroMesh->global->bulk refinements: 4
+macroMesh->global->outer refinements: 2
+
+% ----------- BEGIN OF SIMULATION SETUP ------------------
+
+% Control initial conditions with single parameter
+% 'singular' - single cell, used to examine treshold for movement & morphology
+% 'binary_collision' - two cells with fixed initial polarization
+% 'collective' - packing of high cell numbers (rectangles hexagonal or spheres)
+%              - with arbitrary initial polarization 
+% 't1' - special form of dense packing to examine neighbor change (T1 transition)
+% 'confinement' - Dirichlet BC + circle geometry (use ball macro and circle_migration)
+% 'two_division' : two cells dividing - keep num of cells atleast 4
+% 'one_division' : one cells dividing - keep num of cells atleast 4
+% 'three collision': three cells
+% 'multi_cell' :multiple cells grow and divide. change parameter initial->numCells
+% 'multi_ring' : similar to multi_cell but has two outer rings of cells. 
+
+main->setup: multi_cell
+main->fixed point iterations: 1
+main->write interaction term: 0
+main->write volume: 0
+main->write neighbors:0
+main->write positions: 1
+main->center of mass:1  
+main->cahn-hilliard: 1
+
+% Global (coupling) parameters 
+global->v0: 0.25  % 2.5
+global->D: 0.01 %0.1
+
+% Phasefield parameters
+phase->epsilon: 0.15
+phase->gamma: 1.0 %1.0
+phase->Ca: 10.0e-2 %1.5e-2
+phase->In:  5.0e-2  %2.5e-2 % Coefficient for interaction combined
+phase->allen_growth: 0.0  %-0.001
+%phase->cutTimeStep: Inf  %disabled
+phase->division_volume: 135.0  %volume where the division is triggered. (491.0 for resize 0.1)
+phase->growth_factor: 0.3	  %growth in correction term
+phase->apoptosis_index: 1000      %generation for which the cell dies
+phase->contact_inhibition_of_growth: 1
+phase->inhibition_limit: 10000.0  %L1 norm of interactions for which growth rate is 0
+phase->growth_type: 3            % 1 - adhoc, 3 - operator based non normalised, 4-hybrid of 1 and 3
+phase->Gr: 0.5  %energy penalisation for growth. This is not growth rate. Keep at 0.5 for exponential growth with growth rate = growth factor
+phase->gamma2: 0.0  %non conservative
+phase->So: 0.0    %source
+phase->confined: 1
+phase->con_inhibition_limit: 300.0
+phase->Con: 5.0e-3
+phase->confinement_shape: 2                 % 1: rectangle, 2: circle, 3:annular ring
+phase->confinement_size: 0.9               %as fraction of domain size --> diameter for circle, side length for square
+                                            % radius of inner ring
+
+% Interaction potential parameters
+phase->interaction->potential: 7                      % 0 - no attraction, 1 - exponential attraction, 2 - trigonometric attraction, 3 - quartic att_and_rep
+                                                    % 4- odd no attraction, 5 % odd quartic att and rep, 6 - attractionAndRepulsion with B = (phi+1)/2
+%added this on my own
+phase->initial->gaussian: 0
+% Start with rectangles instead of spheres, works for collective and t1
+phase->initial->rectangles: 1
+phase->initial->sigma: 1.5
+         
+% Resizing coefficient
+phase->initial->resize: 0.25
+
+phase->initial->numCells: 1 % number of initial cells
+
+% Parameters for collective experiment
+phase->initial->collective->packFrac: 0.9
+phase->initial->collective->growthRate: 0.001
+
+arh->file_prefix: ${output}/data/rank_
+
+% ------------------ END OF SIMULATION SETUP ---------------------
+%adapt->timestep:               0.001  % commenting this prevents stop or animation problems
+%adapt->start time:             0.0
+%adapt->end time:               20
+
+adapt->sequence->timesteps:  [5e-3]%, 1.e-2]%, 2.e-2, 5.e-2]%, 1.e-1]
+adapt->sequence->number of timesteps: [15000]%, 800]%, 800, 800]%, 800]
+adapt->sequence->calc end time: 1
+
+%adapt->number of timesteps: 0
+
+main->components: 1
+main->dim: 2
+
+reinit->tolerance: 1.e-2
+reinit->maximal number of iteration steps: 20
+reinit->Gauss-Seidel iteration: 1
+reinit->infinity value: 1.e8
+reinit->boundary initialization: 3
+reinit->periodic boundaries: -1,-2
+
+phase->space->marker[0]->strategy:    0    % 0=none, 1=GR, 2=MS, 3=ES, 4=GERS
+phase->space->marker[0]->MSGamma:     0.5
+phase->space->marker[0]->MSGammaC:    0.1
+
+phase->write every i-th timestep: 1
+phase->components: 2
+phase->dim:        2
+phase->space->name: [phi,mu]
+phase->space->components:              2
+phase->space->additional components:   1
+phase->space->polynomial degree[0]:    2
+phase->space->polynomial degree[1]:    2
+phase->space->polynomial degree[2]:    1
+phase->space->dim:                     2
+phase->space->mesh:                    macroMesh
+
+phase->space->solver:                  direct
+phase->space->solver->tolerance:       1.e-8
+phase->space->solver->info:            2
+
+phase->space->output->filename:                    ${output}/phase${postfix}_
+phase->space->output->ParaView format:             1
+phase->space->output->ParaView mode:               1
+phase->space->output->ParaView animation:          1
+phase->space->output->ParaView create subdirectory: 1
+phase->space->output->write every i-th timestep:   100
+phase->space->output->append index:                1
+phase->space->output->index length:                6
+phase->space->output->index decimals:              3
+phase->space->output->ARH format:                  0
+
+sendDOF->space->output->filename:			${output}/sendDOF${postfix}_
+sendDOF->space->output->ParaView format:             1
+sendDOF->space->output->ParaView mode:               1
+sendDOF->space->output->ParaView animation:          1
+sendDOF->space->output->ParaView create subdirectory: 1
+sendDOF->space->output->write every i-th timestep:   1000
+sendDOF->space->output->append index:                1
+sendDOF->space->output->index length:                6
+sendDOF->space->output->index decimals:              3
+sendDOF->space->output->ARH format:		1
+
+
+phase_global->space->components: 2
+phase_global->space->dim: 2
+% --------------------------------------------------
+
+
+interaction->write every i-th timestep: 10
+interaction->components: 2
+interaction->dim:        2
+interaction->space->components:              1
+interaction->space->polynomial degree[0]:    2
+interaction->space->dim:                     2
+interaction->space->mesh:                    macroMesh
+
+interaction->space->solver:                  direct
+interaction->space->solver->tolerance:       1.e-8
+interaction->space->solver->info:            2
+
+interaction->space->output[0]->filename:                    ${output}/interaction${postfix}_
+interaction->space->output[0]->ParaView format:             0
+interaction->space->output[0]->ParaView mode:               1
+interaction->space->output[0]->ParaView animation:          0
+interaction->space->output[0]->ParaView create subdirectory: 1
+interaction->space->output[0]->write every i-th timestep:   5
+interaction->space->output[0]->append index:                1
+interaction->space->output[0]->index length:                6
+interaction->space->output[0]->index decimals:              3
+interaction->space->output[0]->ARH format:                  0
+
+% --------------------------------------------------
+
+
+
+polar->write every i-th timestep: 10
+polar->components: 2
+polar->dim:        2
+polar->space->name: [p0,p1]
+polar->space->components:              2
+polar->space->polynomial degree[0]:    2
+polar->space->polynomial degree[1]:    2
+polar->space->dim:                     2
+polar->space->mesh:                    macroMesh
+
+polar->space->solver:                  direct
+polar->space->solver->tolerance:       1.e-8
+polar->space->solver->info:            2
+
+polar->space->output->num vectors: 1
+polar->space->output->vector[0]->components:                   [0,1]
+polar->space->output->vector[0]->name:                         p
+polar->space->output->vector[0]->filename:                     ${output}/polar${postfix}_
+polar->space->output->vector[0]->ParaView vector format:       1
+polar->space->output->vector[0]->ParaView mode:                1
+polar->space->output->vector[0]->write vector as 3d vector:    1
+polar->space->output->vector[0]->ParaView animation:           1
+polar->space->output->vector[0]->ParaView create subdirectory: 1
+polar->space->output->vector[0]->write every i-th timestep:    5
+polar->space->output->vector[0]->append index:                 1
+polar->space->output->vector[0]->index length:                 6
+polar->space->output->vector[0]->index decimals:               3
+polar->space->output->vector[0]->ARH format:                   0
+
+% -----------------------------------------------------------------
+
+projection->components: 1
+projection->dim:        2
+projection->space->name: [p]
+projection->space->components:              1
+projection->space->polynomial degree[0]:    2
+projection->space->dim:                     2
+projection->space->mesh:                    macroMesh
+
+projection->space->solver:                  direct
+projection->space->solver->tolerance:       1.e-8
+projection->space->solver->info:            2
+
+
+% -------------------------------------------------------------------
+
+overlap->output->filename:                    ${output}/debug/overlap${postfix}_
+overlap->output->ParaView format:             1
+overlap->output->ParaView animation:          1
+overlap->output->write every i-th timestep:   2
+overlap->output->append index:                1
+overlap->output->index length:                6
+overlap->output->index decimals:              3
+
+verlet->output->filename:                    ${output}/debug/verlet${postfix}_
+verlet->output->ParaView format:             1
+verlet->output->ParaView animation:          1
+verlet->output->write every i-th timestep:   2
+verlet->output->append index:                1
+verlet->output->index length:                6
+verlet->output->index decimals:              3
+
+signedDist->output->filename:                    ${output}/signedDist${postfix}_
+signedDist->output->ParaView format:             0
+signedDist->output->Binary format: 1
+signedDist->output->precision: 6
+signedDist->output->ParaView animation:          1
+signedDist->output->ParaView mode:               1
+signedDist->output->ParaView create subdirectory: 1
+signedDist->output->write every i-th timestep:   100
+signedDist->output->append index:                1
+signedDist->output->index length:                6
+signedDist->output->index decimals:              3
+
+
+
+WAIT: 0
