@@ -58,6 +58,7 @@ public:
     Parameters::get("phase->con_inhibition_limit", con_inhibiting_limit_);
     Parameters::get("phase->confinement_size", confinement_size_);
     Parameters::get("phase->confinement_shape", confinementShape_);
+    Parameters::get("phase->switch_size", switchsize);
   }
 
   virtual void initData() override
@@ -80,6 +81,7 @@ public:
     int N = 100;
     Parameters::get("number of cells", N);
     N = std::max(N, 100);
+    std::srand(random_seed);
     std::vector<double> rand_angles(N);
     std::generate(rand_angles.begin(), rand_angles.end(), [](){ return std::rand()/double(RAND_MAX)*2.0*M_PI; });
     theta_ = rand_angles[rank_];
@@ -283,9 +285,13 @@ public:
         alive_ = 1;
         position[0] = 0.5 * domainDimension_[0];
         position[1] = 0.5 * domainDimension_[1];
+
+        //set size for collision
+        int d = 1.0;
+        if(switchsize==2){ d = 0.0;}
       
-        double a = 0.25 * resize * domainDimension_[0];
-        double b = 0.25 * resize * domainDimension_[1];
+        double a = 0.25 * resize * domainDimension_[0]*d;
+        double b = 0.25 * resize * domainDimension_[1]*d;
 
         *getProblem()->getSolution(0) << function_(rotatedEllipse(position, eps_, domainDimension_[0], 0.0, a, b, false), X());
 
@@ -309,9 +315,13 @@ public:
         position[1] = domainDimension_[1]*(0.5 + 0.15*std::sin(orientation_ * M_PI / 180.0));
         
         //growth_factor_ = 0.0;
+        
+        //size for cell collision
+        int c = 1.0;
+        if(switchsize==1){ c = 0.0;}
 
-        double a = 0.23 * resize * domainDimension_[0];
-        double b = 0.23 * resize * domainDimension_[1];
+        double a = 0.25 * resize * domainDimension_[0]*c;
+        double b = 0.25 * resize * domainDimension_[1]*c;
 
         if (std::max(a, b) * numInitialCells_ * 2 > 6 * 0.25 * domainDimension_[0])
         {
@@ -846,8 +856,11 @@ public:
     }
     else{
     // Random advection term, Wiener process w.r.t old direction of advection
+    random_seed += 1;
+    std::srand(random_seed); //remove this
     std::random_device rd;
-    std::mt19937 generator(rd()); 
+    std::mt19937 generator(random_seed);//std::mt19937 generator(rd()); 
+
     std::normal_distribution<double> distribution(0,1);    
     
     theta_ += angleDiffusivity_ * distribution(generator);
@@ -891,17 +904,18 @@ public:
         //}
       }
 
-    std::random_device rd;
-    std::mt19937 generator(rd()); 
-    std::normal_distribution<double> distribution(0.0,actual_growth_factor_); //no getTau here
+    //***remove these comments***std::random_device rd;
+    //***remove these comments***std::mt19937 generator(rd()); 
+    //***remove these comments***std::normal_distribution<double> distribution(0.0,actual_growth_factor_); //no getTau here
     
-    double del_gr_change = confinement_inhibition_*(actual_growth_factor_+ distribution(generator));// with inhibition
+    
+    //***remove these comments***double del_gr_change = confinement_inhibition_*(actual_growth_factor_+ distribution(generator));// with inhibition
     //double del_gr_change = confinement_inhibition_*(growth_factor_+ distribution(generator));// no inhibition
-    double del_volume = del_gr_change*volume_;
+    //***remove these comments***double del_volume = del_gr_change*volume_;
     //f_growth_ = (1.0/Gr_)*del_volume;
-    f_growth_ = del_gr_change/Gr_;
+    //***remove these comments***f_growth_ = del_gr_change/Gr_;
     //std::cerr << f_growth_ << "\n";
-
+    f_growth_ = 0.0;
     ///double correction = 0;// =(current_volume_ - volume_) / interface;
     
     ///*tmp_lagrange1_ << valueOf(*tmp_lagrange1_) - correction;
@@ -1068,7 +1082,7 @@ public:
       boost_refinement_ = false; 
     }
     
-    refinement_->refine(1, function_(indicator2b(getMesh()->getName() + "->phase", 7 * eps_, boost_refinement_),
+    refinement_->refine(1, function_(indicator2b(getMesh()->getName() + "->phase", 3 * eps_, boost_refinement_),
                                       valueOf(*tmp_lagrange1_)));
 
     ///time_counter_++;
@@ -1423,8 +1437,12 @@ protected:
 
   double timesteptest = 0;
 
+  int random_seed = 1020;
   double ct = 0.0;
   double st = 0.0;
+
+  //variable to set size of one of the two cells to zero
+  int switchsize = 1; //if 1 then cell 1 exists, 2 then cell 2 exists and 3 then both exist
 };
 
 } // namespace base_problems

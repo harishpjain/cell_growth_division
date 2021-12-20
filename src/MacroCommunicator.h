@@ -89,14 +89,14 @@ namespace AMDiS
     MacroCommunicator(mpi14::Communicator comm, std::vector<std::pair<int,int>> const& verletList)
       : comm_(comm)
       , verletList_(verletList){}
-    {}
+   // {}
   /*
     MacroCommunicator(mpi14::Communicator comm, std::vector<std::pair<int,int>> const& verletList , std::vector<std::pair<int,int>> const& verletListNoOverlap)
       : comm_(comm)
       , verletList_(verletList)
 	  , verletListNoOverlap_(verletListNoOverlap)
     {}
-*/
+  */
     // collect data from DOFVector and send to nighbouring ranks
     int scatter(DOFVector<double> const& vec)
     {
