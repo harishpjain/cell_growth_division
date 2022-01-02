@@ -1,9 +1,9 @@
 dimension of world:   2
 parallel->log main rank: 1
-number of cells: 4
+number of cells: 128
 
 postfix: 
-output: ./../../../../../../mnt/c/Users/haris/Documents/cellboth
+output: /scratch/ws/1/haja565a-workspace1/collision/out2
 macroMesh->macro file name:       ./macro/macro_100_100.per.2d
 %macroMesh->macro file name:       ./macro/circle_macro.2d
 macroMesh->periodic file:         ./macro/macro_100_100.per
@@ -20,8 +20,6 @@ macroMesh->global->bulk refinemen50: 4
 macroMesh->global->outer refinements: 2
 
 % ----------- BEGIN OF SIMULATION SETUP ------------------
-
-phase->switch_size: 3
 
 % Control initial conditions with single parameter
 % 'singular' - single cell, used to examine treshold for movement & morphology
@@ -46,7 +44,7 @@ main->center of mass:1
 main->cahn-hilliard: 1
 
 % Global (coupling) parameters 
-global->v0: 2.0  % 2.5
+global->v0: 1.0  % 2.5
 global->D: 0.01 %0.1
 
 % Phasefield parameters
@@ -57,7 +55,7 @@ phase->In:  5.0e-2  %2.5e-2 % Coefficient for interaction combined
 phase->allen_growth: 0.0  %-0.001
 %phase->cutTimeStep: Inf  %disabled
 phase->division_volume: 135.0  %volume where the division is triggered. (491.0 for resize 0.1)
-phase->growth_factor: 0.0	  %growth in correction term
+phase->growth_factor: 0.3	  %growth in correction term
 phase->apoptosis_index: 1000      %generation for which the cell dies
 phase->contact_inhibition_of_growth: 1
 phase->inhibition_limit: 10000.0  %L1 norm of interactions for which growth rate is 0
@@ -65,7 +63,7 @@ phase->growth_type: 3            % 1 - adhoc, 3 - operator based non normalised,
 phase->Gr: 0.5  %energy penalisation for growth. This is not growth rate. Keep at 0.5 for exponential growth with growth rate = growth factor
 phase->gamma2: 0.0  %non conservative
 phase->So: 0.0    %source
-phase->confined: 0%1
+phase->confined: 1
 phase->con_inhibition_limit: 300.0
 phase->Con: 5.0e-3
 phase->confinement_shape: 2                 % 1: rectangle, 2: circle, 3:annular ring
@@ -84,7 +82,7 @@ phase->initial->sigma: 1.5
 % Resizing coefficient
 phase->initial->resize: 0.25
 
-phase->initial->numCells: 4 % number of initial cells
+phase->initial->numCells: 1 % number of initial cells
 
 % Parameters for collective experiment
 phase->initial->collective->packFrac: 0.9

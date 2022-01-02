@@ -58,7 +58,6 @@ public:
     Parameters::get("phase->con_inhibition_limit", con_inhibiting_limit_);
     Parameters::get("phase->confinement_size", confinement_size_);
     Parameters::get("phase->confinement_shape", confinementShape_);
-    Parameters::get("phase->switch_size", switchsize);
   }
 
   virtual void initData() override
@@ -81,7 +80,7 @@ public:
     int N = 100;
     Parameters::get("number of cells", N);
     N = std::max(N, 100);
-    std::srand(random_seed);
+    //std::srand(random_seed);
     std::vector<double> rand_angles(N);
     std::generate(rand_angles.begin(), rand_angles.end(), [](){ return std::rand()/double(RAND_MAX)*2.0*M_PI; });
     theta_ = rand_angles[rank_];
@@ -117,7 +116,7 @@ public:
     Parameters::get(getMesh()->getName() + "->dimension",domainDimension_);
     if (writeData_) {
         std::ofstream out(filename_positions_);
-        out << "time,rank,x0,x1,r,S0,S1,v0,v1,angle, total_interaction, neighbours, confine_interaction, growth_rate\n";
+        out << "time,rank,x0,x1,r,S0,S1,v0,v1, vel_angle, nematic_angle, total_interaction, neighbours, confine_interaction, growth_rate\n";
     }
 
     if (confined_==1){
@@ -285,13 +284,9 @@ public:
         alive_ = 1;
         position[0] = 0.5 * domainDimension_[0];
         position[1] = 0.5 * domainDimension_[1];
-
-        //set size for collision
-        int d = 1.0;
-        if(switchsize==2){ d = 0.0;}
       
-        double a = 0.25 * resize * domainDimension_[0]*d;
-        double b = 0.25 * resize * domainDimension_[1]*d;
+        double a = 0.25 * resize * domainDimension_[0];
+        double b = 0.25 * resize * domainDimension_[1];
 
         *getProblem()->getSolution(0) << function_(rotatedEllipse(position, eps_, domainDimension_[0], 0.0, a, b, false), X());
 
@@ -317,11 +312,10 @@ public:
         //growth_factor_ = 0.0;
         
         //size for cell collision
-        int c = 1.0;
-        if(switchsize==1){ c = 0.0;}
 
-        double a = 0.25 * resize * domainDimension_[0]*c;
-        double b = 0.25 * resize * domainDimension_[1]*c;
+
+        double a = 0.25 * resize * domainDimension_[0];
+        double b = 0.25 * resize * domainDimension_[1];
 
         if (std::max(a, b) * numInitialCells_ * 2 > 6 * 0.25 * domainDimension_[0])
         {
@@ -856,10 +850,9 @@ public:
     }
     else{
     // Random advection term, Wiener process w.r.t old direction of advection
-    random_seed += 1;
-    std::srand(random_seed); //remove this
+
     std::random_device rd;
-    std::mt19937 generator(random_seed);//std::mt19937 generator(rd()); 
+    std::mt19937 generator(rd()); 
 
     std::normal_distribution<double> distribution(0,1);    
     
@@ -904,18 +897,17 @@ public:
         //}
       }
 
-    //***remove these comments***std::random_device rd;
-    //***remove these comments***std::mt19937 generator(rd()); 
-    //***remove these comments***std::normal_distribution<double> distribution(0.0,actual_growth_factor_); //no getTau here
+    std::random_device rd;
+    std::mt19937 generator(rd()); 
+    std::normal_distribution<double> distribution(0.0,actual_growth_factor_); //no getTau here
     
     
-    //***remove these comments***double del_gr_change = confinement_inhibition_*(actual_growth_factor_+ distribution(generator));// with inhibition
+    double del_gr_change = confinement_inhibition_*(actual_growth_factor_+ distribution(generator));// with inhibition
     //double del_gr_change = confinement_inhibition_*(growth_factor_+ distribution(generator));// no inhibition
-    //***remove these comments***double del_volume = del_gr_change*volume_;
+    double del_volume = del_gr_change*volume_;
     //f_growth_ = (1.0/Gr_)*del_volume;
-    //***remove these comments***f_growth_ = del_gr_change/Gr_;
+    f_growth_ = del_gr_change/Gr_;
     //std::cerr << f_growth_ << "\n";
-    f_growth_ = 0.0;
     ///double correction = 0;// =(current_volume_ - volume_) / interface;
     
     ///*tmp_lagrange1_ << valueOf(*tmp_lagrange1_) - correction;
@@ -1140,7 +1132,7 @@ public:
       }
       out << adaptInfo->getTime() << ',' << rank_ << ',' << center[0] << ',' << center[1] 
         << ',' << radius_ << ',' << nematic_tensor_[0] << ',' << nematic_tensor_[1] << ',' 
-        << velocityValues_[0] << ',' << velocityValues_[1] << ',' << major_axis_angle_ 
+        << velocityValues_[0] << ',' << velocityValues_[1] << ',' << theta_ << ',' << major_axis_angle_ 
         << ','<< total_interactions << ',' << neighbours << ','<< confinement_interaction_ << ',' << actual_growth_factor_ << '\n';
     }
     Super::closeTimestep(adaptInfo);
@@ -1161,8 +1153,8 @@ public:
     {
       vel[1] = vel[1]>0?vel[1]-domainDimension_[1]:vel[1]+domainDimension_[1];
     }
-    velocityValues_[0] = vel[0];
-    velocityValues_[1] = vel[1];
+    velocityValues_[0] = vel[0]/(*getTau());
+    velocityValues_[1] = vel[1]/(*getTau());
   }
 
   // expressiong representing the Double-Well
@@ -1374,7 +1366,7 @@ protected:
   
   int neighbours = 0; //Number of cells, a cell is interacting with
 
-  double v0_ = 0.5;
+  double v0_ = 1.0;
   double allen_growth_ = 0.0;
   double mu_laplace_const_ = 1.0;
   double volume_threshold_ = 1.1e3;
@@ -1437,12 +1429,9 @@ protected:
 
   double timesteptest = 0;
 
-  int random_seed = 1020;
+  
   double ct = 0.0;
   double st = 0.0;
-
-  //variable to set size of one of the two cells to zero
-  int switchsize = 1; //if 1 then cell 1 exists, 2 then cell 2 exists and 3 then both exist
 };
 
 } // namespace base_problems
