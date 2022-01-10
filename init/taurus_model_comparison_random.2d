@@ -1,9 +1,9 @@
 dimension of world:   2
 parallel->log main rank: 1
-number of cells: 128
+number of cells: 1
 
 postfix: 
-output: /scratch/ws/1/haja565a-workspace1/collision/out2
+output: /scratch/ws/1/haja565a-workspace1/collision/out10
 macroMesh->macro file name:       ./macro/macro_100_100.per.2d
 %macroMesh->macro file name:       ./macro/circle_macro.2d
 macroMesh->periodic file:         ./macro/macro_100_100.per
@@ -55,7 +55,7 @@ phase->In:  5.0e-2  %2.5e-2 % Coefficient for interaction combined
 phase->allen_growth: 0.0  %-0.001
 %phase->cutTimeStep: Inf  %disabled
 phase->division_volume: 135.0  %volume where the division is triggered. (491.0 for resize 0.1)
-phase->growth_factor: 0.3	  %growth in correction term
+phase->growth_factor: 0.0%0.3	  %growth in correction term
 phase->apoptosis_index: 1000      %generation for which the cell dies
 phase->contact_inhibition_of_growth: 1
 phase->inhibition_limit: 10000.0  %L1 norm of interactions for which growth rate is 0
@@ -96,7 +96,7 @@ arh->file_prefix: ${output}/data/rank_
 %adapt->end time:               20
 
 adapt->sequence->timesteps:  [5e-3]%, 1.e-2]%, 2.e-2, 5.e-2]%, 1.e-1]
-adapt->sequence->number of timesteps: [10000]%, 800]%, 800, 800]%, 800]
+adapt->sequence->number of timesteps: [30000]%, 800]%, 800, 800]%, 800]
 adapt->sequence->calc end time: 1
 
 %adapt->number of timesteps: 0
@@ -136,7 +136,7 @@ phase->space->output->ParaView format:             1
 phase->space->output->ParaView mode:               1
 phase->space->output->ParaView animation:          1
 phase->space->output->ParaView create subdirectory: 1
-phase->space->output->write every i-th timestep:   50
+phase->space->output->write every i-th timestep:   100
 phase->space->output->append index:                1
 phase->space->output->index length:                6
 phase->space->output->index decimals:              3

@@ -8,6 +8,7 @@
 #include <mpi14/Collective.hpp>
 
 #include "InitialFunctions.h"
+#include "VelocityFunctions.h"
 #include "CutPhase.h"
 #include "Problem.h"
 #include "Refinement.h"
@@ -859,9 +860,12 @@ public:
     theta_ += angleDiffusivity_ * distribution(generator);
     ct = std::cos(theta_);
     st = std::sin(theta_);
-    *advection_[0] << v0_ * std::cos(theta_) * (0.5*valueOf(getProblem()->getSolution(0)) + 0.5);
-    *advection_[1] << v0_ * std::sin(theta_) * (0.5*valueOf(getProblem()->getSolution(0)) + 0.5);
+    *advection_[0] << v0_ * std::cos(theta_) * (0.5*valueOf(getProblem()->getSolution(0)) + 0.5); //uncomment this
+    *advection_[1] << v0_ * std::sin(theta_) * (0.5*valueOf(getProblem()->getSolution(0)) + 0.5); //uncomment this
     }
+
+
+
     // Compute elongation
     nematic_tensor_[0] = 0.125 * integrate(derivativeOf(getProblem()->getSolution(0),1) * derivativeOf(getProblem()->getSolution(0),1)); 
     nematic_tensor_[0] += -0.125 * integrate(derivativeOf(getProblem()->getSolution(0),0) * derivativeOf(getProblem()->getSolution(0),0));
@@ -874,6 +878,13 @@ public:
     nematic_tensor_[1] *= (1.0 / norm_q);
 
     major_axis_angle_ = atan2(nematic_tensor_[1], nematic_tensor_[0]) * 180.0 / (2*M_PI);
+
+    if(elongation_vel){ 
+      //here changes are made to elongate cell in direction of its elongation
+      double major_axis_angle_rad_ = major_axis_angle_ *(2*M_PI) / (360.0);
+      *advection_[0] << function_(elongateVelocity(getPosition(), v0_, theta_,0.25), X())* std::cos(theta_+M_PI/2) * (0.5*valueOf(getProblem()->getSolution(0)) + 0.5);
+      *advection_[1] << function_(elongateVelocity(getPosition(), v0_, theta_, 0.25), X())* std::sin(theta_+M_PI/2) * (0.5*valueOf(getProblem()->getSolution(0)) + 0.5);
+    }
 
     Timer t;
     // calculate phase-field from lagrange[1] signed-distance function
@@ -892,9 +903,6 @@ public:
     if(confined_ == 1){
         double conForce = integrate(valueOf(*confinementForce_));
         confinement_inhibition_ = (std::max(0.0, 1.0 - std::pow((conForce/(Con_*con_inhibiting_limit_)),2)));
-        //if(phaseProb_.current_volume_ < volume_threshold_*0.5){   //if the cell is small, there is no contact inhibition
-        //  phaseProb_.actual_growth_factor_ = phaseProb_.growth_factor_; 
-        //}
       }
 
     std::random_device rd;
@@ -1132,7 +1140,7 @@ public:
       }
       out << adaptInfo->getTime() << ',' << rank_ << ',' << center[0] << ',' << center[1] 
         << ',' << radius_ << ',' << nematic_tensor_[0] << ',' << nematic_tensor_[1] << ',' 
-        << velocityValues_[0] << ',' << velocityValues_[1] << ',' << theta_ << ',' << major_axis_angle_ 
+        << velocityValues_[0] << ',' << velocityValues_[1] << ',' << theta_*(360.0 / (2*M_PI)) << ',' << major_axis_angle_ 
         << ','<< total_interactions << ',' << neighbours << ','<< confinement_interaction_ << ',' << actual_growth_factor_ << '\n';
     }
     Super::closeTimestep(adaptInfo);
@@ -1429,6 +1437,7 @@ protected:
 
   double timesteptest = 0;
 
+  bool elongation_vel = true; //if true, the cells elongate in direction of motion
   
   double ct = 0.0;
   double st = 0.0;
