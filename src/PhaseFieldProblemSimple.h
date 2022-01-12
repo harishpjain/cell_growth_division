@@ -235,9 +235,11 @@ public:
     //experimental ranking of cells
     aliveCells_.resize(numInitialCells_);
     waitingCells_.resize(numInitialCells_);
+    volumeList_.resize(numInitialCells_);
     latestWaitingCell_ = numInitialCells_*2-1;
     std::iota(aliveCells_.begin(), aliveCells_.end(), 0);
     std::iota(waitingCells_.begin(), waitingCells_.end(), numInitialCells_);
+    std::iota(volumeList_.begin(), volumeList_.end(), 0.0);
     //std::cerr << aliveCells_ << "\n";
     //std::cerr << waitingCells_ << "\n";
     //std::cerr << latestWaitingCell_ << "\n";
@@ -385,9 +387,11 @@ public:
     //experimental ranking of cells
     aliveCells_.resize(numInitialCells_);
     waitingCells_.resize(numInitialCells_);
+    volumeList_.resize(numInitialCells_);
     latestWaitingCell_ = numInitialCells_*2-1;
     std::iota(aliveCells_.begin(), aliveCells_.end(), 0);
     std::iota(waitingCells_.begin(), waitingCells_.end(), numInitialCells_);
+    std::iota(volumeList_.begin(), volumeList_.end(), 0.0);
     //std::cerr << aliveCells_ << "\n";
     //std::cerr << waitingCells_ << "\n";
     //std::cerr << latestWaitingCell_ << "\n";
@@ -928,106 +932,7 @@ public:
     ///**  return std::max(-1.0, std::min(1.0, std::abs(1.0 + phi * x) > 1.e-5 ? (x + phi) / (1.0 + phi * x) : phi));
     ///**},valueOf(getProblem()->getSolution(0)));
     radius_ = std::sqrt(volume_/M_PI);
-    /*
-    if(growth_type_==1){
-      std::random_device rd;
-      std::mt19937 generator(rd()); 
-      std::normal_distribution<double> distribution(0.0,actual_growth_factor_ * (*getTau()));
-        
-      current_volume_ = (1.0 + confinement_inhibition_*(actual_growth_factor_ * (*getTau()))  + distribution(generator))* current_volume_;// 
-      // volume measuring
-      //double correction = 0.0;
-      double correction;// =(current_volume_ - volume_) / interface;
-      phaseStatus != 0 ? correction = 0.0: correction =(current_volume_ - volume_) / interface;
-      
-      *tmp_lagrange1_ << valueOf(*tmp_lagrange1_) - correction;
-      volume_ = compositeFEM::CFE_Integration::integrate_onNegLs(&oneFct, &elLevelSet);
-      MSG("volume-error = %e\n", std::abs(current_volume_ - volume_));
-      
     
-      //double x = 0.0;//
-      double x = std::tanh(correction / (std::sqrt(2.0) * eps_));
-      *getProblem()->getOldSolution() << function_([x](double const &phi) {
-        return std::max(-1.0, std::min(1.0, std::abs(1.0 + phi * x) > 1.e-5 ? (x + phi) / (1.0 + phi * x) : phi));
-      },
-                                                  valueOf(getProblem()->getSolution(0)));
-      
-      radius_ = std::sqrt(volume_/M_PI);
-    }else if(growth_type_==2){//this is bullshit
-      std::random_device rd;
-      std::mt19937 generator(rd()); 
-      std::normal_distribution<double> distribution(0.0,actual_growth_factor_); //no getTau here
-      
-      double gr_change = 1+actual_growth_factor_+ distribution(generator);
-      double volume_new = gr_change*volume_;
-      f_growth_ = (1.0/Gr_)*(1.0/volume_new)*(1.0/gr_change-1.0);
-      //std::cerr << f_growth_ << "\n";
-
-      double correction = 0;// =(current_volume_ - volume_) / interface;
-      
-      *tmp_lagrange1_ << valueOf(*tmp_lagrange1_) - correction;
-      volume_ = compositeFEM::CFE_Integration::integrate_onNegLs(&oneFct, &elLevelSet);
-      
-      //double x = 0.0;//
-      double x = std::tanh(correction / (std::sqrt(2.0) * eps_));
-      *getProblem()->getOldSolution() << function_([x](double const &phi) {
-        return std::max(-1.0, std::min(1.0, std::abs(1.0 + phi * x) > 1.e-5 ? (x + phi) / (1.0 + phi * x) : phi));
-      },
-                                                  valueOf(getProblem()->getSolution(0)));
-      radius_ = std::sqrt(volume_/M_PI);
-    }else if(growth_type_==3){
-      std::random_device rd;
-      std::mt19937 generator(rd()); 
-      std::normal_distribution<double> distribution(0.0,actual_growth_factor_); //no getTau here
-      
-      double del_gr_change = confinement_inhibition_*(actual_growth_factor_+ distribution(generator));//
-      double del_volume = del_gr_change*volume_;
-      //f_growth_ = (1.0/Gr_)*del_volume;
-      f_growth_ = del_gr_change/Gr_;
-      //std::cerr << f_growth_ << "\n";
-
-      double correction = 0;// =(current_volume_ - volume_) / interface;
-      
-      *tmp_lagrange1_ << valueOf(*tmp_lagrange1_) - correction;
-      //volume_ = compositeFEM::CFE_Integration::integrate_onNegLs(&oneFct, &elLevelSet);
-      volume_ = integrate(0.5*valueOf(*getProblem()->getSolution(0))+0.5);
-      //double x = 0.0;//
-      double x = 0.0;// std::tanh(correction / (std::sqrt(2.0) * eps_));
-      *getProblem()->getOldSolution() << function_([x](double const &phi) {
-        return std::max(-1.0, std::min(1.0, std::abs(1.0 + phi * x) > 1.e-5 ? (x + phi) / (1.0 + phi * x) : phi));
-      },
-                                                  valueOf(getProblem()->getSolution(0)));
-      radius_ = std::sqrt(volume_/M_PI);
-    }else if(growth_type_ == 4){//hybrid growth
-      std::random_device rd;
-      std::mt19937 generator(rd()); 
-      std::normal_distribution<double> distribution(0.0,actual_growth_factor_);
-        
-      current_volume_ = (1.0 + actual_growth_factor_ * (*getTau()) + distribution(generator) * (*getTau()) ) * current_volume_;
-      // volume measuring
-      //double correction = 0.0;
-      double correction;// =(current_volume_ - volume_) / interface;
-      phaseStatus != 0 ? correction = 0.0: correction =(current_volume_ - volume_) / interface;
-      
-      *tmp_lagrange1_ << valueOf(*tmp_lagrange1_) - correction;
-      volume_ = compositeFEM::CFE_Integration::integrate_onNegLs(&oneFct, &elLevelSet);
-      MSG("volume-error = %e\n", std::abs(current_volume_ - volume_));
-      
-    
-      //double x = 0.0;//
-      double x = std::tanh(correction / (std::sqrt(2.0) * eps_));
-      *getProblem()->getOldSolution() << function_([x](double const &phi) {
-        return std::max(-1.0, std::min(1.0, std::abs(1.0 + phi * x) > 1.e-5 ? (x + phi) / (1.0 + phi * x) : phi));
-      },
-                                                  valueOf(getProblem()->getSolution(0)));
-      
-      radius_ = std::sqrt(volume_/M_PI);
-
-      double del_gr_change = actual_growth_factor_+ distribution(generator);
-      double del_volume = del_gr_change*volume_;
-      f_growth_ = (1.0/Gr_)*del_volume;
-      //std::cerr << f_growth_ << "\n";
-    }*/
 
 
     bool writeVolume = false;
@@ -1074,7 +979,6 @@ public:
     //refinement_->refine(1, function_(indicator2(getMesh()->getName() + "->phase", 7 * eps_),
     //                                 valueOf(*tmp_lagrange1_)));
     
-    //if((current_volume_ > volume_threshold_*0.997) || div_refine_>0){ //0.49 works for volume 125.0 For higher volume, might need some change. Not yet tested
     if(div_refine_ > 0){
       boost_refinement_ = true;
       div_refine_ -= 1;
@@ -1088,16 +992,11 @@ public:
     ///time_counter_++;
     /*refinement_->refine(1, function_(indicator(getMesh()->getName() + "->phase", 3 * eps_),
                                      valueOf(getProblem()->getSolution(0))));*/
-    /*								 
-	if(!(rank_ == 2 && time_counter_<10)){
-		refinement_->refine(1, function_(indicator(getMesh()->getName() + "->phase", 3 * eps_),
-                                     valueOf(getProblem()->getSolution(0))));
-	}*/
+
     MSG("time (refinement) = %e\n", t.elapsed());
 
     //rescaling phase field
     //*getProblem()->getSolution(0) << max(-1.0, min(1.0, valueOf(*getProblem()->getSolution(0))));
-
 
     // Possibly write the velocity ...
     bool writeVelocities = true;
@@ -1215,18 +1114,14 @@ public:
 
     // Random advection term
     Operator *opAdvection = new Operator(prob->getFeSpace(0));
-    //addFOT(opAdvection, valueOf(advection_), GRD_PSI);
-    //addFOT(opAdvection, valueOf(adRef()), GRD_PSI);//e
-    //addFOT(opAdvection, valueOf(adref_), GRD_PSI);//f
     addFOT(opAdvection, valueOf(*advec), GRD_PSI);
 
     prob->addMatrixOperator(opAdvection, 0, 0);  
 
-    // phi^# = 1/eps * (phi^3 - phi) - eps*laplace(phi)
-    // ------------------------------------------------
+
 
     Operator *opPhi2 = new Operator(prob->getFeSpace(1));
-    addZOT(opPhi2, G(valueOf(phi))*1.0);//G(valueOf(phi))*G(phi_restrict)*G(valueOf(phi))*
+    addZOT(opPhi2, G(valueOf(phi))*1.0);
 
     prob->addMatrixOperator(opPhi2, 1, 1);
 
@@ -1246,17 +1141,8 @@ public:
 
     //operator for growth
     Operator *opGrowth = new Operator(prob->getFeSpace(0));
-    addZOT(opGrowth, ref_(f_growth_)*(valueOf(phi)+1)/2.0);//ref_(f_growth_)(*growth_f)
+    addZOT(opGrowth, ref_(f_growth_)*(valueOf(phi)+1)/2.0);
     prob->addVectorOperator(opGrowth, 0);
-    
-    //Operator *opGrowthM = new Operator(prob->getFeSpace(0), prob->getFeSpace(0));
-    //addZOT(opGrowthM, -ref_(f_growth_));
-    //prob->addMatrixOperator(opGrowthM, 0, 0);
-  
-
-    //Operator *opSource = new Operator(prob->getFeSpace(0));
-    //addZOT(opSource, So_);
-    //prob->addVectorOperator(opSource, 0);
 
     if (confined_==1){
       // B'(phi) * w(d_wall)
@@ -1271,7 +1157,7 @@ public:
 
   virtual void fillBoundaryConditions(ProblemType *prob) override
   {
-    // priodic boundary conditions for left-right (-1) and bottom-top (-2) periodicity
+    // periodic boundary conditions for left-right (-1) and bottom-top (-2) periodicity
     for (int j = 0; j < prob->getNumComponents(); ++j)
     {
       for (int k = 0; k < prob->getNumComponents(); ++k)
@@ -1370,15 +1256,15 @@ protected:
   double Ca_ = 0.0281;
   double rescaledCa_ = Ca_;
   double rescaledIn_ = In_;
-  int div_refine_ = 0;
+  int div_refine_ = 0; // to control boost in refinement after division
   
   int neighbours = 0; //Number of cells, a cell is interacting with
 
-  double v0_ = 1.0;
-  double allen_growth_ = 0.0;
+  double v0_ = 1.0; 
+  double allen_growth_ = 0.0;  
   double mu_laplace_const_ = 1.0;
-  double volume_threshold_ = 1.1e3;
-  bool boost_refinement_ = false;
+  double volume_threshold_ = 1.1e3; //the volume at which the cell divides
+  bool boost_refinement_ = false; 
   double growth_factor_ = 0.1;
   double actual_growth_factor_ = 0.1;
   double confinement_inhibition_ = 1.0; //1 = no inhibition, 0.0 = complete inhibition
@@ -1389,7 +1275,6 @@ protected:
   double Gr_ = 1.0;
   double gamma2_ = 1.0;
   double So_;
-  int refinement_counter = 0;
 
   double total_interactions = 0.0;
 
@@ -1405,6 +1290,7 @@ protected:
 
   std::vector<int> aliveCells_; //list of all cells which are alive
   std::vector<int> waitingCells_; //list of cells waiting to be born
+  std::vector<double> volumeList_; //list of volumes of all cells
   int latestWaitingCell_;
   int alive_ = 0; //1 = alive, 2 = dead, 0 = not born yet
 

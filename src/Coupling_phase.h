@@ -60,6 +60,14 @@ namespace AMDiS { namespace base_problems {
       {
         in.clear();
       }
+      for(auto out: volumeOut_){
+        out.clear();
+      }
+      for (auto in : volumeIn_)
+      {
+        in.clear();
+      }
+
       if(comm().rank() < phaseProb_.numInitialCells_){
         alive = 1;
       }
@@ -223,28 +231,38 @@ namespace AMDiS { namespace base_problems {
       in_ranks_.clear();
       in_ranks_.resize(comm().size());
       
-
-      //experimental
       aliveInStatus_.clear();
       aliveInStatus_.resize(comm().size());
-      //for(int r=0; r<aliveInStatus_.size(); ++r){
-      //  aliveInStatus_[r].resize(comm().size());
-      // }
       aliveOutStatus_.clear();
       aliveOutStatus_.resize(comm().size());
+
+      volumeIn_.clear();
+      volumeIn_.resize(comm().size());
+      volumeOut_.clear();
+      volumeOut_.resize(comm().size());
+      phaseProb_.volumeList_.clear();
+      phaseProb_.volumeList_.resize(comm().size(), 0.0);
+
       phaseProb_.aliveCells_.clear();
       phaseProb_.waitingCells_.clear();
       phaseProb_.aliveCells_.resize(comm().size());
-      phaseProb_.waitingCells_.resize(comm().size());
+      phaseProb_.waitingCells_.resize(comm().size(),comm().size()-1);
+
       aliveOutStatus_[rank_].push_back(alive);
+      volumeOut_[rank_].push_back(phaseProb_.volume_);
       
-      //400h20//aliveOutStatus_[rank_][0] = alive;
-      //aliveStatus_[rank_][0] = alive_[rank_];
+
+      //making sure all cores know which other cores have cells. 
       communicator_->sendRanks(aliveOutStatus_, numRanks_, rank_); //the send and recv rank functions can also send/recv aliveStatus
       communicator_->recvRanks(aliveInStatus_, numRanks_, rank_);
+
+      //making sure all cores have volume of cells of all other cores.
+      communicator_->sendVolume(volumeOut_, numRanks_, rank_); 
+      communicator_->recvVolume(volumeIn_, numRanks_, rank_);
       
       aliveInStatus_[rank_][0] = alive; //this is necessary for some reason becuase self status is not well communicated
-      //aliveStatus_[rank_][0] = phaseProb_.alive_;
+      volumeIn_[rank_][0] = phaseProb_.volume_;
+
       int idx1 = 0;
       int idx2 = 0;
       
@@ -252,27 +270,44 @@ namespace AMDiS { namespace base_problems {
         
         if(aliveInStatus_[r][0] == 1 || r < phaseProb_.numInitialCells_){
           phaseProb_.aliveCells_[idx1] = r;
+          phaseProb_.volumeList_[idx1] = volumeIn_[r][0];
           idx1++;
         }else if(aliveInStatus_[r][0] == 0){
           phaseProb_.waitingCells_[idx2] = r;
           idx2++;
         }
       }
-      if(idx2<idx1){
-        for(int j = 0; j <= idx1-idx2; j++){
-          phaseProb_.waitingCells_[idx2+j] = numRanks_+j;
-        }
-      }
-      //for(int r=0; r<aliveInStatus_.size(); ++r){ //keeping ghost ranks as backup to fill all ranks
-      //  phaseProb_.waitingCells_.push_back(r+aliveStatusIn_.size());
-      //}
+
+      //sorting waitingCells based on decreasing volume: NEED MORE EFFICIENT WAY TO DO THIS
       
-      phaseProb_.waitingCells_.resize(phaseProb_.aliveCells_.size()); //match number of waiting cells to number of alive cells 
+      std::vector<std::size_t> index_vec;
+
+      for (std::size_t i = 0; i != phaseProb_.waitingCells_.size(); ++i) { index_vec.push_back(i); }
+      std::sort(
+          index_vec.begin(), index_vec.end(),
+          [&](std::size_t a, std::size_t b) { 
+              return phaseProb_.volumeList_[a] > phaseProb_.volumeList_[b];
+             });
+
+      for( int i = 0; i < phaseProb_.waitingCells_.size() - 1; ++i )
+      { 
+          // while the element i is not yet in place 
+          while( i != index_vec[i] )
+          {
+              // swap it with the element at its final place
+              int alt = index_vec[i];
+              std::swap( phaseProb_.waitingCells_[i], phaseProb_.waitingCells_[alt] );
+              std::swap( index_vec[i], index_vec[alt] );
+          }
+      }
+      
+
       for(int i = 0; i < phaseProb_.waitingCells_.size(); i++){
         if(rank_ == phaseProb_.waitingCells_[i]){
           phaseProb_.parent_ = phaseProb_.aliveCells_[i];
         }
       }
+
       //std::cerr << phaseProb_.aliveCells_ << "\n";
       MPI_Barrier(comm());
       if(phaseProb_.volume_ >= volume_threshold_){
@@ -331,6 +366,8 @@ namespace AMDiS { namespace base_problems {
         //non iterator method
         std::cerr << phaseProb_.aliveCells_ << "\n";
         std::cerr << phaseProb_.waitingCells_ << "\n";
+        std::cerr << phaseProb_.volumeList_ << "\n";
+        
         for(int i = 0; i < phaseProb_.aliveCells_.size(); i++){
           if(rank_ == phaseProb_.aliveCells_[i]){
             mother_index = i;
@@ -350,8 +387,8 @@ namespace AMDiS { namespace base_problems {
         //sprintf(to_r, "%03d", phaseProb_.rankTree_[phaseProb_.nextChildIndex_]);
         //int child = phaseProb_.rankTree_[phaseProb_.nextChildIndex_];
         //out_ranks_[rank_].push_back(child);
-        sprintf(to_r, "%03d", phaseProb_.waitingCells_[mother_index]);
-        out_ranks_[rank_].push_back(phaseProb_.waitingCells_[mother_index]);
+        sprintf(to_r, "%03d", daughter_rank);//phaseProb_.waitingCells_[mother_index]);
+        out_ranks_[rank_].push_back(daughter_rank);//phaseProb_.waitingCells_[mother_index]);
 
         ///std::string poststr = str(from_r) + "_to_rank_" + str(to_r);
         phaseProb_.nextChildIndex_++;
@@ -395,8 +432,7 @@ namespace AMDiS { namespace base_problems {
             //refinement_->refine(10, function_(indicator(getMesh()->getName() + "->phase", 3 * eps_),
             //                                  valueOf(phaseProb_.getProblem()->getSolution(0))));
             auto &ownPhase = *phaseProb_.getProblem()->getSolution(0);
-            std::cerr << ownPhase.l1norm() << "\n"
-                      << "*******";
+            std::cerr << ownPhase.l1norm() << "\n" << "*******";
             //double x = ((rank_ + 1) / phaseProb_.numInitialCells_) - 1;
             //int y = int(log2(x));
             //int parent = rank_ - phaseProb_.numInitialCells_ * (1 << y);
@@ -412,10 +448,9 @@ namespace AMDiS { namespace base_problems {
             //int daughter_index = indexItr - phaseProb_.waitingCells_.begin();
             //auto daughter_index = std::distance(phaseProb_.waitingCells_.begin(), indexItr);
             int mother_rank = phaseProb_.aliveCells_[daughter_index];
-            std::cerr << "\n my mother is " << mother_rank;
-            std::cerr << "and I am " << rank_;
+            std::cerr << "\n my mother is " << mother_rank << "and I am " << rank_;
             char from_r[10];
-            sprintf(from_r, "%03d", phaseProb_.parent_);
+            sprintf(from_r, "%03d", mother_rank);//phaseProb_.parent_);
             //sprintf(from_r, "%03d", phaseProb_.aliveCells_[daughter_index]);
             char to_r[10];
             sprintf(to_r, "%03d", rank_);
@@ -508,7 +543,7 @@ namespace AMDiS { namespace base_problems {
       Parameters::get("postfix", postfix_);
       postfix_ += "_p" + std::to_string(comm().rank());
       
-      /*
+      
       bool writeAliveAndWaitingCells = true;
       if (writeAliveAndWaitingCells){
         std::string alive_filename = directory_ + "/alive" + postfix_ + ".dat";
@@ -525,7 +560,7 @@ namespace AMDiS { namespace base_problems {
         waitFile <<  "\n";
         aliveFile.close();  
         waitFile.close(); 
-      }*/
+      }
 
       int writeNeighbours = 0;
       Parameters::get("main->write neighbors",writeNeighbours);
@@ -679,6 +714,8 @@ namespace AMDiS { namespace base_problems {
 
     std::vector<std::vector<int>> aliveOutStatus_;
     std::vector<std::vector<int>> aliveInStatus_;
+    std::vector<std::vector<double>> volumeOut_;
+    std::vector<std::vector<double>> volumeIn_;
 
   };
 } } // end namespaces

@@ -136,6 +136,27 @@ namespace AMDiS
       mpi14::wait_all(requests.begin(), requests.end());
     }
 
+    void sendVolume(std::vector<std::vector<double>> out_volume, int numRanks, int source){
+      FUNCNAME("MacroCommunicator::sendVolume()");
+      MSG("start (MacroCommunicator::sendVolume) = %20.16e\n", mpi14::now());
+
+      for (int r = 0; r < numRanks; ++r){
+        auto req = comm_.isend(out_volume[source], r, tag_macrodata_);
+        req.free();
+      }
+    }
+
+    void recvVolume(std::vector<std::vector<double>>& in_volume, int numRanks, int target){
+      FUNCNAME("MacroCommunicator::recvVolume()");
+      MSG("start (MacroCommunicator::recvVolume) = %20.16e\n", mpi14::now());
+      std::vector<mpi14::Request> requests;
+      for (int r = 0; r < numRanks; ++r)
+      {
+        requests.push_back(comm_.irecv(in_volume[r], r, tag_macrodata_));
+      }
+      mpi14::wait_all(requests.begin(), requests.end());
+    }
+
 
 
     // receive data from neighbouring ranks and apply to DOFVector
