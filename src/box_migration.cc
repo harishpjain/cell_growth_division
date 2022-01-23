@@ -3,6 +3,7 @@
 #include "GlobalProblem.h"
 #include "Coupling_phase.h"
 
+
 #include "AdaptInstationarySeq.h"
 
 using namespace AMDiS;

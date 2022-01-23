@@ -1,6 +1,6 @@
 #pragma once
 
-#include "PhaseFieldProblemSimple.h"
+#include "PhaseFieldProblemSimple_modified_elongation.h"
 #include "GlobalProblem.h"
 #include "MacroCommunicator.h"
 #include "ExpressionAssigner.h"
@@ -93,51 +93,6 @@ namespace AMDiS { namespace base_problems {
               ? B_j*w_der_i
               : 0.0;
         }
-        /*
-        if(potential_ == 0 || potential_ == 3){
-          double f = std::log((1.0 + phi_i) / (1.0 - phi_i));
-          double B = 1.0 / eps * sqr(sqr(phi_j) - 1.0);
-
-          double d = -(eps/std::sqrt(2.0))*f;
-
-          if(potential_ == 0){
-          return std::abs(phi_i) < 0.95 && std::abs(phi_j) < 0.95
-                ? B * f * 2.0/(sqr(phi_i)-1.0) * std::exp(-0.5*sqr(f))
-                : 0.0;
-          }
-          if(potential_==3){
-          return std::abs(phi_i) < 0.95 && std::abs(phi_j) < 0.95
-                ? B * (2*b*d/eps+4*a*d*sqr(d/eps))*(std::sqrt(2.0)*eps)/(sqr(phi_i)-1)
-                : 0.0;
-          }
-        }
-
-        if(potential_ == 4 || potential_ == 5 || potential_ == 6){
-         
-          double f_psi = std::log((1.0 + psi_i) / (1.0 - psi_i));
-          double B_psij = 1.0 / eps * sqr(sqr(psi_j) - 1.0);
-          double d_psi = -(eps/std::sqrt(2.0))*f_psi;
-          double a = 2; //coefficient of x^4
-          double b = -3; //coefficient of x^2
-          if(potential_ == 4){ //odd repulsion
-            return phi_i > -0.95 && phi_j > -0.95
-                  ? B_psij * f_psi * 2.0/(sqr(psi_i)-1.0) * std::exp(-0.5*sqr(f_psi)) * (1/2)
-                  : 0.0;
-          }
-          if(potential_==5){ //odd attaction and repulsion
-            return phi_i > -0.99 && phi_j > -0.99
-                    ? B_psij*(2*b*psi_i+3*a*psi_i*sqr(psi_i))*0.5
-                    : 0.0;
-                    //? B_psi * (2*b*(d_psi/eps)+4*a*(d_psi/eps)*sqr(d_psi/eps)) * (std::sqrt(2.0)*eps)/(sqr(psi_i)-1) * (1/2)
-                    //: 0.0;
-          }
-          if(potential_==6){ // odd attraction and repulsion with B(phi) = (phi+1)/2
-          double B_phij = (phi_j+1.0)/2.0;
-            return phi_i > -0.99 && phi_j > -0.99
-                    ? B_phij*(2*b*psi_i+3*a*psi_i*sqr(psi_i))*0.5
-                    : 0.0;
-          }   
-        }*/
       };
     }
     // B'(phi_i) * w(phi_j) - repulsion
@@ -158,53 +113,6 @@ namespace AMDiS { namespace base_problems {
               ?  B_der_i*w_j
               : 0.0;
           }
-/*
-          if(potential_ == 0 || potential_ == 3){
-            double f = std::log((1.0 + phi_j)/(1.0 - phi_j));
-            double B1 = 1.0/eps * (sqr(phi_i) - 1.0)*phi_i;  //what's this? A factor of 4 is missing
-            
-            double d = -(eps/std::sqrt(2.0))*f;
-
-            
-            if(potential_==0){
-              return std::abs(phi_i) < 0.95 && std::abs(phi_j) < 0.95
-                  ? B1 * std::exp(-0.5*sqr(f))
-                  : 0.0;
-            }
-            if(potential_ == 3){
-              return std::abs(phi_i) < 0.95 && std::abs(phi_j) < 0.95
-                  ? B1 * (1+b*sqr(d/eps)+a*sqr(sqr(d/eps)))
-                  : 0.0;
-            }
-          }
-
-          if(potential_ == 4 || potential_ == 5 || potential_==6){
-            double psi_i = (phi_i-1.0)/2;
-            double psi_j = (phi_j-1.0)/2;
-            double f_psi = std::log((1.0 + psi_i) / (1.0 - psi_i));//bullshit
-            double B1_psi = 1.0/eps * (sqr(psi_i) - 1.0)*psi_i;
-            double d_psi = -(eps/std::sqrt(2.0))*f_psi;
-            double a = 2; //coefficient of x^4
-            double b = -3; //coefficient of x^2
-            if(potential_ == 4){ //odd repulsion
-              return phi_i > -0.95 && phi_j > -0.95
-                    ? B1_psi * std::exp(-0.5*sqr(f_psi)) * (0.5)
-                    : 0.0;
-            }
-            if(potential_==5){ //odd attaction and repulsion
-              return phi_i > -0.99 && phi_j > -0.99
-                    ? B1_psi*(1+b*sqr(psi_j) + a*sqr(sqr(psi_j)))*0.5
-                    : 0.0;
-                    //? B1_psi * (1+b*sqr(d_psi/eps)+a*sqr(sqr(d_psi/eps))) * (0.5)
-                    //: 0.0;
-            }
-            if(potential_==6){ // odd attraction and repulsion with B(phi) = (phi+1)/2
-              double Bder_phii = (1.0)/2.0;
-              return phi_i > -0.99 && phi_j > -0.99
-                    ? Bder_phii*(1+b*sqr(psi_j) + a*sqr(sqr(psi_j)))*0.5
-                    : 0.0;
-          }
-          }*/
         };
     }
 
@@ -250,6 +158,8 @@ namespace AMDiS { namespace base_problems {
 
       aliveOutStatus_[rank_].push_back(alive);
       volumeOut_[rank_].push_back(phaseProb_.volume_);
+
+      int dummy  = 1;
       
 
       //making sure all cores know which other cores have cells. 
@@ -716,6 +626,6 @@ namespace AMDiS { namespace base_problems {
     std::vector<std::vector<int>> aliveInStatus_;
     std::vector<std::vector<double>> volumeOut_;
     std::vector<std::vector<double>> volumeIn_;
-    int dummy = 1;
+
   };
 } } // end namespaces
