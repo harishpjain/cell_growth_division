@@ -309,13 +309,8 @@ public:
       if(rank_<numInitialCells_ && rank_ >0){
         double orientation_ = (rank_-1) * angle_difference_;
         alive_ = 1;
-        position[0] = domainDimension_[0]*(0.5 + 0.15*std::cos(orientation_ * M_PI / 180.0));
-        position[1] = domainDimension_[1]*(0.5 + 0.15*std::sin(orientation_ * M_PI / 180.0));
-        
-        //growth_factor_ = 0.0;
-        
-        //size for cell collision
-
+        position[0] = domainDimension_[0]*(0.5 + 0.30*std::cos(orientation_ * M_PI / 180.0));
+        position[1] = domainDimension_[1]*(0.5 + 0.30*std::sin(orientation_ * M_PI / 180.0));
 
         double a = 0.25 * resize * domainDimension_[0];
         double b = 0.25 * resize * domainDimension_[1];
@@ -351,6 +346,7 @@ public:
       }
     }
   }
+
   void MultiCellMultiRing(AdaptInfo *adaptInfo){
     std::cout << "initialise some cells and rankTrees" << std::endl;
     

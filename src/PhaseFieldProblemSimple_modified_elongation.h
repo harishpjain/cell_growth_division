@@ -276,8 +276,6 @@ public:
         position[1] = 0.0;
         double a = 0.01 * resize * domainDimension_[0];
         double b = 0.01 * resize * domainDimension_[1];
-        //*getProblem()->getSolution(0) << function_(rotatedEllipse(position, eps_, domainDimension_[0], 0.0, a, b, false), X());
-        //growth_factor_ = 0.0;
         *getProblem()->getSolution(0) << function_(noCell(), X());
       }
     }
@@ -311,11 +309,6 @@ public:
         alive_ = 1;
         position[0] = domainDimension_[0]*(0.5 + 0.15*std::cos(orientation_ * M_PI / 180.0));
         position[1] = domainDimension_[1]*(0.5 + 0.15*std::sin(orientation_ * M_PI / 180.0));
-        
-        //growth_factor_ = 0.0;
-        
-        //size for cell collision
-
 
         double a = 0.25 * resize * domainDimension_[0];
         double b = 0.25 * resize * domainDimension_[1];
@@ -438,7 +431,6 @@ public:
           position[0] = domainDimension_[0]*(0.5 + 0.27*std::cos(orientation_ * M_PI / 180.0));
           position[1] = domainDimension_[1]*(0.5 + 0.27*std::sin(orientation_ * M_PI / 180.0));
         }
-        //growth_factor_ = 0.0;
 
         double a = 0.23 * resize * domainDimension_[0];
         double b = 0.23 * resize * domainDimension_[1];
@@ -472,6 +464,42 @@ public:
         //growth_factor_ = 0.0;
         *getProblem()->getSolution(0) << function_(noCell(), X());
       }
+
+  void readCellsARH(AdaptInfo *adaptInfo)
+  {
+    /*reading the initial phasefields from arh files.
+    If N is total number of cells and N_a is number of arh files available, 
+    then N-N_a cores will be assigned an empty phasefield which are ready to 
+    take in more cells due to division. 
+
+    IMPORTANT NOTE: The underlying macro mesh must be the same as the macro 
+    mesh of the arh files
+    */
+    Parameters::get(name_ + "->initial->numCells", numInitialCells_); // These many cells would be read from arh files
+
+    aliveCells_.resize(numInitialCells_);
+    waitingCells_.resize(numInitialCells_);
+    volumeList_.resize(numInitialCells_);
+    latestWaitingCell_ = numInitialCells_*2-1;
+    std::iota(aliveCells_.begin(), aliveCells_.end(), 0);
+    std::iota(waitingCells_.begin(), waitingCells_.end(), numInitialCells_);
+    std::iota(volumeList_.begin(), volumeList_.end(), 0.0);
+
+    std::string arh_directory_;
+    Parameters::get(name_ + "->initial->arh_directory", arh_directory_);
+     if(rank_<numInitialCells_)
+     {
+        auto &ownPhase = *phaseProb_.getProblem()->getSolution(0);
+        std::string arh_filename{arh_directory_ + std::to_string(rank_) + ".arh"};
+        AMDiS::io::readFile(arh_filename, ownPhase);
+        alive_ = 1;
+     }else
+     {
+       alive_ = 0;
+       *getProblem()->getSolution(0) << function_(noCell(), X());
+     }
+
+  }
     
   }
   void singularInitialCell(AdaptInfo *adaptInfo){

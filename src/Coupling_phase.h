@@ -84,8 +84,8 @@ namespace AMDiS { namespace base_problems {
         phi_j = std::max(-1.0, std::min(1.0, phi_j));
         double psi_i = (phi_i-1.0)/2;
         double psi_j = (phi_j-1.0)/2;
-        double a = 1.0;//1.5; //coefficient of x^4
-        double b = -2.0;//-2.5; //coefficient of x^2
+        double a = 1.5; //coefficient of x^4
+        double b = -2.5; //coefficient of x^2
         if(potential_==7){
           double B_j = (phi_j+1.0)/2.0;
           double w_der_i = 0.5*(2*b*psi_i+4*a*psi_i*sqr(psi_i));
@@ -149,8 +149,8 @@ namespace AMDiS { namespace base_problems {
           phi_j = std::max(-1.0, std::min(1.0, phi_j));
           double psi_i = (phi_i-1.0)/2;
           double psi_j = (phi_j-1.0)/2;
-          double a = 1.0;//1.; //coefficient of x^4
-          double b = -2.0;//-2.5; //coefficient of x^2
+          double a = 1.5;//1.; //coefficient of x^4
+          double b = -2.5;//-2.5; //coefficient of x^2
           if(potential_==7){
             double B_der_i = 0.5;
             double w_j = 1 + b*sqr(psi_j) + a*(sqr(sqr(psi_j)));
@@ -544,7 +544,7 @@ namespace AMDiS { namespace base_problems {
       postfix_ += "_p" + std::to_string(comm().rank());
       
       
-      bool writeAliveAndWaitingCells = true;
+      bool writeAliveAndWaitingCells = false;
       if (writeAliveAndWaitingCells){
         std::string alive_filename = directory_ + "/alive" + postfix_ + ".dat";
         std::string wait_filename = directory_ + "/wait" + postfix_ + ".dat";
