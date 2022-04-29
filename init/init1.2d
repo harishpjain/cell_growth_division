@@ -3,7 +3,7 @@ parallel->log main rank: 1
 number of cells: 150
 
 postfix: 
-output: /beegfs/ws/1/haja565a-workspacebeegfs/out10b
+output: /beegfs/ws/1/haja565a-my_workspace/save_arh_sim_1
 macroMesh->macro file name:       ./macro/macro_100_100.per.2d
 %macroMesh->macro file name:       ./macro/circle_macro.2d
 macroMesh->periodic file:         ./macro/macro_100_100.per
@@ -40,7 +40,7 @@ main->write interaction term: 0
 main->write volume: 0
 main->write neighbors:0
 main->write positions: 1
-main->center of mass:1  
+main->center of mass:0  
 main->cahn-hilliard: 1
 
 % Global (coupling) parameters 

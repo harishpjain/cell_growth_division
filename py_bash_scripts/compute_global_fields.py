@@ -20,12 +20,12 @@ if confined:
 else:
     mode = 'wrap'
 
-interpolation_steps = 200
+interpolation_steps = 1000
 # --- Parameters
 
 if len(sys.argv) > 1:
     file_pattern = sys.argv[1] + 'positions_p*.csv'
-    out_dir = sys.argv[1] + 'global_fields_200'
+    out_dir = sys.argv[1] + 'global_fields'
     if not os.path.exists(out_dir):
         os.makedirs(out_dir)
 

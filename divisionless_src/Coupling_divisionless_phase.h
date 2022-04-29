@@ -182,7 +182,7 @@ namespace AMDiS { namespace base_problems {
 
       
       int everyIthTimestep = 1;
-      Parameters::get("signedDist->output->write every i-th timestep",everyIthTimestep);
+      //Parameters::get("phase->space->output->write every i-th timestep:",everyIthTimestep);
 
       if (writeNeighbours && (adaptInfo->getTimestepNumber() % everyIthTimestep == 0)){
         std::string filename = directory_ + "/neighbours" + postfix_ + ".dat";

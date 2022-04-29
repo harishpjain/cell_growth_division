@@ -3,7 +3,7 @@ parallel->log main rank: 1
 number of cells: 10
 
 postfix: 
-output: /beegfs/ws/1/haja565a-workspacebeegfs/out30
+output: /beegfs/ws/1/haja565a-my_workspace/haja565a-workspacebeegfs-1647745203/out30
 macroMesh->macro file name:       /home/haja565a/softwares/cell_growth_division/macro/macro_100_100.per.2d
 %macroMesh->macro file name:       /home/haja565a/softwares/cell_growth_division/macro/circle_macro.2d
 macroMesh->periodic file:         /home/haja565a/softwares/cell_growth_division/macro/macro_100_100.per
@@ -41,7 +41,7 @@ main->write interaction term: 0
 main->write volume: 0
 main->write neighbors:0
 main->write positions: 1
-main->center of mass:1  
+main->center of mass:0  
 main->cahn-hilliard: 1
 
 % Global (coupling) parameters 
@@ -90,7 +90,7 @@ phase->initial->resize: 0.98%0.25
 
 
 phase->initial->numCells: 100 % number of initial cells
-phase->initial->arh_directory: /beegfs/ws/1/haja565a-workspacebeegfs/phd24022201/arhfiles/time_009000
+phase->initial->arh_directory: /beegfs/ws/1/haja565a-my_workspace/haja565a-workspacebeegfs-1647745203/phd24022201/arhfiles/time_009000
 % Parameters for collective experiment
 phase->initial->collective->packFrac: 0.9
 phase->initial->collective->growthRate: 0.001
@@ -143,7 +143,7 @@ phase->space->output->ParaView format:             1
 phase->space->output->ParaView mode:               1
 phase->space->output->ParaView animation:          1
 phase->space->output->ParaView create subdirectory: 1
-phase->space->output->write every i-th timestep:   100000
+phase->space->output->write every i-th timestep:   100
 phase->space->output->append index:                1
 phase->space->output->index length:                6
 phase->space->output->index decimals:              3
