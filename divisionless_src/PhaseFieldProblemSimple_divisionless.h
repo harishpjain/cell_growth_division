@@ -50,6 +50,7 @@ public:
     Parameters::get("phase->Ca", Ca_);
     Parameters::get("global->v0", v0_);
     Parameters::get("global->D", angleDiffusivity_);
+    Parameters::get("global->alignmentRate", alignmentRate_);
     Parameters::get("phase->allen_growth", allen_growth_);
   	Parameters::get("phase->growth_factor", growth_factor_);
     Parameters::get("phase->division_volume", volume_threshold_);
@@ -184,6 +185,9 @@ public:
     }
     else if(setup_.compare("read_cells")==0){
       readCellsARH(adaptInfo);
+    }
+    else if(setup_.compare("elongated_rectangles")==0){
+      elongatedRectangleInitial(adaptInfo);
     }
     else
       TEST_EXIT(false)("Undefined setup.");  
@@ -716,6 +720,55 @@ public:
     }
   }
 
+  void elongatedRectangleInitial(AdaptInfo *adaptInfo){
+    /*
+    Create dense rectangles in hexagonal alignment. Size is determined by 
+    dimension and rescaled.
+    */
+    double resize = 1.0;
+    Parameters::get(name_ + "->initial->resize", resize);
+
+    int num_cells = 1;
+    Parameters::get("number of cells", num_cells);
+
+    int Nx = std::floor(std::sqrt(num_cells));
+    int Ny = std::floor(Nx/2);
+    Nx *= 2;
+
+    int column = rank_ % Nx; //column
+    int row = rank_ / Nx;     //row
+
+    double sizeX = domainDimension_[0] / Nx; //size in dim 0
+    double sizeY = domainDimension_[1] / Ny; //size in dim 1
+
+    WorldVector<double> position;
+    bool hexagonal_pack = 0;
+    Parameters::get(name_ + "->initial->hexagonal_packing", hexagonal_pack);
+    if (hexagonal_pack){
+      position[0] = (row % 2 == 0 ? 0.5 * sizeX + column * sizeX : column * sizeX);
+      position[1] = 0.5 * sizeY + row * sizeY;
+    }else {
+      //position[0] = (row % 2 == 0 ? 0.5 * sizeX + column * sizeX : column * sizeX);
+      position[0] = 0.5 * sizeX + column * sizeX;
+      position[1] = 0.5 * sizeY + row * sizeY;
+    }
+    sizeX *= resize;
+    sizeY *= resize;
+
+    *getProblem()->getSolution(0) << function_(rectangle(position, eps_, domainDimension_[0], sizeX, sizeY), X());
+   
+    for (int _rep = 0; _rep < 5; ++_rep)
+    {
+      calcSignedDist(adaptInfo);
+
+      // refine/coarsen local mesh along interface
+      refinement_->refine(5, function_(indicator2(getMesh()->getName() + "->phase", 3 * eps_),
+                                       valueOf(*tmp_lagrange1_)));
+
+      *getProblem()->getSolution(0) << function_(rectangle(position, eps_, domainDimension_[0], sizeX, sizeY), X()); 
+    }
+  }
+
   void gaussianRectangles(AdaptInfo *adaptInfo){
     /*
     * Constant row height but inside the rows a normal distribution of cell sizes
@@ -758,7 +811,8 @@ public:
       std::normal_distribution<double> distribution(meanSize,meanSize/5.0);
         
       for (int i = 0; i < Nx; i++)
-        sizes.push_back(distribution(generator));
+        //sizes.push_back(distribution(generator)); //gaussian
+        sizes.push_back(meanSize); //non gaussian
       
       // Now we normalize
       double size_sum = std::accumulate(sizes.begin(), sizes.end(), 0.0);
@@ -869,7 +923,6 @@ public:
     FUNCNAME("PhaseFieldProblem::initTimestep()");
     MSG("start (PhaseFieldProblem::initTimestep) = %20.16e\n", mpi14::now());
 
-
     Super::initTimestep(adaptInfo);
 
     if (setup_.compare("read_cells")==0 && adaptInfo->getTimestepNumber()==100)
@@ -896,19 +949,23 @@ public:
       std::normal_distribution<double> distribution_theta(0,1);    
       
       //theta_ += angleDiffusivity_ * distribution_theta(generator_theta);
-      theta_ += angleDiffusivity_ * distribution_theta(generator_theta);
+      //theta_ += std::sqrt(2.0 * angleDiffusivity_) * distribution_theta(generator_theta) * (*getTau()) ;out4
+      theta_ += std::sqrt(2.0 * angleDiffusivity_* (*getTau())) * distribution_theta(generator_theta)  ;//out5 and out7
+
+      //std::normal_distribution<double> distribution_theta(0, angleDiffusivity_* std::sqrt(2.0 *(*getTau()))); 
+      //theta_ += distribution_theta(generator_theta);
     }
     
     double theta_temp_ = theta_vec_[rank_];
     
     
-    //if(elongation_vel_ == 0)
-    //{ 
+    if(elongation_vel_ == 0)
+    { 
     //here changes are made to elongate cell in direction of its elongation
     *advection_[0] << v0_ * std::cos(theta_) * (0.5*valueOf(getProblem()->getSolution(0)) + 0.5);
     *advection_[1] << v0_ * std::sin(theta_) * (0.5*valueOf(getProblem()->getSolution(0)) + 0.5);
-    //}
-    /*else if(elongation_vel_ == 1)
+    }
+    else if(elongation_vel_ == 1)
     { 
       //here changes are made to elongate cell in direction of its elongation
       
@@ -919,7 +976,7 @@ public:
     {
       *advection_[0] << function_(elongateVelocityAlt(getPosition(), v0_, theta_+(M_PI/2), 0.25), X()) * std::cos(theta_) * (0.5*valueOf(getProblem()->getSolution(0)) + 0.5);
       *advection_[1] << function_(elongateVelocityAlt(getPosition(), v0_, theta_+(M_PI/2), 0.25), X()) * std::sin(theta_) * (0.5*valueOf(getProblem()->getSolution(0)) + 0.5);
-    }*/
+    }
 
 
         // Compute elongation
@@ -947,7 +1004,7 @@ public:
       major_axis_angle_rad_ = major_axis_angle_rad_- M_PI;
     }
     
-    double angle_correction = (major_axis_angle_rad_ - theta_)*0.003;
+    double angle_correction = (major_axis_angle_rad_ - theta_)*alignmentRate_*(*getTau());
     if(adaptInfo->getTimestepNumber() > 200)
     {
       theta_ += angle_correction;
@@ -1385,7 +1442,7 @@ protected:
   double theta_ = 0.0;
   std::vector<double> theta_vec_; 
   double angleDiffusivity_ = 1.0; // How much can we change in a single step?
-  
+  double alignmentRate_ = 0.5; //Rate at which the velocity angle aligns with elongation
   // velocity
   WorldVector<double> velocityValues_;
 

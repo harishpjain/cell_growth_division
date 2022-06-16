@@ -3,20 +3,20 @@ parallel->log main rank: 1
 number of cells: 100
 
 postfix: 
-output: /beegfs/ws/1/haja565a-my_workspace_neo/elongated_rectangles/sim_6c
-macroMesh->macro file name:       ./macro/macro_100_100.per.2d
-%macroMesh->macro file name:       ./macro/circle_macro.2d
-macroMesh->periodic file:         ./macro/macro_100_100.per
+output: #{OUT_DIR}
+macroMesh->macro file name:       /home/haja565a/softwares/cell_growth_division/macro/macro_100_100.per.2d
+%macroMesh->macro file name:       /home/haja565a/softwares/cell_growth_division/macro/circle_macro.2d
+macroMesh->periodic file:         /home/haja565a/softwares/cell_growth_division/macro/macro_100_100.per
 macroMesh->check: 1
 macroMesh->global refinements:        4
 macroMesh->dimension: [100,100]
 
 macroMesh->phase->interface refinements: 10 %10
-macroMesh->phase->bulk refinements: 6 %6
+macroMesh->phase->bulk refinements: 4 %6
 macroMesh->phase->outer refinements: 0
 
 macroMesh->global->interface refinements: 8 %10
-macroMesh->global->bulk refinements: 4
+macroMesh->global->bulk refinement: 4
 macroMesh->global->outer refinements: 0
 
 % ----------- BEGIN OF SIMULATION SETUP ------------------
@@ -32,11 +32,10 @@ macroMesh->global->outer refinements: 0
 % 'one_division' : one cells dividing - keep num of cells atleast 4
 % 'three collision': three cells
 % 'multi_cell' :multiple cells grow and divide. change parameter initial->numCells
-% 'multi_ring' : similar to multi_cell but has two outer rings of cells. 
-% 'elongated_rectangles' : elongated cells stacked in cubic manner
+% 'multi_ring' : similar to multi_cell but has two outer rings of cells.
 % 'read_cells' : read arh files of cells. Make sure the macro mesh is same
 
-main->setup: elongated_rectangles
+main->setup: read_cells
 main->fixed point iterations: 1
 main->write interaction term: 0
 main->write volume: 0
@@ -46,22 +45,22 @@ main->center of mass:0
 main->cahn-hilliard: 1
 
 % Global (coupling) parameters 
-global->v0: 0.25  % 2.5
-global->D: 0.0 %0.01
-global->alignmentRate: 0.5
+global->v0: #{v}  % 2.5
+global->D: #{D}  %0.01 /used for phd24022022 %0.1
+global->alignmentRate: #{ALPHA} %0.5
 
 % Phasefield parameters
 phase->epsilon: 0.15
 phase->gamma: 1.0 %1.0
-phase->Ca: 10.0e-2 %1.5e-2
-phase->In: 2.5e-2  %2.5e-2 % Coefficient for interaction combined
+phase->Ca: #{CA} %1.5e-2
+phase->In:  #{IN}  %2.5e-2 % Coefficient for interaction combined
 phase->allen_growth: 0.0  %-0.001
 %phase->cutTimeStep: Inf  %disabled
 phase->division_volume: 135.0  %volume where the division is triggered. (491.0 for resize 0.1)
-phase->growth_factor: 0.0	  %growth in correction term
+phase->growth_factor: 0.0%0.3	  %growth in correction term
 phase->apoptosis_index: 1000      %generation for which the cell dies
-phase->contact_inhibition_of_growth: 1
-phase->interaction_a: 1.5
+phase->contact_inhibition_of_growth: 0
+phase->interaction_a: #{A}
 phase->inhibition_limit: 10000.0  %L1 norm of interactions for which growth rate is 0
 phase->growth_type: 3            % 1 - adhoc, 3 - operator based non normalised, 4-hybrid of 1 and 3
 phase->Gr: 0.5  %energy penalisation for growth. This is not growth rate. Keep at 0.5 for exponential growth with growth rate = growth factor
@@ -70,8 +69,8 @@ phase->So: 0.0    %source
 phase->confined: 0
 phase->con_inhibition_limit: 300.0
 phase->Con: 5.0e-3
-phase->confinement_shape: 1                 % 1: rectangle, 2: circle, 3:annular ring
-phase->confinement_size: 1.0               %as fraction of domain size --> diameter for circle, side length for square
+phase->confinement_shape: 2                 % 1: rectangle, 2: circle, 3:annular ring
+phase->confinement_size: 0.9               %as fraction of domain size --> diameter for circle, side length for square
                                             % radius of inner ring
 phase->elongation_vel: 0
 phase->x_elon_scale: 0.0
@@ -82,17 +81,17 @@ phase->d_elon_scale: 0.0625
 phase->interaction->potential: 7                      % 0 - no attraction, 1 - exponential attraction, 2 - trigonometric attraction, 3 - quartic att_and_rep
                                                     % 4- odd no attraction, 5 % odd quartic att and rep, 6 - attractionAndRepulsion with B = (phi+1)/2
 %added this on my own
-phase->initial->gaussian: 0
-phase->initial->hexagonal_packing: 0
+phase->initial->gaussian: 1
 % Start with rectangles instead of spheres, works for collective and t1
 phase->initial->rectangles: 1
 phase->initial->sigma: 1.5
          
 % Resizing coefficient
-phase->initial->resize: 0.99
+phase->initial->resize: 0.98%0.25
+
 
 phase->initial->numCells: 100 % number of initial cells
-
+phase->initial->arh_directory: /beegfs/ws/1/haja565a-my_workspace_neo/save_arh
 % Parameters for collective experiment
 phase->initial->collective->packFrac: 0.9
 phase->initial->collective->growthRate: 0.001
@@ -151,14 +150,13 @@ phase->space->output->index length:                6
 phase->space->output->index decimals:              3
 phase->space->output->ARH format:                  0
 
-
 sendDOF->space->output->write arh: 1 %if 1 then arh files are saved
 sendDOF->space->output->filename:			${output}/sendDOF${postfix}_
 sendDOF->space->output->ParaView format:             1
 sendDOF->space->output->ParaView mode:               1
 sendDOF->space->output->ParaView animation:          1
 sendDOF->space->output->ParaView create subdirectory: 1
-sendDOF->space->output->write every i-th timestep:   1000000
+sendDOF->space->output->write every i-th timestep:   80000
 sendDOF->space->output->append index:                1
 sendDOF->space->output->index length:                6
 sendDOF->space->output->index decimals:              3

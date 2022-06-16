@@ -1,9 +1,9 @@
 dimension of world:   2
 parallel->log main rank: 1
-number of cells: 4
+number of cells: 1
 
 postfix: 
-output: /scratch/ws/1/haja565a-workspace1/collision/out78c
+output: /beegfs/ws/1/haja565a-my_workspace_neo/out8
 macroMesh->macro file name:       ./macro/macro_100_100.per.2d
 %macroMesh->macro file name:       ./macro/circle_macro.2d
 macroMesh->periodic file:         ./macro/macro_100_100.per
@@ -46,6 +46,7 @@ main->cahn-hilliard: 1
 % Global (coupling) parameters 
 global->v0: 3.0  % 2.5
 global->D: 0.01 %0.1
+global->alignmentRate: 0.000005
 
 % Phasefield parameters
 phase->epsilon: 0.15
@@ -63,16 +64,16 @@ phase->growth_type: 3            % 1 - adhoc, 3 - operator based non normalised,
 phase->Gr: 0.5  %energy penalisation for growth. This is not growth rate. Keep at 0.5 for exponential growth with growth rate = growth factor
 phase->gamma2: 0.0  %non conservative
 phase->So: 0.0    %source
-phase->confined: 1
+phase->confined: 0
 phase->con_inhibition_limit: 300.0
 phase->Con: 5.0e-3
 phase->confinement_shape: 2                 % 1: rectangle, 2: circle, 3:annular ring
 phase->confinement_size: 0.9               %as fraction of domain size --> diameter for circle, side length for square
                                             % radius of inner ring
-phase->elongation_vel: 1
+phase->elongation_vel: 0 
 phase->x_elon_scale: 0.0
 phase->y_elon_scale: 0.0
-phase->d_elon_scale: 0.09375
+phase->d_elon_scale: 0.0% 0.09375
 
 % Interaction potential parameters
 phase->interaction->potential: 7                      % 0 - no attraction, 1 - exponential attraction, 2 - trigonometric attraction, 3 - quartic att_and_rep
@@ -86,7 +87,7 @@ phase->initial->sigma: 1.5
 % Resizing coefficient
 phase->initial->resize: 0.25
 
-phase->initial->numCells: 4 % number of initial cells
+phase->initial->numCells: 1 % number of initial cells
 
 % Parameters for collective experiment
 phase->initial->collective->packFrac: 0.9
@@ -100,7 +101,7 @@ arh->file_prefix: ${output}/data/rank_
 %adapt->end time:               20
 
 adapt->sequence->timesteps:  [5e-3]%, 1.e-2]%, 2.e-2, 5.e-2]%, 1.e-1]
-adapt->sequence->number of timesteps: [10000]%, 800]%, 800, 800]%, 800]
+adapt->sequence->number of timesteps: [3000]%, 800]%, 800, 800]%, 800]
 adapt->sequence->calc end time: 1
 
 %adapt->number of timesteps: 0

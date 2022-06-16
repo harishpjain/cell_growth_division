@@ -1,9 +1,9 @@
 dimension of world:   2
 parallel->log main rank: 1
-number of cells: 10
+number of cells: 100
 
 postfix: 
-output: /beegfs/ws/1/haja565a-my_workspace/haja565a-workspacebeegfs-1647745203/out30
+output: /beegfs/ws/1/haja565a-my_workspace_neo/read_cells_4
 macroMesh->macro file name:       /home/haja565a/softwares/cell_growth_division/macro/macro_100_100.per.2d
 %macroMesh->macro file name:       /home/haja565a/softwares/cell_growth_division/macro/circle_macro.2d
 macroMesh->periodic file:         /home/haja565a/softwares/cell_growth_division/macro/macro_100_100.per
@@ -46,7 +46,8 @@ main->cahn-hilliard: 1
 
 % Global (coupling) parameters 
 global->v0: 1.0  % 2.5
-global->D: 0.01 %0.1
+global->D: 0.1%0.01 %0.1
+global->alignmentRate: 0.5
 
 % Phasefield parameters
 phase->epsilon: 0.15
@@ -90,7 +91,7 @@ phase->initial->resize: 0.98%0.25
 
 
 phase->initial->numCells: 100 % number of initial cells
-phase->initial->arh_directory: /beegfs/ws/1/haja565a-my_workspace/haja565a-workspacebeegfs-1647745203/phd24022201/arhfiles/time_009000
+phase->initial->arh_directory: /beegfs/ws/1/haja565a-my_workspace_neo/save_arh
 % Parameters for collective experiment
 phase->initial->collective->packFrac: 0.9
 phase->initial->collective->growthRate: 0.001
@@ -103,7 +104,7 @@ arh->file_prefix: ${output}/data/rank_
 %adapt->end time:               20
 
 adapt->sequence->timesteps:  [5e-3]%[5e-3]%, 1.e-2]%, 2.e-2, 5.e-2]%, 1.e-1]
-adapt->sequence->number of timesteps: [3000]%, 800]%, 800, 800]%, 800]
+adapt->sequence->number of timesteps: [5001]%, 800]%, 800, 800]%, 800]
 adapt->sequence->calc end time: 1
 
 %adapt->number of timesteps: 0

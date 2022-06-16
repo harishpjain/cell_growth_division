@@ -1,0 +1,246 @@
+
+
+cp out30000_In_3_Ca_4_a_1/global_fields_200/nematics/defect_info_stride_100.pkl /home/quasar/mydir/phd24022201_vtu_v1_0_defects/i3c4a1/
+cp out30000_In_3_Ca_4_a_1/global_fields_200/nematics/defect_nature_array_stride_100.npy /home/quasar/mydir/phd24022201_vtu_v1_0_defects/i3c4a1/
+
+cp out30000_In_2_Ca_4_a_1/global_fields_200/nematics/defect_info_stride_100.pkl /home/quasar/mydir/phd24022201_vtu_v1_0_defects/i2c4a1/
+cp out30000_In_2_Ca_4_a_1/global_fields_200/nematics/defect_nature_array_stride_100.npy /home/quasar/mydir/phd24022201_vtu_v1_0_defects/i2c4a1/
+
+cp out30000_In_4_Ca_4_a_1/global_fields_200/nematics/defect_info_stride_100.pkl /home/quasar/mydir/phd24022201_vtu_v1_0_defects/i4c4a1/
+cp out30000_In_4_Ca_4_a_1/global_fields_200/nematics/defect_nature_array_stride_100.npy /home/quasar/mydir/phd24022201_vtu_v1_0_defects/i4c4a1/
+
+cp out30000_In_1_Ca_4_a_1/global_fields_200/nematics/defect_info_stride_100.pkl /home/quasar/mydir/phd24022201_vtu_v1_0_defects/i1c4a1/
+cp out30000_In_1_Ca_4_a_1/global_fields_200/nematics/defect_nature_array_stride_100.npy /home/quasar/mydir/phd24022201_vtu_v1_0_defects/i1c4a1/
+
+cp out30000_In_3_Ca_3_a_1/global_fields_200/nematics/defect_info_stride_100.pkl /home/quasar/mydir/phd24022201_vtu_v1_0_defects/i3c3a1/
+cp out30000_In_3_Ca_3_a_1/global_fields_200/nematics/defect_nature_array_stride_100.npy /home/quasar/mydir/phd24022201_vtu_v1_0_defects/i3c3a1/
+
+cp out30000_In_4_Ca_3_a_1/global_fields_200/nematics/defect_info_stride_100.pkl /home/quasar/mydir/phd24022201_vtu_v1_0_defects/i4c3a1/
+cp out30000_In_4_Ca_3_a_1/global_fields_200/nematics/defect_nature_array_stride_100.npy /home/quasar/mydir/phd24022201_vtu_v1_0_defects/i4c3a1/
+
+cp out30000_In_2_Ca_3_a_1/global_fields_200/nematics/defect_info_stride_100.pkl /home/quasar/mydir/phd24022201_vtu_v1_0_defects/i2c3a1/
+cp out30000_In_2_Ca_3_a_1/global_fields_200/nematics/defect_nature_array_stride_100.npy /home/quasar/mydir/phd24022201_vtu_v1_0_defects/i2c3a1/
+
+cp out30000_In_1_Ca_3_a_1/global_fields_200/nematics/defect_info_stride_100.pkl /home/quasar/mydir/phd24022201_vtu_v1_0_defects/i1c3a1/
+cp out30000_In_1_Ca_3_a_1/global_fields_200/nematics/defect_nature_array_stride_100.npy /home/quasar/mydir/phd24022201_vtu_v1_0_defects/i1c3a1/
+
+cp out30000_In_4_Ca_4_a_2/global_fields_200/nematics/defect_info_stride_100.pkl /home/quasar/mydir/phd24022201_vtu_v1_0_defects/i4c4a2/
+cp out30000_In_4_Ca_4_a_2/global_fields_200/nematics/defect_nature_array_stride_100.npy /home/quasar/mydir/phd24022201_vtu_v1_0_defects/i4c4a2/
+
+cp out30000_In_4_Ca_3_a_2/global_fields_200/nematics/defect_info_stride_100.pkl /home/quasar/mydir/phd24022201_vtu_v1_0_defects/i4c3a2/
+cp out30000_In_4_Ca_3_a_2/global_fields_200/nematics/defect_nature_array_stride_100.npy /home/quasar/mydir/phd24022201_vtu_v1_0_defects/i4c3a2/
+
+cp out30000_In_4_Ca_2_a_2/global_fields_200/nematics/defect_info_stride_100.pkl /home/quasar/mydir/phd24022201_vtu_v1_0_defects/i4c2a2/
+cp out30000_In_4_Ca_2_a_2/global_fields_200/nematics/defect_nature_array_stride_100.npy /home/quasar/mydir/phd24022201_vtu_v1_0_defects/i4c2a2/
+
+cp out30000_In_4_Ca_1_a_2/global_fields_200/nematics/defect_info_stride_100.pkl /home/quasar/mydir/phd24022201_vtu_v1_0_defects/i4c1a2/
+cp out30000_In_4_Ca_1_a_2/global_fields_200/nematics/defect_nature_array_stride_100.npy /home/quasar/mydir/phd24022201_vtu_v1_0_defects/i4c1a2/
+
+
+
+
+cp out30000_In_3_Ca_4_a_1/neighbours* /home/quasar/mydir/phd24022201_vtu_v1_0_defects/i3c4a1/
+
+cp out30000_In_2_Ca_4_a_1/neighbours* /home/quasar/mydir/phd24022201_vtu_v1_0_defects/i2c4a1/
+
+cp out30000_In_4_Ca_4_a_1/neighbours* /home/quasar/mydir/phd24022201_vtu_v1_0_defects/i4c4a1/
+
+cp out30000_In_1_Ca_4_a_1/neighbours* /home/quasar/mydir/phd24022201_vtu_v1_0_defects/i1c4a1/
+
+cp out30000_In_3_Ca_3_a_1/neighbours* /home/quasar/mydir/phd24022201_vtu_v1_0_defects/i3c3a1/
+
+cp out30000_In_4_Ca_3_a_1/neighbours* /home/quasar/mydir/phd24022201_vtu_v1_0_defects/i4c3a1/
+
+cp out30000_In_2_Ca_3_a_1/neighbours* /home/quasar/mydir/phd24022201_vtu_v1_0_defects/i2c3a1/
+
+cp out30000_In_1_Ca_3_a_1/neighbours* /home/quasar/mydir/phd24022201_vtu_v1_0_defects/i1c3a1/
+
+cp out30000_In_4_Ca_4_a_2/neighbours* /home/quasar/mydir/phd24022201_vtu_v1_0_defects/i4c4a2/
+
+cp out30000_In_4_Ca_3_a_2/neighbours* /home/quasar/mydir/phd24022201_vtu_v1_0_defects/i4c3a2/
+
+cp out30000_In_4_Ca_2_a_2/neighbours* /home/quasar/mydir/phd24022201_vtu_v1_0_defects/i4c2a2/
+
+cp out30000_In_4_Ca_1_a_2/neighbours* /home/quasar/mydir/phd24022201_vtu_v1_0_defects/i4c1a2/
+
+
+rm out30000_In_1_Ca_3_a_1/global_fields_200/grid_x_*
+rm out30000_In_2_Ca_3_a_1/global_fields_200/grid_x_*
+rm out30000_In_3_Ca_3_a_1/global_fields_200/grid_x_*
+rm out30000_In_4_Ca_3_a_1/global_fields_200/grid_x_*
+
+rm out30000_In_1_Ca_4_a_1/global_fields_200/grid_x_*
+rm out30000_In_2_Ca_4_a_1/global_fields_200/grid_x_*
+rm out30000_In_3_Ca_4_a_1/global_fields_200/grid_x_*
+rm out30000_In_4_Ca_4_a_1/global_fields_200/grid_x_*
+
+rm out30000_In_4_Ca_1_a_2/global_fields_200/grid_x_*
+rm out30000_In_4_Ca_2_a_2/global_fields_200/grid_x_*
+rm out30000_In_4_Ca_3_a_2/global_fields_200/grid_x_*
+rm out30000_In_4_Ca_4_a_2/global_fields_200/grid_x_*
+
+cp out30000_In_1_Ca_3_a_1/neo_* /home/quasar/mydir/
+
+
+mkdir -p i3c3a1d0v5a1_set2/{neighbours,positions,phasefield}
+mkdir -p i3c3a1d0v5a2_set2/{neighbours,positions,phasefield}
+mkdir -p i3c3a1d0v5a0_set2/{neighbours,positions,phasefield}
+mkdir -p i3c3a1d0v5a3_set2/{neighbours,positions,phasefield}
+mkdir -p i3c3a1d0v5a4_set2/{neighbours,positions,phasefield}
+mkdir -p i3c3a1d0v5a5_set2/{neighbours,positions,phasefield}
+
+
+mkdir -p i3c3a1d0v10a0/{neighbours,positions,phasefield}
+mkdir -p i3c3a1d0v10a1/{neighbours,positions,phasefield}
+mkdir -p i3c3a1d0v10a2/{neighbours,positions,phasefield}
+
+cp out_In_3_Ca_3_a_1_D_0_v_5_Al_0/neo_* /home/quasar/mydir/i3c3a1d0v5a0/positions
+cp out_set2_In_3_Ca_3_a_1_D_0_v_5_Al_0/neo_* /home/quasar/mydir/i3c3a1d0v5a0_set2/positions
+cp out_In_3_Ca_3_a_1_D_0_v_5_Al_1/neo_* /home/quasar/mydir/i3c3a1d0v5a1/positions
+cp out_set3_In_3_Ca_3_a_1_D_0_v_5_Al_2/neo_* /home/quasar/mydir/i3c3a1d0v5a2_set3/positions
+cp out_set2_In_3_Ca_3_a_1_D_0_v_5_Al_3/neo_* /home/quasar/mydir/i3c3a1d0v5a3_set2/positions
+cp out_set3_In_3_Ca_3_a_1_D_0_v_5_Al_4/neo_* /home/quasar/mydir/i3c3a1d0v5a4_set3/positions
+cp out_set2_In_3_Ca_3_a_1_D_0_v_5_Al_5/neo_* /home/quasar/mydir/i3c3a1d0v5a5_set2/positions
+
+cp out_set2_In_3_Ca_3_a_1_D_0_v_5_Al_0/neighbours* /home/quasar/mydir/i3c3a1d0v5a0_set2/neighbours
+cp out_set2_In_3_Ca_3_a_1_D_0_v_5_Al_1/neighbours* /home/quasar/mydir/i3c3a1d0v5a1_set2/neighbours
+cp out_set3_In_3_Ca_3_a_1_D_0_v_5_Al_2/neighbours* /home/quasar/mydir/i3c3a1d0v5a2_set3/neighbours
+cp out_set2_In_3_Ca_3_a_1_D_0_v_5_Al_3/neighbours* /home/quasar/mydir/i3c3a1d0v5a3_set2/neighbours
+cp out_set3_In_3_Ca_3_a_1_D_0_v_5_Al_4/neighbours* /home/quasar/mydir/i3c3a1d0v5a4_set3/neighbours
+cp out_set2_In_3_Ca_3_a_1_D_0_v_5_Al_5/neighbours* /home/quasar/mydir/i3c3a1d0v5a5_set2/neighbours
+
+cp out_In_3_Ca_3_a_1_D_0_v_5_Al_0/global_fields_200/*.npy /home/quasar/mydir/i3c3a1d0v5a0/phasefield
+cp out_set2_In_3_Ca_3_a_1_D_0_v_5_Al_0/global_fields_200/*.npy /home/quasar/mydir/i3c3a1d0v5a0_set2/phasefield
+cp out_In_3_Ca_3_a_1_D_0_v_5_Al_1/global_fields_200/*.npy /home/quasar/mydir/i3c3a1d0v5a1/phasefield
+cp out_set3_In_3_Ca_3_a_1_D_0_v_5_Al_2/global_fields_200/*.npy /home/quasar/mydir/i3c3a1d0v5a2_set3/phasefield
+cp out_set2_In_3_Ca_3_a_1_D_0_v_5_Al_3/global_fields_200/*.npy /home/quasar/mydir/i3c3a1d0v5a3_set2/phasefield
+cp out_set3_In_3_Ca_3_a_1_D_0_v_5_Al_4/global_fields_200/*.npy /home/quasar/mydir/i3c3a1d0v5a4_set3/phasefield
+cp out_set2_In_3_Ca_3_a_1_D_0_v_5_Al_5/global_fields_200/*.npy /home/quasar/mydir/i3c3a1d0v5a5_set2/phasefield
+
+
+mkdir -p i3c3a1d1v5a2_set4/{neighbours,positions,phasefield}
+cp out_set4_In_3_Ca_3_a_1_D_1_v_5_Al_2/neo_* /home/quasar/mydir/i3c3a1d1v5a2_set4/positions
+cp out_set4_In_3_Ca_3_a_1_D_1_v_5_Al_2/neighbours* /home/quasar/mydir/i3c3a1d1v5a2_set4/neighbours
+cp out_set4_In_3_Ca_3_a_1_D_1_v_5_Al_2/global_fields_200/*.npy /home/quasar/mydir/i3c3a1d1v5a2_set4/phasefield
+
+mkdir -p i3c3a0d1v5a2_set4/{neighbours,positions,phasefield}
+cp out_set4_In_3_Ca_3_a_0_D_1_v_5_Al_2/neo_* /home/quasar/mydir/i3c3a0d1v5a2_set4/positions
+cp out_set4_In_3_Ca_3_a_0_D_1_v_5_Al_2/neighbours* /home/quasar/mydir/i3c3a0d1v5a2_set4/neighbours
+cp out_set4_In_3_Ca_3_a_0_D_1_v_5_Al_2/global_fields_200/*.npy /home/quasar/mydir/i3c3a0d1v5a2_set4/phasefield
+
+mkdir -p i3c3a1d1v5a6_set5/{neighbours,positions,phasefield}
+cp out_set5_In_3_Ca_3_a_1_D_1_v_5_Al_6/neo_* /home/quasar/mydir/i3c3a1d1v5a6_set5/positions
+cp out_set5_In_3_Ca_3_a_1_D_1_v_5_Al_6/neighbours* /home/quasar/mydir/i3c3a1d1v5a6_set5/neighbours
+cp out_set5_In_3_Ca_3_a_1_D_1_v_5_Al_6/global_fields_200/*.npy /home/quasar/mydir/i3c3a1d1v5a6_set5/phasefield
+
+mkdir -p i3c3a0d1v5a6_set5/{neighbours,positions,phasefield}
+cp out_set5_In_3_Ca_3_a_0_D_1_v_5_Al_6/neo_* /home/quasar/mydir/i3c3a0d1v5a6_set5/positions
+cp out_set5_In_3_Ca_3_a_0_D_1_v_5_Al_6/neighbours* /home/quasar/mydir/i3c3a0d1v5a6_set5/neighbours
+cp out_set5_In_3_Ca_3_a_0_D_1_v_5_Al_6/global_fields_200/*.npy /home/quasar/mydir/i3c3a0d1v5a6_set5/phasefield
+
+mkdir -p i3c3a1d0v5a7_set6/{neighbours,positions,phasefield}
+cp out_set6_In_3_Ca_3_a_1_D_0_v_5_Al_7/neo_* /home/quasar/mydir/i3c3a1d0v5a7_set6/positions
+cp out_set6_In_3_Ca_3_a_1_D_0_v_5_Al_7/neighbours* /home/quasar/mydir/i3c3a1d0v5a7_set6/neighbours
+cp out_set6_In_3_Ca_3_a_1_D_0_v_5_Al_7/global_fields_200/*.npy /home/quasar/mydir/i3c3a1d0v5a7_set6/phasefield
+
+mkdir -p i3c3a1d0v5a5_set7/{neighbours,positions,phasefield}
+cp out_set7_In_3_Ca_3_a_1_D_0_v_5_Al_5/neo_* /home/quasar/mydir/i3c3a1d0v5a5_set7/positions
+cp out_set7_In_3_Ca_3_a_1_D_0_v_5_Al_5/neighbours* /home/quasar/mydir/i3c3a1d0v5a5_set7/neighbours
+cp out_set7_In_3_Ca_3_a_1_D_0_v_5_Al_5/global_fields_200/*.npy /home/quasar/mydir/i3c3a1d0v5a5_set7/phasefield
+
+mkdir -p i3c3a1d0v5a2_set7/{neighbours,positions,phasefield}
+cp out_set7_In_3_Ca_3_a_1_D_0_v_5_Al_2/neo_* /home/quasar/mydir/i3c3a1d0v5a2_set7/positions
+cp out_set7_In_3_Ca_3_a_1_D_0_v_5_Al_2/neighbours* /home/quasar/mydir/i3c3a1d0v5a2_set7/neighbours
+cp out_set7_In_3_Ca_3_a_1_D_0_v_5_Al_2/global_fields_200/*.npy /home/quasar/mydir/i3c3a1d0v5a2_set7/phasefield
+
+mkdir -p elonrect7b/{neighbours,positions,phasefield}
+cp sim_7b/neo_* /home/quasar/mydir/elonrect7b/positions
+cp sim_7b/neighbours* /home/quasar/mydir/elonrect7b/neighbours
+cp sim_7b/global_fields_200/*.npy /home/quasar/mydir/elonrect7b/phasefield
+
+mkdir -p elonrect6b/{neighbours,positions,phasefield}
+cp sim_6b/neo_* /home/quasar/mydir/elonrect6b/positions
+cp sim_6b/neighbours* /home/quasar/mydir/elonrect6b/neighbours
+cp sim_6b/global_fields_200/*.npy /home/quasar/mydir/elonrect6b/phasefield
+
+cp out_In_3_Ca_3_a_1_D_0_v_5_Al_0/combined/movieslow.mp4 /home/quasar/mydir/i3c3a1d0v5a0.mp4
+cp out_In_3_Ca_3_a_1_D_0_v_5_Al_1/combined/movieslow.mp4 /home/quasar/mydir/i3c3a1d0v5a1.mp4
+cp out_set2_In_3_Ca_3_a_1_D_0_v_5_Al_0/combined/movieslow.mp4 /home/quasar/mydir/i3c3a1d0v5a0_set2.mp4
+cp out_set2_In_3_Ca_3_a_1_D_0_v_5_Al_3/combined/movieslow.mp4 /home/quasar/mydir/i3c3a1d0v5a3_set2.mp4
+cp out_set2_In_3_Ca_3_a_1_D_0_v_5_Al_5/combined/movieslow.mp4 /home/quasar/mydir/i3c3a1d0v5a5_set2.mp4
+cp out_set3_In_3_Ca_3_a_1_D_0_v_5_Al_2/combined/movieslow.mp4 /home/quasar/mydir/i3c3a1d0v5a2_set3.mp4
+cp out_set3_In_3_Ca_3_a_1_D_0_v_5_Al_4/combined/movieslow.mp4 /home/quasar/mydir/i3c3a1d0v5a4_set3.mp4
+cp out_set4_In_3_Ca_3_a_1_D_1_v_5_Al_2/combined/movieslow.mp4 /home/quasar/mydir/i3c3a1d1v5a2_set4.mp4
+cp out_set4_In_3_Ca_3_a_0_D_1_v_5_Al_2/combined/movieslow.mp4 /home/quasar/mydir/i3c3a0d1v5a2_set4.mp4
+cp out_set5_In_3_Ca_3_a_1_D_1_v_5_Al_6/combined/movieslow.mp4 /home/quasar/mydir/i3c3a1d1v5a6_set5.mp4
+cp out_set5_In_3_Ca_3_a_0_D_1_v_5_Al_6/combined/movieslow.mp4 /home/quasar/mydir/i3c3a0d1v5a6_set5.mp4
+cp out_set6_In_3_Ca_3_a_1_D_0_v_5_Al_7/combined/movieslow.mp4 /home/quasar/mydir/i3c3a1d0v5a7_set6.mp4
+cp out_set7_In_3_Ca_3_a_1_D_0_v_5_Al_5/combined/movieslow.mp4 /home/quasar/mydir/i3c3a1d0v5a5_set7.mp4
+cp out_set7_In_3_Ca_3_a_1_D_0_v_5_Al_2/combined/movieslow.mp4 /home/quasar/mydir/i3c3a1d0v5a2_set7.mp4
+
+
+python neo_positions.py /beegfs/ws/1/haja565a-my_workspace_neo/phd10052022/out_set2_In_3_Ca_3_a_1_D_0_v_5_Al_0/ 100
+python neo_positions.py /beegfs/ws/1/haja565a-my_workspace_neo/phd10052022/out_In_3_Ca_cd 3_a_1_D_0_v_5_Al_1/ 100
+python neo_positions.py /beegfs/ws/1/haja565a-my_workspace_neo/phd10052022/out_set3_In_3_Ca_3_a_1_D_0_v_5_Al_2/ 100
+python neo_positions.py /beegfs/ws/1/haja565a-my_workspace_neo/phd10052022/out_set2_In_3_Ca_3_a_1_D_0_v_5_Al_3/ 100
+python neo_positions.py /beegfs/ws/1/haja565a-my_workspace_neo/phd10052022/out_set3_In_3_Ca_3_a_1_D_0_v_5_Al_4/ 100
+python neo_positions.py /beegfs/ws/1/haja565a-my_workspace_neo/phd10052022/out_set2_In_3_Ca_3_a_1_D_0_v_5_Al_5/ 100 
+python neo_positions.py /beegfs/ws/1/haja565a-my_workspace_neo/phd10052022/out_In_3_Ca_3_a_1_D_0_v_5_Al_0/ 100  
+python neo_positions.py /beegfs/ws/1/haja565a-my_workspace_neo/phd10052022/out_set4_In_3_Ca_3_a_0_D_1_v_5_Al_2/ 100 
+python neo_positions.py /beegfs/ws/1/haja565a-my_workspace_neo/phd10052022/out_set4_In_3_Ca_3_a_1_D_1_v_5_Al_2/ 100 
+python neo_positions.py /beegfs/ws/1/haja565a-my_workspace_neo/phd10052022/out_set5_In_3_Ca_3_a_1_D_1_v_5_Al_6/ 100 
+python neo_positions.py /beegfs/ws/1/haja565a-my_workspace_neo/phd10052022/out_set5_In_3_Ca_3_a_0_D_1_v_5_Al_6/ 100 
+python neo_positions.py /beegfs/ws/1/haja565a-my_workspace_neo/phd10052022/out_set6_In_3_Ca_3_a_1_D_0_v_5_Al_7/ 100 
+python neo_positions.py /beegfs/ws/1/haja565a-my_workspace_neo/phd10052022/out_set7_In_3_Ca_3_a_1_D_0_v_5_Al_5/ 100 
+python neo_positions.py /beegfs/ws/1/haja565a-my_workspace_neo/phd10052022/out_set7_In_3_Ca_3_a_1_D_0_v_5_Al_2/ 100 
+python neo_positions.py /beegfs/ws/1/haja565a-my_workspace_neo/phd10052022/out_In_3_Ca_3_a_1_D_0_v_10_Al_2/ 100
+
+
+
+
+
+#!/bin/bash
+#SBATCH -J elonrect
+#SBATCH --ntasks=100
+#SBATCH --mail-type=end
+#SBATCH --mail-user=harish_p.jain@mailbox.tu-dresden.de
+#SBATCH --time=16:00:00
+#SBATCH --error=/beegfs/ws/1/haja565a-my_workspace_neo/elonrect.err
+#SBATCH --output=/beegfs/ws/1/haja565a-my_workspace_neo/elonrect.out
+#SBATCH -A wir
+#SBATCH -p haswell
+#SBATCH --mem-per-cpu=2500
+
+#!/bin/bash
+#SBATCH -J supra7
+#SBATCH --ntasks=40
+#SBATCH --mail-type=end
+#SBATCH --mail-user=harish_p.jain@mailbox.tu-dresden.de
+#SBATCH --time=16:00:00
+#SBATCH --error=/beegfs/ws/1/haja565a-my_workspace_neo/supra7.err
+#SBATCH --output=/beegfs/ws/1/haja565a-my_workspace_neo/supra7.out
+#SBATCH -A wir
+#SBATCH -p haswell
+#SBATCH --mem-per-cpu=2500
+
+cp out_In_3_Ca_3_a_1_D_0_v_5_Al_2/neo_* /home/quasar/mydir/i3c3a1d0v5a2/positions
+cp out_In_3_Ca_3_a_1_D_0_v_10_Al_0/neo_* /home/quasar/mydir/i3c3a1d0v10a0/positions
+cp out_In_3_Ca_3_a_1_D_0_v_10_Al_1/neo_* /home/quasar/mydir/i3c3a1d0v10a1/positions
+cp out_In_3_Ca_3_a_1_D_0_v_10_Al_2/neo_* /home/quasar/mydir/i3c3a1d0v10a2/positions
+
+cp out_In_3_Ca_3_a_1_D_0_v_5_Al_1/neighbours* /home/quasar/mydir/i3c3a1d0v5a1/neighbours
+cp out_In_3_Ca_3_a_1_D_0_v_5_Al_2/neighbours* /home/quasar/mydir/i3c3a1d0v5a2/neighbours
+cp out_In_3_Ca_3_a_1_D_0_v_10_Al_0/neighbours* /home/quasar/mydir/i3c3a1d0v10a0/neighbours
+cp out_In_3_Ca_3_a_1_D_0_v_10_Al_1/neighbours* /home/quasar/mydir/i3c3a1d0v10a1/neighbours
+cp out_In_3_Ca_3_a_1_D_0_v_10_Al_2/neighbours* /home/quasar/mydir/i3c3a1d0v10a2/neighbours
+
+cp out_In_3_Ca_3_a_1_D_0_v_5_Al_1/global_fields_200/*.npy /home/quasar/mydir/i3c3a1d0v5a1/phasefield
+cp out_In_3_Ca_3_a_1_D_0_v_5_Al_2/global_fields_200/*.npy /home/quasar/mydir/i3c3a1d0v5a2/phasefield
+cp out_In_3_Ca_3_a_1_D_0_v_10_Al_0/global_fields_200/*.npy /home/quasar/mydir/i3c3a1d0v10a0/phasefield
+cp out_In_3_Ca_3_a_1_D_0_v_10_Al_1/global_fields_200/*.npy /home/quasar/mydir/i3c3a1d0v10a1/phasefield
+cp out_In_3_Ca_3_a_1_D_0_v_10_Al_2/global_fields_200/*.npy /home/quasar/mydir/i3c3a1d0v10a2/phasefield
+
+cp out_In_3_Ca_3_a_1_D_0_v_10_Al_2/neo_* /home/quasar/mydir/i3c3a1d0v10a2/positions
+cp out_In_3_Ca_3_a_1_D_0_v_5_Al_1/neighbours* /home/quasar/mydir/i3c3a1d0v5a1/neighbours
+
+

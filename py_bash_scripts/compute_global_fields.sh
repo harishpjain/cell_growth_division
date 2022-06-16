@@ -4,8 +4,8 @@
 #SBATCH --mail-type=end
 #SBATCH --mail-user=harish_p.jain@mailbox.tu-dresden.de
 #SBATCH --time=16:00:00
-#SBATCH --error=/beegfs/ws/1/haja565a-my_workspace/globalfield.err
-#SBATCH --output=/beegfs/ws/1/haja565a-my_workspace/globalfield.out
+#SBATCH --error=/beegfs/ws/1/haja565a-my_workspace_neo/globalfield4.err
+#SBATCH --output=/beegfs/ws/1/haja565a-my_workspace_neo/globalfield4.out
 #SBATCH -A wir
 #SBATCH -p haswell
 #SBATCH --mem-per-cpu=2500
@@ -13,9 +13,61 @@
 module load VTK/8.2.0-intel-2020a-Python-3.8.2
 module load matplotlib/3.2.1-intel-2020a-Python-3.8.2
 
-python compute_phi_field.py /beegfs/ws/1/haja565a-my_workspace/haja565a-workspacebeegfs-1647745203/phd24022201_vtu_v1_5/out30000_In_3_Ca_4_a_1/
-python compute_phi_field.py /beegfs/ws/1/haja565a-my_workspace/haja565a-workspacebeegfs-1647745203/phd24022201_vtu_v1_5/out30000_In_4_Ca_4_a_1/
-python compute_phi_field.py /beegfs/ws/1/haja565a-my_workspace/haja565a-workspacebeegfs-1647745203/phd24022201_vtu_v1_5/out30000_In_2_Ca_4_a_1/
+#srun python compute_phi_mu_cell.py /beegfs/ws/1/haja565a-my_workspace_neo/phd10052022/out_set2_In_3_Ca_3_a_1_D_0_v_5_Al_0/ 3000
+
+srun python compute_phi_field.py /beegfs/ws/1/haja565a-my_workspace_neo/elongated_rectangles/sim_7b/ 
+srun python compute_phi_field.py /beegfs/ws/1/haja565a-my_workspace_neo/elongated_rectangles/sim_6b/ 
+#srun python compute_phi_field.py /beegfs/ws/1/haja565a-my_workspace_neo/elongated_rectangles/sim_4/
+
+#srun python compute_phi_field.py /beegfs/ws/1/haja565a-my_workspace_neo/phd10052022/out_set6_In_3_Ca_3_a_1_D_0_v_5_Al_7/ 
+#srun python compute_phi_field.py /beegfs/ws/1/haja565a-my_workspace_neo/phd10052022/out_set7_In_3_Ca_3_a_1_D_0_v_5_Al_5/ 
+
+#srun python compute_phi_field.py /beegfs/ws/1/haja565a-my_workspace_neo/phd10052022/out_set2_In_3_Ca_3_a_1_D_0_v_5_Al_0/  
+#srun python compute_phi_field.py /beegfs/ws/1/haja565a-my_workspace_neo/phd10052022/out_In_3_Ca_3_a_1_D_0_v_5_Al_1/ 
+#srun python compute_phi_field.py /beegfs/ws/1/haja565a-my_workspace_neo/phd10052022/out_set3_In_3_Ca_3_a_1_D_0_v_5_Al_2/ 
+#srun python compute_phi_field.py /beegfs/ws/1/haja565a-my_workspace_neo/phd10052022/out_set2_In_3_Ca_3_a_1_D_0_v_5_Al_3/ 
+#srun python compute_phi_field.py /beegfs/ws/1/haja565a-my_workspace_neo/phd10052022/out_set3_In_3_Ca_3_a_1_D_0_v_5_Al_4/ 
+#srun python compute_phi_field.py /beegfs/ws/1/haja565a-my_workspace_neo/phd10052022/out_set2_In_3_Ca_3_a_1_D_0_v_5_Al_5/ 
+#srun python compute_phi_field.py /beegfs/ws/1/haja565a-my_workspace_neo/phd10052022/out_In_3_Ca_3_a_1_D_0_v_5_Al_0/  
+#srun python compute_phi_field.py /beegfs/ws/1/haja565a-my_workspace_neo/phd10052022/out_set4_In_3_Ca_3_a_0_D_1_v_5_Al_2/ 
+#srun python compute_phi_field.py /beegfs/ws/1/haja565a-my_workspace_neo/phd10052022/out_set4_In_3_Ca_3_a_1_D_1_v_5_Al_2/ 
+#srun python compute_phi_field.py /beegfs/ws/1/haja565a-my_workspace_neo/phd10052022/out_set5_In_3_Ca_3_a_1_D_1_v_5_Al_6/ 
+#srun python compute_phi_field.py /beegfs/ws/1/haja565a-my_workspace_neo/phd10052022/out_set5_In_3_Ca_3_a_0_D_1_v_5_Al_6/ 
+#srun python compute_phi_field.py /beegfs/ws/1/haja565a-my_workspace_neo/phd10052022/out_set6_In_3_Ca_3_a_1_D_0_v_5_Al_7/ 
+#srun python compute_phi_field.py /beegfs/ws/1/haja565a-my_workspace_neo/phd10052022/out_set7_In_3_Ca_3_a_1_D_0_v_5_Al_5/ 
+#srun python compute_phi_field.py /beegfs/ws/1/haja565a-my_workspace_neo/phd10052022/out_set7_In_3_Ca_3_a_1_D_0_v_5_Al_2/ 
+#######srun python compute_phi_field.py /beegfs/ws/1/haja565a-my_workspace_neo/phd10052022/out_In_3_Ca_3_a_1_D_0_v_10_Al_2/
+
+
+
+
+
+#srun python local_cell_velocity.py /beegfs/ws/1/haja565a-my_workspace_neo/phd24022201_vtu_v1_0/out30000_In_3_Ca_4_a_1/
+#python compute_phi_field.py /beegfs/ws/1/haja565a-my_workspace/phd24022201_vtu_v1_0/out30000_In_3_Ca_3_a_1/
+#srun python compute_phi_field.py /beegfs/ws/1/haja565a-my_workspace/phd24022201_vtu_v1_0/out30000_In_3_Ca_4_a_1/
+#python compute_phi_field.py /beegfs/ws/1/haja565a-my_workspace/phd24022201_vtu_v1_0/out30000_In_4_Ca_3_a_1/
+#python compute_phi_field.py /beegfs/ws/1/haja565a-my_workspace/phd24022201_vtu_v1_0/out30000_In_4_Ca_4_a_1/
+
+
+#srun python compute_phi_field.py /beegfs/ws/1/haja565a-my_workspace/phd24022201_vtu_v1_0/out30000_In_4_Ca_3_a_2/
+#srun python compute_phi_field.py /beegfs/ws/1/haja565a-my_workspace/phd24022201_vtu_v1_0/out30000_In_4_Ca_4_a_2/
+#srun python compute_phi_field.py /beegfs/ws/1/haja565a-my_workspace/phd24022201_vtu_v1_0/out30000_In_4_Ca_1_a_2/
+#srun python compute_phi_field.py /beegfs/ws/1/haja565a-my_workspace/phd24022201_vtu_v1_0/out30000_In_4_Ca_2_a_2/
+
+#srun python compute_phi_field.py /beegfs/ws/1/haja565a-my_workspace/phd24022201_vtu_v1_0/out30000_In_1_Ca_4_a_1/
+#srun python compute_phi_field.py /beegfs/ws/1/haja565a-my_workspace/phd24022201_vtu_v1_0/out30000_In_2_Ca_4_a_1/
+#srun python compute_phi_field.py /beegfs/ws/1/haja565a-my_workspace/phd24022201_vtu_v1_0/out30000_In_3_Ca_4_a_1/
+#srun python compute_phi_field.py /beegfs/ws/1/haja565a-my_workspace/phd24022201_vtu_v1_0/out30000_In_4_Ca_4_a_1/
+#srun python compute_phi_field.py /beegfs/ws/1/haja565a-my_workspace/phd24022201_vtu_v1_0/out30000_In_1_Ca_3_a_1/
+#srun python compute_phi_field.py /beegfs/ws/1/haja565a-my_workspace/phd24022201_vtu_v1_0/out30000_In_2_Ca_4_a_1/
+#srun python compute_phi_field.py /beegfs/ws/1/haja565a-my_workspace/phd24022201_vtu_v1_0/out30000_In_3_Ca_3_a_1/
+#srun python compute_phi_field.py /beegfs/ws/1/haja565a-my_workspace/phd24022201_vtu_v1_0/out30000_In_4_Ca_3_a_1/
+
+#python compute_phi_field.py /beegfs/ws/1/haja565a-my_workspace/phd24022201_vtu_v1_0/out30000_In_1_Ca_3_a_1/
+#python compute_phi_field.py /beegfs/ws/1/haja565a-my_workspace/phd24022201_vtu_v1_0/out30000_In_1_Ca_4_a_1/
+#python compute_phi_field.py /beegfs/ws/1/haja565a-my_workspace/phd24022201_vtu_v1_0/out30000_In_2_Ca_3_a_1/
+#python compute_phi_field.py /beegfs/ws/1/haja565a-my_workspace/phd24022201_vtu_v1_0/out30000_In_2_Ca_4_a_1/
+
 #python compute_global_fields.py /beegfs/ws/1/haja565a-my_workspace/haja565a-workspacebeegfs-1647745203/phd24022201_vtu_v1_5/out30000_In_4_Ca_4_a_1/
 #python strain_field_interpolated.py /beegfs/ws/1/haja565a-workspacebeegfs/phd24022201/b_out10000_In_1_Ca_1/
 
@@ -26,6 +78,3 @@ python compute_phi_field.py /beegfs/ws/1/haja565a-my_workspace/haja565a-workspac
 #python strain_field_interpolated.py /beegfs/ws/1/haja565a-workspacebeegfs/phd24022201_v1_0/out30000_In_1_Ca_3_a_1/ 1000 30000 1 0
 
 ###python compute_global_fields.py ${1} ${2} ${3}
-
-
-

@@ -64,9 +64,14 @@ y = np.linspace(0,domain_size[1],interpolation_steps)
 xx,yy = np.meshgrid(x,y)
 xx = np.reshape(xx,(interpolation_steps**2,1))
 yy = np.reshape(yy,(interpolation_steps**2,1))
-
+np.save(out_dir + '/grid_x',np.reshape(xx,(interpolation_steps,interpolation_steps)))
+np.save(out_dir + '/grid_y',np.reshape(yy,(interpolation_steps,interpolation_steps)))
+        
+        
 reader = vtk.vtkXMLUnstructuredGridReader()
 print(stride)
+print(positions_raw[0].index.shape)
+print(positions_raw[0].index)
 #row_indices = np.arange(0,positions_raw[0].index.shape[0],stride,dtype=int) uncomment this if 0 problem is fixed
 row_indices = np.arange(stride-1,positions_raw[0].index.shape[0],stride,dtype=int)
 times = []
@@ -104,6 +109,16 @@ for ind in row_indices:
     # now the axis 0 here is the rank axis which we want to remove
     phi_all = np.array(phi_all)
 
+    phi_identity = np.ones(phi_all.shape)*-1
+    phi_rankwise = np.ones(phi_all[0].shape)*-1
+    for ind_r, rank in enumerate(ranks):
+        phi_identity[rank][phi_all[rank] > 0.05] = rank
+    phi_rankwise = np.max(phi_identity, axis = 0)    
+    np.save(out_dir + '/phi_field' +  '{:06.3f}'.format(time),phi_rankwise)
+    #phi_glob = np.max(phi_all,axis=0)
+    
+    
+    """
     # global phasefield, given by a lot of 1s and something in between
 
     phi_glob = np.max(phi_all,axis=0)
@@ -117,12 +132,7 @@ for ind in row_indices:
     print(len(phi_all))
     #phi_field = rank_max
     #phi_field[phi_field==rank_max] = ranks[rank_max, :]
-
     np.save(out_dir + '/phi_field' +  '{:06.3f}'.format(time),phi_field)
-
-    if(count == 0):
-        np.save(out_dir + '/grid_x',np.reshape(xx,(interpolation_steps,interpolation_steps)))
-        np.save(out_dir + '/grid_y',np.reshape(yy,(interpolation_steps,interpolation_steps)))
-    print('Finished time ' + str(time))
-    count += 1
+    np.save(out_dir + '/phi_glob' +  '{:06.3f}'.format(time),phi_glob)
+    """
 np.save(out_dir + '/timesteps',np.array(times))

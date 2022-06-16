@@ -30,3 +30,13 @@ add_executable(divisionless_model
 target_include_directories(divisionless_model  PRIVATE ${CMAKE_SOURCE_DIR})
 target_link_libraries(divisionless_model  PRIVATE AMDiS mpi14)
 target_compile_definitions(divisionless_model  PRIVATE HAVE_MPI)
+
+
+add_executable(supracell_model 
+supracell_src/AdaptInstationarySeq.cc 
+  include/ContourWriter.cc 
+  supracell_src/Coupling_supracell_phase.h
+  supracell_src/box_migration.cc)
+target_include_directories(supracell_model  PRIVATE ${CMAKE_SOURCE_DIR})
+target_link_libraries(supracell_model  PRIVATE AMDiS mpi14)
+target_compile_definitions(supracell_model  PRIVATE HAVE_MPI)

@@ -5,7 +5,7 @@ import sys
 corresponding to different times while renaming them to pRANK.arh"""
 
 def main():
-    filepath = "/scratch/ws/1/haja565a-workspace1/collision/out151/"
+    #filepath = "/scratch/ws/1/haja565a-workspace1/collision/out151/"
     filepath = sys.argv[1]
     filepath += "/"
 

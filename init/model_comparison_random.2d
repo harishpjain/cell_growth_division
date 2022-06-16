@@ -44,6 +44,7 @@ main->cahn-hilliard: 1
 % Global (coupling) parameters 
 global->v0: 0.0 % 2.5
 global->D: 0.0 %0.1
+global->alignmentRate: 0.5
 
 % Phasefield parameters
 phase->epsilon: 0.15

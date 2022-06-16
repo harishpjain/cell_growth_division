@@ -25,7 +25,7 @@ interpolation_steps = 200
 
 if len(sys.argv) > 1:
     file_pattern = sys.argv[1] + 'positions_p*.csv'
-    out_dir = sys.argv[1] + 'global_fields_200'
+    out_dir = sys.argv[1] + 'cell_fields_200'
     if not os.path.exists(out_dir):
         os.makedirs(out_dir)
 
@@ -64,29 +64,31 @@ y = np.linspace(0,domain_size[1],interpolation_steps)
 xx,yy = np.meshgrid(x,y)
 xx = np.reshape(xx,(interpolation_steps**2,1))
 yy = np.reshape(yy,(interpolation_steps**2,1))
-
+np.save(out_dir + '/grid_x',np.reshape(xx,(interpolation_steps,interpolation_steps)))
+np.save(out_dir + '/grid_y',np.reshape(yy,(interpolation_steps,interpolation_steps)))
+        
+        
 reader = vtk.vtkXMLUnstructuredGridReader()
 print(stride)
+print(positions_raw[0].index.shape)
+print(positions_raw[0].index)
 #row_indices = np.arange(0,positions_raw[0].index.shape[0],stride,dtype=int) uncomment this if 0 problem is fixed
 row_indices = np.arange(stride-1,positions_raw[0].index.shape[0],stride,dtype=int)
 times = []
 
 
 count = 0
-for ind in row_indices[:-1]:
+for ind in row_indices:
     # we now have one particular timepoint
-    time_1 = positions_raw[0].iloc[ind]['time']
-    time_2 = positions_raw[0].iloc[ind+stride]['time']
-    print(time_1)
-    print(time_2)
+    time = positions_raw[0].iloc[ind]['time']
+    print(time)
     #if not os.path.exists(sys.argv[1] + 'data/phase_p0_' + '{:06.3f}'.format(time) + '.vtu'):
     #    continue
-    times.append(time_1)
-    phi_all_diff = []
-    phi_all_diff_2 = [] 
+    times.append(time)
+    phi_all = []
     
     for rank_ind,rank in enumerate(ranks):
-        filename = sys.argv[1] + 'data/phase_p' + str(rank) + '_' + '{:06.3f}'.format(time_1) + '.vtu'
+        filename = sys.argv[1] + 'data/phase_p' + str(rank) + '_' + '{:06.3f}'.format(time) + '.vtu'
         reader.SetFileName(filename)
         reader.Update()
         data = reader.GetOutput()
@@ -95,49 +97,38 @@ for ind in row_indices[:-1]:
         points = data.GetPoints()
         points = vtk_to_numpy(points.GetData())
         # values 
-        phi_1 = vtk_to_numpy(data.GetPointData().GetArray(0))
+        phi = vtk_to_numpy(data.GetPointData().GetArray(0))
+        mu = vtk_to_numpy(data.GetPointData().GetArray(1))
 
-
-        phi_interp_1 = griddata(points[:,0:2],phi_1,(xx,yy),method='nearest')
-
-        phi_interp_1 = np.reshape(phi_interp_1,(interpolation_steps,interpolation_steps))
+        phi_interp = griddata(points[:,0:2],phi,(xx,yy),method='nearest')
+        phi_interp = np.reshape(phi_interp,(interpolation_steps,interpolation_steps))
         
-        filename2 = sys.argv[1] + 'data/phase_p' + str(rank) + '_' + '{:06.3f}'.format(time_2) + '.vtu'
-        reader.SetFileName(filename2)
-        reader.Update()
-        data = reader.GetOutput()
-
-        # grid points
-        points = data.GetPoints()
-        points = vtk_to_numpy(points.GetData())
-        # values 
-        phi_2 = vtk_to_numpy(data.GetPointData().GetArray(0))
-
-
-        phi_interp_2 = griddata(points[:,0:2],phi_2,(xx,yy),method='nearest')
-
-        phi_interp_2 = np.reshape(phi_interp_2,(interpolation_steps,interpolation_steps))
+        mu_interp = griddata(points[:,0:2],mu,(xx,yy),method='nearest')
+        mu_interp = np.reshape(mu_interp,(interpolation_steps,interpolation_steps))
         
-        phi_interp_1 = 0.5*phi_interp_1 + 0.5
-        phi_interp_2 = 0.5*phi_interp_2 + 0.5
+        np.save(out_dir + '/phi_r' + f"{rank_ind:04}" +'_{:06.3f}'.format(time), phi_interp)
+        np.save(out_dir + '/mu_r' + f"{rank_ind:04}" +'_{:06.3f}'.format(time), mu_interp)
         
-        phi_diff = phi_interp_2 - phi_interp_1
-        phi_diff_2 = np.fmax(phi_interp_2, 0.0) - np.fmax(phi_interp_1, 0.0)
-        phi_all_diff.append(phi_diff)
-        phi_all_diff_2.append(phi_diff_2)
+        phi_all.append(0.5 * phi_interp + 0.5)
     
     # after this we have a list IN THE SAME ORDER AS ranks with all phi
     # now the axis 0 here is the rank axis which we want to remove
-    phi_all_diff = np.array(phi_all_diff)
-    phi_all_diff_2 = np.array(phi_all_diff_2)
+    #phi_all = np.array(phi_all)
 
     # global phasefield, given by a lot of 1s and something in between
 
-    phi_glob_diff = np.sum(phi_all_diff,axis=0)
-    phi_glob_diff_2 = np.sum(phi_all_diff_2,axis=0)
+    #phi_glob = np.max(phi_all,axis=0)
     # this is more interesting -> this locally gives the rank index the contributed to the max, ie the cell
+    #rank_max = np.argmax(phi_all,axis=0)
+    #phi_field = rank_max
+    #print(rank_max)
+    #print(phi_glob.shape)
+    #print(rank_max.shape)
+    #print(np.max(rank_max))
+    #print(len(phi_all))
     #phi_field = rank_max
     #phi_field[phi_field==rank_max] = ranks[rank_max, :]
-
-    np.save(out_dir + '/phi_diff_field' +  '{:06.3f}'.format(time_1),phi_glob_diff)
-    np.save(out_dir + '/phi_diff_2_field' +  '{:06.3f}'.format(time_1),phi_glob_diff_2)
+    #np.save(out_dir + '/phi_field' +  '{:06.3f}'.format(time),phi_field)
+    #np.save(out_dir + '/phi_glob' +  '{:06.3f}'.format(time),phi_glob)
+np.save(out_dir + '/timesteps',np.array(times))
+np.save(out_dir + '/ranks',np.array(ranks))

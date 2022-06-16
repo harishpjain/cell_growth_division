@@ -12,23 +12,4 @@
 
 
 
-srun rm -rf /beegfs/ws/1/haja565a-my_workspace/haja565a-workspacebeegfs-1647745203/phd24022201/b_out10000_In_3_Ca_1/
-srun rm -rf /beegfs/ws/1/haja565a-my_workspace/haja565a-workspacebeegfs-1647745203/phd24022201/b_out10000_In_3_Ca_2/
-srun rm -rf /beegfs/ws/1/haja565a-my_workspace/haja565a-workspacebeegfs-1647745203/phd24022201/b_out10000_In_3_Ca_3/
-srun rm -rf /beegfs/ws/1/haja565a-my_workspace/haja565a-workspacebeegfs-1647745203/phd24022201/b_out10000_In_3_Ca_4/
-
-srun rm -rf /beegfs/ws/1/haja565a-my_workspace/haja565a-workspacebeegfs-1647745203/phd24022201/b_out10000_In_4_Ca_1/
-srun rm -rf /beegfs/ws/1/haja565a-my_workspace/haja565a-workspacebeegfs-1647745203/phd24022201/b_out10000_In_4_Ca_2/
-srun rm -rf /beegfs/ws/1/haja565a-my_workspace/haja565a-workspacebeegfs-1647745203/phd24022201/b_out10000_In_4_Ca_3/
-srun rm -rf /beegfs/ws/1/haja565a-my_workspace/haja565a-workspacebeegfs-1647745203/phd24022201/b_out10000_In_4_Ca_4/
-
-srun rm -rf /beegfs/ws/1/haja565a-my_workspace/haja565a-workspacebeegfs-1647745203/phd24022201/b_out10000_In_6_Ca_1/
-srun rm -rf /beegfs/ws/1/haja565a-my_workspace/haja565a-workspacebeegfs-1647745203/phd24022201/b_out10000_In_6_Ca_2/
-srun rm -rf /beegfs/ws/1/haja565a-my_workspace/haja565a-workspacebeegfs-1647745203/phd24022201/b_out10000_In_6_Ca_3/
-srun rm -rf /beegfs/ws/1/haja565a-my_workspace/haja565a-workspacebeegfs-1647745203/phd24022201/b_out10000_In_6_Ca_4/
-
-
-srun rm -rf /beegfs/ws/1/haja565a-my_workspace/haja565a-workspacebeegfs-1647745203/phd24022201/b_out10000_In_7_Ca_1/
-srun rm -rf /beegfs/ws/1/haja565a-my_workspace/haja565a-workspacebeegfs-1647745203/phd24022201/b_out10000_In_7_Ca_2/
-srun rm -rf /beegfs/ws/1/haja565a-my_workspace/haja565a-workspacebeegfs-1647745203/phd24022201/b_out10000_In_7_Ca_3/
-srun rm -rf /beegfs/ws/1/haja565a-my_workspace/haja565a-workspacebeegfs-1647745203/phd24022201/b_out10000_In_7_Ca_4/
+srun rm -rf /beegfs/ws/1/haja565a-my_workspace/haja565a-workspacebeegfs-1647745203/

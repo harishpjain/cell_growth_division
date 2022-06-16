@@ -61,19 +61,25 @@ for ind_t, time in enumerate(times):
         phasefield[phi_rankwise==(rank)] = 1
         
         #fixing for periodic BC
-        maxX = np.max(grid_X[phasefield>0], initial=0)
-        minX = np.min(grid_X[phasefield>0], initial=0)
-        maxY = np.max(grid_Y[phasefield>0], initial=0)
-        minY = np.min(grid_Y[phasefield>0], initial=0)
+        maxX = np.max(grid_X[phasefield>0], initial=-1)
+        minX = np.min(grid_X[phasefield>0], initial=101)
+        maxY = np.max(grid_Y[phasefield>0], initial=-1)
+        minY = np.min(grid_Y[phasefield>0], initial=101)
+        #maxX = np.max(grid_X[phasefield>0], initial=0)
+        #minX = np.min(grid_X[phasefield>0], initial=0)
+        #maxY = np.max(grid_Y[phasefield>0], initial=0)
+        #minY = np.min(grid_Y[phasefield>0], initial=0)
         
+        grid_Xc = grid_X.copy()
+        grid_Yc = grid_Y.copy()
         if((maxX - minX) > 0.5*domain_dimension[0]):
-           grid_X[grid_X<0.5*domain_dimension[0]] += domain_dimension[0]
+           grid_Xc[grid_Xc<0.5*domain_dimension[0]] += domain_dimension[0]
         if((maxY - minY) > 0.5*domain_dimension[1]):
-           grid_Y[grid_Y<0.5*domain_dimension[1]] += domain_dimension[1]
+           grid_Yc[grid_Yc<0.5*domain_dimension[1]] += domain_dimension[1]
         
         #note: below values need to be can go beyond the periodic domain.
-        pos_x[ind_r, ind_t] = np.sum((grid_X.flatten()*phasefield.flatten()))/np.sum(phasefield)
-        pos_y[ind_r, ind_t] = np.sum((grid_Y.flatten()*phasefield.flatten()))/np.sum(phasefield)
+        pos_x[ind_r, ind_t] = np.sum((grid_Xc.flatten()*phasefield.flatten()))/np.sum(phasefield)
+        pos_y[ind_r, ind_t] = np.sum((grid_Yc.flatten()*phasefield.flatten()))/np.sum(phasefield)
 
 #fixing values such that the positions are within the domain
 pos_x[pos_x > domain_dimension[0]] -= domain_dimension[0]
