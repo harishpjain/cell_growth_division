@@ -163,6 +163,31 @@ cp sim_6b/neo_* /home/quasar/mydir/elonrect6b/positions
 cp sim_6b/neighbours* /home/quasar/mydir/elonrect6b/neighbours
 cp sim_6b/global_fields_200/*.npy /home/quasar/mydir/elonrect6b/phasefield
 
+mkdir -p elonrect7c/{neighbours,positions,phasefield}
+cp sim_7c/neo_* /home/quasar/mydir/elonrect7c/positions
+cp sim_7c/neighbours* /home/quasar/mydir/elonrect7c/neighbours
+cp sim_7c/global_fields_200/*.npy /home/quasar/mydir/elonrect7c/phasefield
+
+mkdir -p elonrect6c/{neighbours,positions,phasefield}
+cp sim_6c/neo_* /home/quasar/mydir/elonrect6c/positions
+cp sim_6c/neighbours* /home/quasar/mydir/elonrect6c/neighbours
+cp sim_6c/global_fields_200/*.npy /home/quasar/mydir/elonrect6c/phasefield
+
+mkdir -p elonrect7d/{neighbours,positions,phasefield}
+cp sim_7d/neo_* /home/quasar/mydir/elonrect7d/positions
+cp sim_7d/neighbours* /home/quasar/mydir/elonrect7d/neighbours
+cp sim_7d/global_fields_200/*.npy /home/quasar/mydir/elonrect7d/phasefield
+
+mkdir -p elonrect6d/{neighbours,positions,phasefield}
+cp sim_6d/neo_* /home/quasar/mydir/elonrect6d/positions
+cp sim_6d/neighbours* /home/quasar/mydir/elonrect6d/neighbours
+cp sim_6d/global_fields_200/*.npy /home/quasar/mydir/elonrect6d/phasefield
+
+mkdir -p elonrect7e/{neighbours,positions,phasefield}
+cp sim_7e/neo_* /home/quasar/mydir/elonrect7e/positions
+cp sim_7e/neighbours* /home/quasar/mydir/elonrect7e/neighbours
+cp sim_7e/global_fields_200/*.npy /home/quasar/mydir/elonrect7e/phasefield
+
 cp out_In_3_Ca_3_a_1_D_0_v_5_Al_0/combined/movieslow.mp4 /home/quasar/mydir/i3c3a1d0v5a0.mp4
 cp out_In_3_Ca_3_a_1_D_0_v_5_Al_1/combined/movieslow.mp4 /home/quasar/mydir/i3c3a1d0v5a1.mp4
 cp out_set2_In_3_Ca_3_a_1_D_0_v_5_Al_0/combined/movieslow.mp4 /home/quasar/mydir/i3c3a1d0v5a0_set2.mp4
@@ -197,7 +222,11 @@ python neo_positions.py /beegfs/ws/1/haja565a-my_workspace_neo/phd10052022/out_I
 
 
 
-
+python neo_positions.py /beegfs/ws/1/haja565a-my_workspace_neo/phd10052022/out_set8_In_3_Ca_3_a_1_D_0_v_1_Al_2/ 100
+python neo_positions.py /beegfs/ws/1/haja565a-my_workspace_neo/phd10052022/out_set8_In_3_Ca_3_a_1_D_0_v_3_Al_2/ 100
+python neo_positions.py /beegfs/ws/1/haja565a-my_workspace_neo/phd10052022/out_set9_In_1_Ca_1_a_1_D_0_v_5_Al_2/ 100
+python neo_positions.py /beegfs/ws/1/haja565a-my_workspace_neo/phd10052022/out_set9_In_3_Ca_1_a_1_D_0_v_5_Al_2/ 100
+python neo_positions.py /beegfs/ws/1/haja565a-my_workspace_neo/phd10052022/out_set10_In_1_Ca_3_a_1_D_0_v_5_Al_2/ 100
 
 #!/bin/bash
 #SBATCH -J elonrect

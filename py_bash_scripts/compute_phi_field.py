@@ -75,7 +75,7 @@ print(positions_raw[0].index)
 #row_indices = np.arange(0,positions_raw[0].index.shape[0],stride,dtype=int) uncomment this if 0 problem is fixed
 row_indices = np.arange(stride-1,positions_raw[0].index.shape[0],stride,dtype=int)
 times = []
-
+phi_gap_fraction = []
 
 count = 0
 for ind in row_indices:
@@ -115,6 +115,15 @@ for ind in row_indices:
         phi_identity[rank][phi_all[rank] > 0.05] = rank
     phi_rankwise = np.max(phi_identity, axis = 0)    
     np.save(out_dir + '/phi_field' +  '{:06.3f}'.format(time),phi_rankwise)
+    
+    phi_empty = np.sum(phi_all, axis = 0)
+    gap_threshold = 0.2
+    phi_empty[phi_empty >= gap_threshold] = 1.0 #if a cell exist then this is 1
+    phi_empty[phi_empty < gap_threshold] = 0.0 #if not then it is zero
+    
+    phi_gap = np.sum(phi_empty)
+    phi_gap_fraction.append(phi_gap/len(phi_empty.flatten()))
+    
     #phi_glob = np.max(phi_all,axis=0)
     
     
@@ -136,3 +145,6 @@ for ind in row_indices:
     np.save(out_dir + '/phi_glob' +  '{:06.3f}'.format(time),phi_glob)
     """
 np.save(out_dir + '/timesteps',np.array(times))
+
+phi_gap_fraction = np.array(phi_gap_fraction)
+np.save(out_dir + '/phi_gap_fraction', phi_gap_fraction)

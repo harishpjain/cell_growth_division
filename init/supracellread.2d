@@ -3,7 +3,7 @@ parallel->log main rank: 1
 number of cells: 16
 
 postfix: 
-output: /beegfs/ws/1/haja565a-my_workspace_neo/supracell/sim_6
+output: /beegfs/ws/1/haja565a-my_workspace_neo/supracell/sim_7
 macroMesh->macro file name:       /home/haja565a/softwares/cell_growth_division/macro/macro_100_100.per.2d
 %macroMesh->macro file name:       /home/haja565a/softwares/cell_growth_division/macro/circle_macro.2d
 macroMesh->periodic file:         /home/haja565a/softwares/cell_growth_division/macro/macro_100_100.per
@@ -105,7 +105,7 @@ arh->file_prefix: ${output}/data/rank_
 %adapt->end time:               20
 
 adapt->sequence->timesteps:  [5e-3]%[5e-3]%, 1.e-2]%, 2.e-2, 5.e-2]%, 1.e-1]
-adapt->sequence->number of timesteps: [10001]%, 800]%, 800, 800]%, 800]
+adapt->sequence->number of timesteps: [2001]%, 800]%, 800, 800]%, 800]
 adapt->sequence->calc end time: 1
 
 %adapt->number of timesteps: 0

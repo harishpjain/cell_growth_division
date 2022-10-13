@@ -10,7 +10,7 @@ from vtk.util.numpy_support import vtk_to_numpy
 from scipy.interpolate import griddata
 from scipy import ndimage
 from scipy.ndimage import gaussian_filter
-
+import lol
 # --- Parameters
 domain_size = np.array([100.0,100.0])
 confined = False
@@ -78,6 +78,7 @@ times = []
 
 
 count = 0
+
 for ind in row_indices:
     # we now have one particular timepoint
     time = positions_raw[0].iloc[ind]['time']
@@ -86,6 +87,11 @@ for ind in row_indices:
     #    continue
     times.append(time)
     phi_all = []
+    
+    phi_cell = np.zeros([len(ranks), interpolation_steps, interpolation_steps])
+    mu_cell = np.zeros([len(ranks), interpolation_steps, interpolation_steps])
+    mugradx = np.zeros([len(ranks), interpolation_steps, interpolation_steps])
+    mugrady = np.zeros([len(ranks), interpolation_steps, interpolation_steps])
     
     for rank_ind,rank in enumerate(ranks):
         filename = sys.argv[1] + 'data/phase_p' + str(rank) + '_' + '{:06.3f}'.format(time) + '.vtu'
@@ -106,10 +112,25 @@ for ind in row_indices:
         mu_interp = griddata(points[:,0:2],mu,(xx,yy),method='nearest')
         mu_interp = np.reshape(mu_interp,(interpolation_steps,interpolation_steps))
         
-        np.save(out_dir + '/phi_r' + f"{rank_ind:04}" +'_{:06.3f}'.format(time), phi_interp)
-        np.save(out_dir + '/mu_r' + f"{rank_ind:04}" +'_{:06.3f}'.format(time), mu_interp)
+        phi_cell[rank] = phi_interp
+        mu_cell[rank] = mu_interp
+        
+        #np.save(out_dir + '/phi_r' + f"{rank_ind:04}" +'_{:06.3f}'.format(time), phi_interp)
+        #np.save(out_dir + '/mu_r' + f"{rank_ind:04}" +'_{:06.3f}'.format(time), mu_interp)
+        
+        #mugradx, mugrady = np.gradient(mu_interp, x, y)
+        #mugradx[rank] = np.gradient(np.pad(mu_interp, 2, mode="wrap"), axis=0)[2:-2, 2:-2]
+        #mugrady[rank] = np.gradient(np.pad(mu_interp, 2, mode="wrap"), axis=1)[2:-2, 2:-2]
+        
+        #np.save(out_dir + '/mu_gradx_r' + f"{rank_ind:04}" +'_{:06.3f}'.format(time), mugradx)
+        #np.save(out_dir + '/mu_grady_r' + f"{rank_ind:04}" +'_{:06.3f}'.format(time), mugrady)
         
         phi_all.append(0.5 * phi_interp + 0.5)
+    
+    np.save(out_dir + '/phi_cell' + '_{:06.3f}'.format(time), phi_cell)
+    np.save(out_dir + '/mu_cell' + '_{:06.3f}'.format(time), mu_cell)
+    #np.save(out_dir + '/mugradx' + '_{:06.3f}'.format(time), mugradx)
+    #np.save(out_dir + '/mugrady' + '_{:06.3f}'.format(time), mugrady)
     
     # after this we have a list IN THE SAME ORDER AS ranks with all phi
     # now the axis 0 here is the rank axis which we want to remove

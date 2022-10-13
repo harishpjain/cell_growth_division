@@ -19,7 +19,7 @@ setup = 'benchmark2'
 base_dir = '/home/haja565a/softwares/cell_growth_division'
 exec_dir = base_dir + '/build'
 init_dir = base_dir + '/init' 
-out_dir = '/beegfs/ws/1/haja565a-my_workspace_neo/phd10052022/' 
+out_dir = '/beegfs/ws/1/haja565a-neo_workspace3/phd10052022/' 
 if not os.path.exists(out_dir):
     os.makedirs(out_dir)
 
@@ -28,17 +28,17 @@ templ_run_file = base_dir + '/run/phd10052022.sh.templ'
 
 a = np.array([1.0, 1.5])
 In = np.array([2.5e-2, 5.0e-2,  7.5e-2, 10e-2])
-Ca = np.array([5.0e-2, 10.0e-2, 15.0e-2, 20.0e-2])
+Ca = np.array([5.0e-2, 10.0e-2, 15.0e-2, 20.0e-2, 25.0e-2, 30e-2, 35e-2])
 D = np.array([0.01, 0.0])
 v = np.array([0.0, 0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9, 1.0])
-alpha = np.array([0.1, 0.4, 1.0, 0.025, 0.05, 2.0, 5.0, 0.0])
+alpha = np.array([0.1, 0.4, 1.0, 0.025, 0.05, 2.0, 5.0, 0.0, 0.25, 0.5, 0.75, 1.0, 1.5, 2.0, 0.01, 0.001])
 
 a_ind = [1]
 In_ind = [3]
-Ca_ind = [3]
+Ca_ind = [4]
 D_ind = [0]
 v_ind = [5]
-alpha_ind = [2,5]
+alpha_ind = [0]
 
 for indI in In_ind:
     for indC in Ca_ind:
@@ -46,8 +46,9 @@ for indI in In_ind:
             for indD in D_ind:
                 for indV in v_ind:
                     for indAl in alpha_ind:
-                        out_dir_full = out_dir + 'out_set7_In_' + str(indI) + '_Ca_' + str(indC) + '_a_' + str(indA) + '_D_' + str(indD) + '_v_' + str(indV) + '_Al_' +  str(indAl)
+                        out_dir_full = out_dir + 'out_set23_In_' + str(indI) + '_Ca_' + str(indC) + '_a_' + str(indA) + '_D_' + str(indD) + '_v_' + str(indV) + '_Al_' +  str(indAl)
                         print(out_dir_full)
+                        #name = '18d' + 'In_' + str(indI) + '_Ca_' + str(indC) + '_a_' + str(indA) + '_D_' + str(indD) + '_v_' + str(indV) + '_Al_' + str(indAl)
                         name = 'In_' + str(indI) + '_Ca_' + str(indC) + '_a_' + str(indA) + '_D_' + str(indD) + '_v_' + str(indV) + '_Al_' + str(indAl)
                         print(name)
                         print('Ca>', Ca[indC])

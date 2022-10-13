@@ -31,6 +31,15 @@ target_include_directories(divisionless_model  PRIVATE ${CMAKE_SOURCE_DIR})
 target_link_libraries(divisionless_model  PRIVATE AMDiS mpi14)
 target_compile_definitions(divisionless_model  PRIVATE HAVE_MPI)
 
+add_executable(divisionless_tensionless_model 
+  divisionless_tensionless_src/AdaptInstationarySeq.cc 
+  include/ContourWriter.cc 
+  divisionless_tensionless_src/Coupling_divisionless_tensionless_phase.h
+  divisionless_tensionless_src/box_migration.cc)
+target_include_directories(divisionless_tensionless_model  PRIVATE ${CMAKE_SOURCE_DIR})
+target_link_libraries(divisionless_tensionless_model  PRIVATE AMDiS mpi14)
+target_compile_definitions(divisionless_tensionless_model  PRIVATE HAVE_MPI)
+
 
 add_executable(supracell_model 
 supracell_src/AdaptInstationarySeq.cc 

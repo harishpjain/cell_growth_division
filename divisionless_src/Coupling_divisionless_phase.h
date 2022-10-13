@@ -122,6 +122,19 @@ namespace AMDiS { namespace base_problems {
         };
     }
 
+    auto Bi_Bj()
+    {
+      return [eps=eps_, potential_ = potential_](double phi_i, double phi_j)
+        {
+          phi_i = std::max(-1.0, std::min(1.0, phi_i));
+          phi_j = std::max(-1.0, std::min(1.0, phi_j));
+          double B_i = (phi_i+1.0)/2.0;
+          double B_j = (phi_j+1.0)/2.0;
+          return B_i*B_j;
+          }
+        };
+    }
+
     // Rescaling a Phasefield from [-1,1] to [0,1] and multiplying with nematic tensor
 
     virtual void initTimestep(AdaptInfo* adaptInfo) override
@@ -312,6 +325,7 @@ namespace AMDiS { namespace base_problems {
     //
     std::unique_ptr<extensions::RefinementExpression> refinement_;
     std::vector<std::pair<std::size_t,double>> contributions;
+    std::vector<std::pair<std::size_t,double>> Bi_Bj_contributions;
 
     double eps_ = 0.1;
 
