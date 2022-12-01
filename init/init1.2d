@@ -3,7 +3,7 @@ parallel->log main rank: 1
 number of cells: 100
 
 postfix: 
-output: /beegfs/ws/1/haja565a-my_workspace_neo/elongated_rectangles/sim_6f
+output: /beegfs/ws/1/haja565a-workspace/elongated_rectangles/sim35
 macroMesh->macro file name:       ./macro/macro_100_100.per.2d
 %macroMesh->macro file name:       ./macro/circle_macro.2d
 macroMesh->periodic file:         ./macro/macro_100_100.per
@@ -36,7 +36,7 @@ macroMesh->global->outer refinements: 0
 % 'elongated_rectangles' : elongated cells stacked in cubic manner
 % 'read_cells' : read arh files of cells. Make sure the macro mesh is same
 
-main->setup: elongated_rectangles
+main->setup: collective
 main->fixed point iterations: 1
 main->write interaction term: 0
 main->write volume: 0
@@ -82,7 +82,7 @@ phase->d_elon_scale: 0.0625
 phase->interaction->potential: 7                      % 0 - no attraction, 1 - exponential attraction, 2 - trigonometric attraction, 3 - quartic att_and_rep
                                                     % 4- odd no attraction, 5 % odd quartic att and rep, 6 - attractionAndRepulsion with B = (phi+1)/2
 %added this on my own
-phase->initial->gaussian: 0
+phase->initial->gaussian: 1
 phase->initial->hexagonal_packing: 0
 % Start with rectangles instead of spheres, works for collective and t1
 phase->initial->rectangles: 1

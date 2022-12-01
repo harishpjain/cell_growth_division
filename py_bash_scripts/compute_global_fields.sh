@@ -4,8 +4,8 @@
 #SBATCH --mail-type=end
 #SBATCH --mail-user=harish_p.jain@mailbox.tu-dresden.de
 #SBATCH --time=24:00:00
-#SBATCH --error=/beegfs/ws/1/haja565a-neo_workspace3/globalfield1.err
-#SBATCH --output=/beegfs/ws/1/haja565a-neo_workspace3/globalfield1.out
+#SBATCH --error=/beegfs/ws/1/haja565a-workspace/globalfield2.err
+#SBATCH --output=/beegfs/ws/1/haja565a-workspace/globalfield2.out
 #SBATCH -A wir
 #SBATCH -p haswell
 #SBATCH --mem-per-cpu=2500
@@ -13,70 +13,120 @@
 module load VTK/8.2.0-intel-2020a-Python-3.8.2
 module load matplotlib/3.2.1-intel-2020a-Python-3.8.2
 
-srun python compute_T1_force.py /beegfs/ws/1/haja565a-neo_workspace3/phd10052022/out_set17_In_3_Ca_3_a_0_D_0_v_5_Al_2/
-srun python compute_T1_force.py /beegfs/ws/1/haja565a-neo_workspace3/phd10052022/out_set17_In_3_Ca_3_a_0_D_0_v_5_Al_7/
-srun python compute_T1_force.py /beegfs/ws/1/haja565a-neo_workspace3/phd10052022/out_set17_In_3_Ca_3_a_0_D_1_v_5_Al_2/
-srun python compute_T1_force.py /beegfs/ws/1/haja565a-neo_workspace3/phd10052022/out_set17_In_3_Ca_3_a_0_D_1_v_5_Al_7/
+#srun python compute_stress_or_force.py /beegfs/ws/1/haja565a-workspace/phd10052022/out_set28b_In_3_Ca_3_a_0_D_0_v_5_Al_0/ 1 20e-2
+#srun python compute_stress_or_force.py /beegfs/ws/1/haja565a-workspace/phd10052022/out_set28c_In_3_Ca_3_a_0_D_0_v_5_Al_0/ 1 20e-2
 
-#srun python compute_phi_field.py /beegfs/ws/1/haja565a-neo_workspace3/phd10052022/out_set23_In_3_Ca_5_a_1_D_0_v_5_Al_0/
-#srun python compute_phi_field.py /beegfs/ws/1/haja565a-neo_workspace3/phd10052022/out_set23_In_3_Ca_4_a_1_D_0_v_5_Al_0/
-#srun python compute_stress_or_force.py /beegfs/ws/1/haja565a-neo_workspace3/phd10052022/out_set23_In_3_Ca_5_a_1_D_0_v_5_Al_0/ 1 30e-2
-srun python compute_stress_or_force.py /beegfs/ws/1/haja565a-neo_workspace3/phd10052022/out_set23_In_3_Ca_4_a_1_D_0_v_5_Al_0/ 1 25e-2
+#srun python compute_phi_field.py /beegfs/ws/1/haja565a-workspace/phd10052022/out_set29_In_3_Ca_3_a_1_D_0_v_5_Al_0/
+#srun python neo_positions.py /beegfs/ws/1/haja565a-workspace/phd10052022/out_set29_In_3_Ca_3_a_1_D_0_v_5_Al_0/ 100
+#srun python compute_stress_or_force.py /beegfs/ws/1/haja565a-workspace/phd10052022/out_set29_In_3_Ca_3_a_1_D_0_v_5_Al_0/ 1 20e-2
 
-#srun python compute_phi_field.py /beegfs/ws/1/haja565a-neo_workspace3/phd10052022/out_set20_In_3_Ca_0_a_1_D_0_v_5_Al_0/
-#srun python compute_phi_field.py /beegfs/ws/1/haja565a-neo_workspace3/phd10052022/out_set20_In_3_Ca_1_a_1_D_0_v_5_Al_0/
-#srun python compute_phi_field.py /beegfs/ws/1/haja565a-neo_workspace3/phd10052022/out_set20_In_3_Ca_2_a_1_D_0_v_5_Al_0/
-#srun python compute_phi_field.py /beegfs/ws/1/haja565a-neo_workspace3/phd10052022/out_set20_In_3_Ca_4_a_1_D_0_v_5_Al_0/
-#srun python compute_phi_field.py /beegfs/ws/1/haja565a-neo_workspace3/phd10052022/out_set20_In_3_Ca_5_a_1_D_0_v_5_Al_0/
+#srun python compute_phi_field.py /beegfs/ws/1/haja565a-workspace/phd10052022/out_set27SHEAR_In_3_Ca_3_a_1_D_0_v_5_Al_0/
+#srun python neo_positions.py /beegfs/ws/1/haja565a-workspace/phd10052022/out_set27SHEAR_In_3_Ca_3_a_1_D_0_v_5_Al_0/ 100
+#srun python compute_stress_or_force.py /beegfs/ws/1/haja565a-workspace/phd10052022/out_set27SHEAR_In_3_Ca_3_a_1_D_0_v_5_Al_0/ 1 20e-2
 
-#srun python compute_phi_field.py /beegfs/ws/1/haja565a-neo_workspace3/phd10052022/out_set21_In_3_Ca_3_a_1_D_0_v_5_Al_2/
-#srun python compute_phi_field.py /beegfs/ws/1/haja565a-neo_workspace3/phd10052022/out_set21_In_3_Ca_3_a_1_D_0_v_5_Al_7/
-#srun python compute_phi_field.py /beegfs/ws/1/haja565a-neo_workspace3/phd10052022/out_set21_In_3_Ca_3_a_1_D_0_v_5_Al_14/
-#srun python compute_phi_field.py /beegfs/ws/1/haja565a-neo_workspace3/phd10052022/out_set21_In_3_Ca_3_a_1_D_0_v_5_Al_15/
+#srun python compute_phi_field.py /beegfs/ws/1/haja565a-workspace/phd10052022/out_set26_In_3_Ca_3_a_1_D_0_v_1_Al_0/
+#srun python neo_positions.py /beegfs/ws/1/haja565a-workspace/phd10052022/out_set26_In_3_Ca_3_a_1_D_0_v_1_Al_0/ 100
+#srun python compute_stress_or_force.py /beegfs/ws/1/haja565a-workspace/phd10052022/out_set26_In_3_Ca_3_a_1_D_0_v_1_Al_0/ 1 20e-2
 
-#srun python compute_phi_field.py /beegfs/ws/1/haja565a-neo_workspace3/phd10052022/out_set22_In_3_Ca_3_a_1_D_1_v_5_Al_0/
-#srun python compute_phi_field.py /beegfs/ws/1/haja565a-neo_workspace3/phd10052022/out_set22_In_3_Ca_3_a_1_D_1_v_5_Al_7/
-
-#srun python compute_stress_or_force.py /beegfs/ws/1/haja565a-neo_workspace3/phd10052022/out_set20_In_3_Ca_0_a_1_D_0_v_5_Al_0/ 1 5e-2
-#srun python compute_stress_or_force.py /beegfs/ws/1/haja565a-neo_workspace3/phd10052022/out_set20_In_3_Ca_1_a_1_D_0_v_5_Al_0/ 1 10e-2
-#srun python compute_stress_or_force.py /beegfs/ws/1/haja565a-neo_workspace3/phd10052022/out_set20_In_3_Ca_2_a_1_D_0_v_5_Al_0/ 1 15e-2
-#srun python compute_stress_or_force.py /beegfs/ws/1/haja565a-neo_workspace3/phd10052022/out_set20_In_3_Ca_4_a_1_D_0_v_5_Al_0/ 1 25e-2
-#srun python compute_stress_or_force.py /beegfs/ws/1/haja565a-neo_workspace3/phd10052022/out_set20_In_3_Ca_5_a_1_D_0_v_5_Al_0/ 1 30e-2
-
-#srun python compute_stress_or_force.py /beegfs/ws/1/haja565a-neo_workspace3/phd10052022/out_set21_In_3_Ca_3_a_1_D_0_v_5_Al_2/ 1 20e-2
-#srun python compute_stress_or_force.py /beegfs/ws/1/haja565a-neo_workspace3/phd10052022/out_set21_In_3_Ca_3_a_1_D_0_v_5_Al_7/ 1 20e-2
-#srun python compute_stress_or_force.py /beegfs/ws/1/haja565a-neo_workspace3/phd10052022/out_set21_In_3_Ca_3_a_1_D_0_v_5_Al_14/ 1 20e-2
-#srun python compute_stress_or_force.py /beegfs/ws/1/haja565a-neo_workspace3/phd10052022/out_set21_In_3_Ca_3_a_1_D_0_v_5_Al_15/ 1 20e-2
-
-#srun python compute_stress_or_force.py /beegfs/ws/1/haja565a-neo_workspace3/phd10052022/out_set22_In_3_Ca_3_a_1_D_1_v_5_Al_0/ 1 20e-2
-#srun python compute_stress_or_force.py /beegfs/ws/1/haja565a-neo_workspace3/phd10052022/out_set22_In_3_Ca_3_a_1_D_1_v_5_Al_7/ 1 20e-2
-
-#srun python compute_stress_or_force.py /beegfs/ws/1/haja565a-neo_workspace3/phd10052022/out_set18a_In_3_Ca_3_a_1_D_0_v_5_Al_0/ 1 20e-2
-#srun python compute_stress_or_force.py /beegfs/ws/1/haja565a-neo_workspace3/phd10052022/out_set18b_In_3_Ca_3_a_1_D_0_v_5_Al_0/ 1 20e-2
-#srun python compute_stress_or_force.py /beegfs/ws/1/haja565a-neo_workspace3/phd10052022/out_set18c_In_3_Ca_3_a_1_D_0_v_5_Al_0/ 1 
-#srun python compute_stress_or_force.py /beegfs/ws/1/haja565a-neo_workspace3/phd10052022/out_set18d_In_3_Ca_3_a_1_D_0_v_5_Al_0/ 1 20e-2
-
-#srun python compute_stress_or_force.py /beegfs/ws/1/haja565a-neo_workspace3/phd10052022/out_set19lowgap_In_3_Ca_3_a_1_D_0_v_5_Al_0/ 1 20e-2
-
-#srun python compute_stress_or_force_repulsion.py /beegfs/ws/1/haja565a-neo_workspace3/phd10052022/out_set17_In_3_Ca_3_a_0_D_0_v_5_Al_2/ 1 20e-2
-#srun python compute_stress_or_force_repulsion.py /beegfs/ws/1/haja565a-neo_workspace3/phd10052022/out_set17_In_3_Ca_3_a_0_D_0_v_5_Al_7/ 1 20e-2
-#srun python compute_stress_or_force_repulsion.py /beegfs/ws/1/haja565a-neo_workspace3/phd10052022/out_set17_In_3_Ca_3_a_0_D_1_v_5_Al_2/ 1 20e-2
-#srun python compute_stress_or_force_repulsion.py /beegfs/ws/1/haja565a-neo_workspace3/phd10052022/out_set17_In_3_Ca_3_a_0_D_1_v_5_Al_7/ 1 20e-2
+#srun python compute_phi_field.py /beegfs/ws/1/haja565a-workspace/phd10052022/out_set26_In_3_Ca_3_a_0_D_0_v_1_Al_0/
+#srun python neo_positions.py /beegfs/ws/1/haja565a-workspace/phd10052022/out_set26_In_3_Ca_3_a_0_D_0_v_1_Al_0/ 100
+#srun python compute_stress_or_force.py /beegfs/ws/1/haja565a-workspace/phd10052022/out_set26_In_3_Ca_3_a_0_D_0_v_1_Al_0/ 1 20e-2
 
 
-#srun python compute_phi_field.py /beegfs/ws/1/haja565a-neo_workspace3/phd10052022/out_set17_In_3_Ca_3_a_0_D_0_v_5_Al_2/
-#srun python compute_phi_field.py /beegfs/ws/1/haja565a-neo_workspace3/phd10052022/out_set17_In_3_Ca_3_a_0_D_0_v_5_Al_7/
-#srun python compute_phi_field.py /beegfs/ws/1/haja565a-neo_workspace3/phd10052022/out_set17_In_3_Ca_3_a_0_D_1_v_5_Al_2/
-#srun python compute_phi_field.py /beegfs/ws/1/haja565a-neo_workspace3/phd10052022/out_set17_In_3_Ca_3_a_0_D_1_v_5_Al_7/
+#srun python compute_phi_field.py /beegfs/ws/1/haja565a-workspace/elongated_rectangles/sim11/
+#srun python compute_phi_field.py /beegfs/ws/1/haja565a-workspace/elongated_rectangles/sim12/
+#srun python compute_phi_field.py /beegfs/ws/1/haja565a-workspace/elongated_rectangles/sim13/
+#srun python compute_phi_field.py /beegfs/ws/1/haja565a-workspace/elongated_rectangles/sim33/
+
+#srun python neo_positions.py /beegfs/ws/1/haja565a-workspace/elongated_rectangles/sim11/ 100
+#srun python neo_positions.py /beegfs/ws/1/haja565a-workspace/elongated_rectangles/sim12/ 100
+#srun python neo_positions.py /beegfs/ws/1/haja565a-workspace/elongated_rectangles/sim13/ 100
+#srun python neo_positions.py /beegfs/ws/1/haja565a-workspace/elongated_rectangles/sim33/ 100
+
+#srun python compute_stress_or_force.py /beegfs/ws/1/haja565a-workspace/elongated_rectangles/sim11/ 1 20e-2
+#srun python compute_stress_or_force.py /beegfs/ws/1/haja565a-workspace/elongated_rectangles/sim12/ 1 20e-2
+#srun python compute_stress_or_force.py /beegfs/ws/1/haja565a-workspace/elongated_rectangles/sim13/ 1 20e-2
+#srun python compute_stress_or_force.py /beegfs/ws/1/haja565a-workspace/elongated_rectangles/sim33/ 1 20e-2
+
+
+srun python compute_T1_force.py /beegfs/ws/1/haja565a-workspace/phd10052022/out_set17_In_3_Ca_3_a_0_D_0_v_5_Al_2/
+srun python compute_T1_force.py /beegfs/ws/1/haja565a-workspace/phd10052022/out_set17_In_3_Ca_3_a_0_D_0_v_5_Al_7/
+srun python compute_T1_force.py /beegfs/ws/1/haja565a-workspace/phd10052022/out_set17_In_3_Ca_3_a_0_D_1_v_5_Al_2/
+srun python compute_T1_force.py /beegfs/ws/1/haja565a-workspace/phd10052022/out_set17_In_3_Ca_3_a_0_D_1_v_5_Al_7/
+srun python compute_T1_force.py /beegfs/ws/1/haja565a-workspace/phd10052022/out_set29_In_3_Ca_3_a_1_D_0_v_5_Al_0/
+
+#srun python compute_phi_field.py /beegfs/ws/1/haja565a-workspace/phd10052022/out_set23_In_3_Ca_5_a_1_D_0_v_5_Al_0/
+#srun python compute_phi_field.py /beegfs/ws/1/haja565a-workspace/phd10052022/out_set23_In_3_Ca_4_a_1_D_0_v_5_Al_0/
+
+#srun python neo_positions.py /beegfs/ws/1/haja565a-workspace/phd10052022/out_set23_In_3_Ca_4_a_1_D_0_v_5_Al_0/ 100
+#srun python compute_stress_or_force.py /beegfs/ws/1/haja565a-workspace/phd10052022/out_set23_In_3_Ca_5_a_1_D_0_v_5_Al_0/ 1 30e-2
+#srun python compute_stress_or_force.py /beegfs/ws/1/haja565a-workspace/phd10052022/out_set23_In_3_Ca_4_a_1_D_0_v_5_Al_0/ 1 25e-2
+
+#srun python compute_phi_field.py /beegfs/ws/1/haja565a-workspace/phd10052022/out_set24lowgap_In_3_Ca_3_a_1_D_0_v_5_Al_0/
+#srun python neo_positions.py /beegfs/ws/1/haja565a-workspace/phd10052022/out_set24lowgap_In_3_Ca_3_a_1_D_0_v_5_Al_0/ 100
+#srun python compute_stress_or_force.py /beegfs/ws/1/haja565a-workspace/phd10052022/out_set24lowgap_In_3_Ca_3_a_1_D_0_v_5_Al_0/ 1 20e-2
+
+#srun python compute_phi_field.py /beegfs/ws/1/haja565a-workspace/phd10052022/out_set24lowgap_In_3_Ca_3_a_0_D_0_v_5_Al_0/
+#srun python neo_positions.py /beegfs/ws/1/haja565a-workspace/phd10052022/out_set24lowgap_In_3_Ca_3_a_0_D_0_v_5_Al_0/ 100
+#srun python compute_stress_or_force.py /beegfs/ws/1/haja565a-workspace/phd10052022/out_set24lowgap_In_3_Ca_3_a_0_D_0_v_5_Al_0/ 1 20e-2
+
+#srun python compute_phi_field.py /beegfs/ws/1/haja565a-workspace/phd10052022/out_set20_In_3_Ca_0_a_1_D_0_v_5_Al_0/
+#srun python compute_phi_field.py /beegfs/ws/1/haja565a-workspace/phd10052022/out_set20_In_3_Ca_1_a_1_D_0_v_5_Al_0/
+#srun python compute_phi_field.py /beegfs/ws/1/haja565a-workspace/phd10052022/out_set20_In_3_Ca_2_a_1_D_0_v_5_Al_0/
+#srun python compute_phi_field.py /beegfs/ws/1/haja565a-workspace/phd10052022/out_set20_In_3_Ca_4_a_1_D_0_v_5_Al_0/
+#srun python compute_phi_field.py /beegfs/ws/1/haja565a-workspace/phd10052022/out_set20_In_3_Ca_5_a_1_D_0_v_5_Al_0/
+
+#srun python compute_phi_field.py /beegfs/ws/1/haja565a-workspace/phd10052022/out_set21_In_3_Ca_3_a_1_D_0_v_5_Al_2/
+#srun python compute_phi_field.py /beegfs/ws/1/haja565a-workspace/phd10052022/out_set21_In_3_Ca_3_a_1_D_0_v_5_Al_7/
+#srun python compute_phi_field.py /beegfs/ws/1/haja565a-workspace/phd10052022/out_set21_In_3_Ca_3_a_1_D_0_v_5_Al_14/
+#srun python compute_phi_field.py /beegfs/ws/1/haja565a-workspace/phd10052022/out_set21_In_3_Ca_3_a_1_D_0_v_5_Al_15/
+
+#srun python compute_phi_field.py /beegfs/ws/1/haja565a-workspace/phd10052022/out_set22_In_3_Ca_3_a_1_D_1_v_5_Al_0/
+#srun python compute_phi_field.py /beegfs/ws/1/haja565a-workspace/phd10052022/out_set22_In_3_Ca_3_a_1_D_1_v_5_Al_7/
+
+#srun python compute_stress_or_force.py /beegfs/ws/1/haja565a-workspace/phd10052022/out_set20_In_3_Ca_0_a_1_D_0_v_5_Al_0/ 1 5e-2
+#srun python compute_stress_or_force.py /beegfs/ws/1/haja565a-workspace/phd10052022/out_set20_In_3_Ca_1_a_1_D_0_v_5_Al_0/ 1 10e-2
+#srun python compute_stress_or_force.py /beegfs/ws/1/haja565a-workspace/phd10052022/out_set20_In_3_Ca_2_a_1_D_0_v_5_Al_0/ 1 15e-2
+#srun python compute_stress_or_force.py /beegfs/ws/1/haja565a-workspace/phd10052022/out_set20_In_3_Ca_4_a_1_D_0_v_5_Al_0/ 1 25e-2
+#srun python compute_stress_or_force.py /beegfs/ws/1/haja565a-workspace/phd10052022/out_set20_In_3_Ca_5_a_1_D_0_v_5_Al_0/ 1 30e-2
+
+#srun python compute_stress_or_force.py /beegfs/ws/1/haja565a-workspace/phd10052022/out_set21_In_3_Ca_3_a_1_D_0_v_5_Al_2/ 1 20e-2
+#srun python compute_stress_or_force.py /beegfs/ws/1/haja565a-workspace/phd10052022/out_set21_In_3_Ca_3_a_1_D_0_v_5_Al_7/ 1 20e-2
+#srun python compute_stress_or_force.py /beegfs/ws/1/haja565a-workspace/phd10052022/out_set21_In_3_Ca_3_a_1_D_0_v_5_Al_14/ 1 20e-2
+#srun python compute_stress_or_force.py /beegfs/ws/1/haja565a-workspace/phd10052022/out_set21_In_3_Ca_3_a_1_D_0_v_5_Al_15/ 1 20e-2
+
+#srun python compute_stress_or_force.py /beegfs/ws/1/haja565a-workspace/phd10052022/out_set22_In_3_Ca_3_a_1_D_1_v_5_Al_0/ 1 20e-2
+#srun python compute_stress_or_force.py /beegfs/ws/1/haja565a-workspace/phd10052022/out_set22_In_3_Ca_3_a_1_D_1_v_5_Al_7/ 1 20e-2
+
+#srun python compute_stress_or_force.py /beegfs/ws/1/haja565a-workspace/phd10052022/out_set18a_In_3_Ca_3_a_1_D_0_v_5_Al_0/ 1 20e-2
+#srun python compute_stress_or_force.py /beegfs/ws/1/haja565a-workspace/phd10052022/out_set18b_In_3_Ca_3_a_1_D_0_v_5_Al_0/ 1 20e-2
+#srun python compute_stress_or_force.py /beegfs/ws/1/haja565a-workspace/phd10052022/out_set18c_In_3_Ca_3_a_1_D_0_v_5_Al_0/ 1 
+#srun python compute_stress_or_force.py /beegfs/ws/1/haja565a-workspace/phd10052022/out_set18d_In_3_Ca_3_a_1_D_0_v_5_Al_0/ 1 20e-2
+
+#srun python compute_stress_or_force.py /beegfs/ws/1/haja565a-workspace/phd10052022/out_set19lowgap_In_3_Ca_3_a_1_D_0_v_5_Al_0/ 1 20e-2
+#srun python compute_phi_field.py /beegfs/ws/1/haja565a-workspace/phd10052022/out_set19lowgap_In_3_Ca_3_a_1_D_0_v_5_Al_0/
+
+#srun python compute_stress_or_force_repulsion.py /beegfs/ws/1/haja565a-workspace/phd10052022/out_set17_In_3_Ca_3_a_0_D_0_v_5_Al_2/ 1 20e-2
+#srun python compute_stress_or_force_repulsion.py /beegfs/ws/1/haja565a-workspace/phd10052022/out_set17_In_3_Ca_3_a_0_D_0_v_5_Al_7/ 1 20e-2
+#srun python compute_stress_or_force_repulsion.py /beegfs/ws/1/haja565a-workspace/phd10052022/out_set17_In_3_Ca_3_a_0_D_1_v_5_Al_2/ 1 20e-2
+#srun python compute_stress_or_force_repulsion.py /beegfs/ws/1/haja565a-workspace/phd10052022/out_set17_In_3_Ca_3_a_0_D_1_v_5_Al_7/ 1 20e-2
+
+
+#srun python compute_phi_field.py /beegfs/ws/1/haja565a-workspace/phd10052022/out_set17_In_3_Ca_3_a_0_D_0_v_5_Al_2/ 30000 25
+#srun python compute_phi_field.py /beegfs/ws/1/haja565a-workspace/phd10052022/out_set17_In_3_Ca_3_a_0_D_0_v_5_Al_7/ 30000 25
+#srun python compute_phi_field.py /beegfs/ws/1/haja565a-workspace/phd10052022/out_set17_In_3_Ca_3_a_0_D_1_v_5_Al_2/ 30000 25
+#srun python compute_phi_field.py /beegfs/ws/1/haja565a-workspace/phd10052022/out_set17_In_3_Ca_3_a_0_D_1_v_5_Al_7/ 30000 25
 
 
 
 
-#srun python compute_phi_field.py /beegfs/ws/1/haja565a-neo_workspace3/phd10052022/out_set18a_In_3_Ca_3_a_1_D_0_v_5_Al_0/
-#srun python compute_phi_field.py /beegfs/ws/1/haja565a-neo_workspace3/phd10052022/out_set18b_In_3_Ca_3_a_1_D_0_v_5_Al_0/
-#srun python compute_phi_field.py /beegfs/ws/1/haja565a-neo_workspace3/phd10052022/out_set18c_In_3_Ca_3_a_1_D_0_v_5_Al_0/
-#srun python compute_phi_field.py /beegfs/ws/1/haja565a-neo_workspace3/phd10052022/out_set18d_In_3_Ca_3_a_1_D_0_v_5_Al_0/
+#srun python compute_phi_field.py /beegfs/ws/1/haja565a-workspace/phd10052022/out_set18a_In_3_Ca_3_a_1_D_0_v_5_Al_0/
+#srun python compute_phi_field.py /beegfs/ws/1/haja565a-workspace/phd10052022/out_set18b_In_3_Ca_3_a_1_D_0_v_5_Al_0/
+#srun python compute_phi_field.py /beegfs/ws/1/haja565a-workspace/phd10052022/out_set18c_In_3_Ca_3_a_1_D_0_v_5_Al_0/
+#srun python compute_phi_field.py /beegfs/ws/1/haja565a-workspace/phd10052022/out_set18d_In_3_Ca_3_a_1_D_0_v_5_Al_0/
 
+
+#srun python compute_overlap_neigh.py /beegfs/ws/1/haja565a-workspace/phd10052022/out_set18a_In_3_Ca_3_a_1_D_0_v_5_Al_0/
 
 
 

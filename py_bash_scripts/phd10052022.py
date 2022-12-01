@@ -19,7 +19,7 @@ setup = 'benchmark2'
 base_dir = '/home/haja565a/softwares/cell_growth_division'
 exec_dir = base_dir + '/build'
 init_dir = base_dir + '/init' 
-out_dir = '/beegfs/ws/1/haja565a-neo_workspace3/phd10052022/' 
+out_dir = '/beegfs/ws/1/haja565a-workspace/phd10052022/' 
 if not os.path.exists(out_dir):
     os.makedirs(out_dir)
 
@@ -35,10 +35,13 @@ alpha = np.array([0.1, 0.4, 1.0, 0.025, 0.05, 2.0, 5.0, 0.0, 0.25, 0.5, 0.75, 1.
 
 a_ind = [1]
 In_ind = [3]
-Ca_ind = [4]
+Ca_ind = [3]
 D_ind = [0]
 v_ind = [5]
 alpha_ind = [0]
+
+multi_exp = ['a', 'b', 'c', 'd', 'e']
+multi_indA = 0
 
 for indI in In_ind:
     for indC in Ca_ind:
@@ -46,10 +49,12 @@ for indI in In_ind:
             for indD in D_ind:
                 for indV in v_ind:
                     for indAl in alpha_ind:
-                        out_dir_full = out_dir + 'out_set23_In_' + str(indI) + '_Ca_' + str(indC) + '_a_' + str(indA) + '_D_' + str(indD) + '_v_' + str(indV) + '_Al_' +  str(indAl)
+                        ##### change ELONGATION_VEL PARAMETER FROM 3 to 0 to change from shear to no shear 
+                        out_dir_full = out_dir + 'out_set29_In_' + str(indI) + '_Ca_' + str(indC) + '_a_' + str(indA) + '_D_' + str(indD) + '_v_' + str(indV) + '_Al_' +  str(indAl)
+                        #out_dir_full = out_dir + 'out_set28' + multi_exp[multi_indA] +  '_In_' + str(indI) + '_Ca_' + str(indC) + '_a_' + str(indA) + '_D_' + str(indD) + '_v_' + str(indV) + '_Al_' +  str(indAl)
                         print(out_dir_full)
                         #name = '18d' + 'In_' + str(indI) + '_Ca_' + str(indC) + '_a_' + str(indA) + '_D_' + str(indD) + '_v_' + str(indV) + '_Al_' + str(indAl)
-                        name = 'In_' + str(indI) + '_Ca_' + str(indC) + '_a_' + str(indA) + '_D_' + str(indD) + '_v_' + str(indV) + '_Al_' + str(indAl)
+                        name = multi_exp[multi_indA] + 'In_' + str(indI) + '_Ca_' + str(indC) + '_a_' + str(indA) + '_D_' + str(indD) + '_v_' + str(indV) + '_Al_' + str(indAl)
                         print(name)
                         print('Ca>', Ca[indC])
                         print('In>', In[indI])
@@ -78,3 +83,5 @@ for indI in In_ind:
                         run_file = out_dir + 'r_' + postfix + '.sh'
                         generate_file(templ_run_file, run_file, parameters)
                         subprocess.call('sbatch --exclusive ' + run_file, shell=True)
+            
+            multi_indA+=1

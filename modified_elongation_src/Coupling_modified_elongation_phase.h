@@ -541,7 +541,7 @@ namespace AMDiS { namespace base_problems {
       }
 
       if(contact_inhi_growth == 1){
-        double total_contributions = 0.0;;
+        double total_contributions = 0.0;
         phaseProb_.neighbours = 0;
         for (std::size_t i = 0; i < contributions.size(); i++){
           total_contributions += contributions[i].second;

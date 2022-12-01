@@ -99,13 +99,15 @@ class Quantity:
         T1_start = np.load(self.input_dir + '/T1_start.npy')
         T1_end = np.load(self.input_dir + '/T1_end.npy')
         
+        T1_locations = np.load(self.input_dir + '/T1_locations.npy')#####
 
         #removing initial few T1 transitions
         ignore_ind = np.argwhere(T1_start > self.delt*ignore_timesteps)
         T1_end = T1_end[ignore_ind].flatten()
         T1_transitions = T1_transitions[ignore_ind].reshape(len(T1_end), 4)
         T1_start = T1_start[ignore_ind].flatten()
-        T1_locations = T1_loc(self.input_dir, T1_transitions, T1_start, T1_end)
+        #T1_locations = T1_loc(self.input_dir, T1_transitions, T1_start, T1_end)
+        T1_locations = T1_locations[ignore_ind].reshape(len(T1_start), 2)#####
         T1_diff = T1_end - T1_start
         print('Total T1 transitions: ', len(T1_start))
         
@@ -119,7 +121,7 @@ class Quantity:
         #less because the algorithm used to detect T1 transitions can only 
         #handle T1 transitions of that length.
         
-        max_length = int(np.max(T1_diff)/self.delt+1) 
+        max_length = int(10.0/self.delt+1) #int(np.max(T1_diff)/self.delt+1) 
         t_a = int(max_length/4)
         t_b = int(max_length/2)
         t_c = int(3*max_length/4)
@@ -268,7 +270,11 @@ class Quantity:
         std_forces_d = np.std(np.array(forces_d), axis=0)
 
         if plot_std:
-            ax[0, 0].errorbar(np.arange(0, np.max(T1_diff)+self.delt, self.delt),
+            #ax[0, 0].errorbar(np.arange(0, np.max(T1_diff)+self.delt, self.delt),
+            #                  average_forces, yerr=std_forces,
+            #                  fmt='-', color='black',
+            #                  ecolor='lightgray', elinewidth=3, capsize=0)
+            ax[0, 0].errorbar(np.arange(0, 10.0+self.delt, self.delt),
                               average_forces, yerr=std_forces,
                               fmt='-', color='black',
                               ecolor='lightgray', elinewidth=3, capsize=0)
@@ -290,7 +296,9 @@ class Quantity:
                               ecolor='lightgray', elinewidth=3, capsize=0)
 
         else:
-            ax[0, 0].plot(np.arange(0, np.max(T1_diff) +
+            #ax[0, 0].plot(np.arange(0, np.max(T1_diff) +
+            #              self.delt, self.delt), average_forces, 'k')
+            ax[0, 0].plot(np.arange(0, 10.0 +
                           self.delt, self.delt), average_forces, 'k')
             ax[0, 2].plot(avg_forces_a, 'k', linewidth=2)
             ax[1, 0].plot(avg_forces_b, 'k', linewidth=2)
@@ -336,12 +344,18 @@ class Quantity:
         #single plot
         fig, ax = plt.subplots(facecolor='w')
         if plot_std:
-            ax.errorbar(np.arange(0, np.max(T1_diff)+self.delt, self.delt),
+            #ax.errorbar(np.arange(0, np.max(T1_diff)+self.delt, self.delt),
+            #            average_forces, yerr=std_forces,
+            #            fmt='-', color='black',
+            #            ecolor='lightgray', elinewidth=3, capsize=0)
+            ax.errorbar(np.arange(0, 10.0+self.delt, self.delt),
                         average_forces, yerr=std_forces,
                         fmt='-', color='black',
                         ecolor='lightgray', elinewidth=3, capsize=0)
         else:
-            ax.plot(np.arange(0, np.max(T1_diff)+self.delt, self.delt),
+            #ax.plot(np.arange(0, 10.0+self.delt, self.delt),
+            #        average_forces, 'k')
+            ax.plot(np.arange(0, 10.0+self.delt, self.delt),
                     average_forces, 'k')
         ax.set_xlabel('Time (rescaled)', fontsize=22)
         if normalise == False:
@@ -366,6 +380,7 @@ class Quantity:
         
         #saving the forces
         np.save(self.result_dir + '/' + filename + '.npy', average_forces)
+        np.save(self.result_dir + '/' + filename + '_std.npy', std_forces)
         
         #plotting max forces
         fig, ax = plt.subplots()
@@ -449,6 +464,11 @@ class Quantity:
             ax.set_xlabel('Max energy')
         ax.set_ylabel('T1 duration')
         plt.savefig(self.result_dir + '/' + filename + '_force_time.png', dpi=200)
+        if force_status:
+            np.save(self.result_dir + '/max_forces_T1.npy', max_forces_T1)
+        else:
+            np.save(self.result_dir + '/max_energy_T1.npy', max_forces_T1)
+        np.save(self.result_dir + '/T1_diff.npy', T1_diff)
 
         
 
@@ -527,23 +547,28 @@ class Quantity:
         T1_transitions = np.load(self.input_dir + '/T1_transitions.npy')
         T1_start = np.load(self.input_dir + '/T1_start.npy')
         T1_end = np.load(self.input_dir + '/T1_end.npy')
-        T1_locations = T1_loc(self.input_dir, T1_transitions, T1_start, T1_end)
+        #T1_locations = T1_loc(self.input_dir, T1_transitions, T1_start, T1_end)
         print('Total T1 transitions: ', len(T1_start))
+        
+        T1_locations = np.load(self.input_dir + '/T1_locations.npy')#####
         
         if equalise_T1num:
             ignore_ind = np.argwhere(T1_start-time_gaps[-1] > selected_times[0])
             T1_end = T1_end[ignore_ind].flatten()
             T1_transitions = T1_transitions[ignore_ind].reshape(len(T1_end), 4)
             T1_start = T1_start[ignore_ind].flatten()
+            T1_locations = T1_locations[ignore_ind, :].reshape(len(T1_start), 2)#####
             
             ignore_ind = np.argwhere(T1_end+time_gaps[-1] < selected_times[-1])
             T1_end = T1_end[ignore_ind].flatten()
             T1_transitions = T1_transitions[ignore_ind].reshape(len(T1_end), 4)
             T1_start = T1_start[ignore_ind].flatten()
             
-            T1_locations = T1_loc(self.input_dir, T1_transitions, T1_start, T1_end)
+            #####T1_locations = T1_loc(self.input_dir, T1_transitions, T1_start, T1_end)
+            T1_locations = T1_locations[ignore_ind, :].reshape(len(T1_start), 2)#####
             T1_diff = T1_end - T1_start
             print('Total T1 transitions: ', len(T1_start))
+            np.save(self.result_dir + '/total_T1_eq.npy', len(T1_start))
         
         S0_arr, S1_arr = load_property(self.input_dir, 'nematic')
         S_mag = np.linalg.norm([S0_arr, S1_arr], axis=0)
@@ -555,8 +580,8 @@ class Quantity:
         radius = load_property(self.input_dir, 'radius')
         area=97.8#change this based on simulations
         area = np.pi*(radius**2)
-        for rank in ranks:
-            perimeter[rank] = np.load(self.input_dir + '/shape/perimeter_' + str(rank) + '.npy')[1:]
+        #for rank in ranks:
+        #    perimeter[rank] = np.load(self.input_dir + '/shape/perimeter_' + str(rank) + '.npy')[1:]
         shape_index = (perimeter/np.sqrt(area.T)).T
         
         avg_vel_mag = np.linalg.norm(load_property(self.input_dir, 'velocity'), axis=0)
@@ -811,6 +836,7 @@ class Quantity:
             ax.plot(plot_times, mean_total_forces, linestyle = 'dashed', linewidth=3)
          
         ax.legend(fontsize=22)
+        ax.set_xlabel('time')
         ax.grid()
         if force_status:
             ax.set_ylabel('Force', fontsize=22)
@@ -834,6 +860,7 @@ class Quantity:
         plt.savefig(self.result_dir + '/' + filename + postfix + '.png', dpi=200)
         np.save(self.result_dir + '/' + filename + postfix + '.npy', save_forces)
         np.save(self.result_dir + '/' + filename + postfix + 'times.npy', plot_times)
+        np.save(self.result_dir + '/' + filename + '_global_mean.npy', np.ma.filled(mean_total_forces, np.nan))
         
         fig, ax = plt.subplots(figsize=(8,8), facecolor='w')
         for indg, g in enumerate(beyond_gaps):
@@ -1137,6 +1164,7 @@ class Quantity:
         plt.tight_layout()
         plt.savefig(self.result_dir + '/T1_shapeindex' + postfix + '.png', dpi=200)
         np.save(self.result_dir+ '/T1_shapeindex' + postfix + '.npy', np.ma.filled(p_meanT1, np.nan))
+        np.save(self.result_dir+ '/T1_shapeindex_std' + postfix + '.npy', np.ma.filled(p_stdT1, np.nan))
         
         fig, ax = plt.subplots(facecolor='w')
         p_meanT1 = np.concatenate((p_start_mean, p_end_mean)) 
@@ -1356,7 +1384,6 @@ def T1_loc(input_dir, T1_transitions, start, end):
 
     """
     times = np.load(input_dir + '/stress_fields_500/timesteps.npy')
-    
     locations = np.zeros([len(T1_transitions), 2])
     
     ranks = []
@@ -1378,6 +1405,7 @@ def T1_loc(input_dir, T1_transitions, start, end):
     print('times is of length', len(times))
     x0 = np.zeros([len(times), len(ranks)])
     x1 = np.zeros([len(times), len(ranks)])
+
     for rank in ranks:
         x0[:, rank] = positions_raw[rank]['x0']
         x1[:, rank] = positions_raw[rank]['x1']

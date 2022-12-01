@@ -745,7 +745,7 @@ public:
     bool hexagonal_pack = 0;
     Parameters::get(name_ + "->initial->hexagonal_packing", hexagonal_pack);
     if (hexagonal_pack){
-      position[0] = (row % 2 == 0 ? 0.5 * sizeX + column * sizeX : column * sizeX);
+      position[0] = (row % 2 == 0 ? 0.25 * sizeX + column * sizeX : column * sizeX);
       position[1] = 0.5 * sizeY + row * sizeY;
     }else {
       //position[0] = (row % 2 == 0 ? 0.5 * sizeX + column * sizeX : column * sizeX);
@@ -808,11 +808,11 @@ public:
 
       std::random_device rd;
       std::mt19937 generator(rd()); 
-      std::normal_distribution<double> distribution(meanSize,meanSize/5.0);
+      std::normal_distribution<double> distribution(meanSize,meanSize/3.0);//5.0, 4.0
         
       for (int i = 0; i < Nx; i++)
-        //sizes.push_back(distribution(generator)); //gaussian
-        sizes.push_back(meanSize); //non gaussian
+        sizes.push_back(distribution(generator)); //gaussian
+        //sizes.push_back(meanSize); //non gaussian
       
       // Now we normalize
       double size_sum = std::accumulate(sizes.begin(), sizes.end(), 0.0);
@@ -950,7 +950,7 @@ public:
       
       //theta_ += angleDiffusivity_ * distribution_theta(generator_theta);
       //theta_ += std::sqrt(2.0 * angleDiffusivity_) * distribution_theta(generator_theta) * (*getTau()) ;out4
-      theta_ += std::sqrt(2.0 * angleDiffusivity_* (*getTau())) * distribution_theta(generator_theta)  ;//out5 and out7
+      theta_ += std::sqrt(2.0 * angleDiffusivity_* (*getTau())) * distribution_theta(generator_theta);//out5 and out7
 
       //std::normal_distribution<double> distribution_theta(0, angleDiffusivity_* std::sqrt(2.0 *(*getTau()))); 
       //theta_ += distribution_theta(generator_theta);
@@ -976,6 +976,12 @@ public:
     {
       *advection_[0] << function_(elongateVelocityAlt(getPosition(), v0_, theta_+(M_PI/2), 0.25), X()) * std::cos(theta_) * (0.5*valueOf(getProblem()->getSolution(0)) + 0.5);
       *advection_[1] << function_(elongateVelocityAlt(getPosition(), v0_, theta_+(M_PI/2), 0.25), X()) * std::sin(theta_) * (0.5*valueOf(getProblem()->getSolution(0)) + 0.5);
+    }
+    else if((elongation_vel_ == 3))
+    {
+      //shear flow along Y direction
+      *advection_[0] << function_(shearY(domainDimension_[1]), X(), v0_) * std::cos(0.0);
+      *advection_[1] << function_(shearY(domainDimension_[1]), X(), v0_) * std::sin(0.0);
     }
 
 

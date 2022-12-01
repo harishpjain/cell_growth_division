@@ -1,11 +1,11 @@
 #!/bin/bash
-#SBATCH -J elonrect
+#SBATCH -J elonrect34
 #SBATCH --ntasks=100
 #SBATCH --mail-type=end
 #SBATCH --mail-user=harish_p.jain@mailbox.tu-dresden.de
 #SBATCH --time=16:00:00
-#SBATCH --error=/beegfs/ws/1/haja565a-my_workspace_neo/elonrect.err
-#SBATCH --output=/beegfs/ws/1/haja565a-my_workspace_neo/elonrect.out
+#SBATCH --error=/beegfs/ws/1/haja565a-workspace/elonrect35.err
+#SBATCH --output=/beegfs/ws/1/haja565a-workspace/elonrect35.out
 #SBATCH -A wir
 #SBATCH -p haswell
 #SBATCH --mem-per-cpu=2500

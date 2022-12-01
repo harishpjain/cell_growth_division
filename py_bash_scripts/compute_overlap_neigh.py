@@ -20,12 +20,12 @@ if confined:
 else:
     mode = 'wrap'
 
-interpolation_steps = 200
+interpolation_steps = 500
 # --- Parameters
 
 if len(sys.argv) > 1:
     file_pattern = sys.argv[1] + 'positions_p*.csv'
-    out_dir = sys.argv[1] + 'global_fields_200'
+    out_dir = sys.argv[1] + 'global_fields_500'
     if not os.path.exists(out_dir):
         os.makedirs(out_dir)
 
@@ -39,7 +39,7 @@ else:
 if len(sys.argv) > 3:
     stride = int(sys.argv[3])
 else:
-    stride = 25
+    stride = 100
 
 positions_raw = []
 ranks = []
@@ -72,17 +72,16 @@ reader = vtk.vtkXMLUnstructuredGridReader()
 print(stride)
 print(positions_raw[0].index.shape)
 print(positions_raw[0].index)
-print(positions_raw[0])
 #row_indices = np.arange(0,positions_raw[0].index.shape[0],stride,dtype=int) uncomment this if 0 problem is fixed
 row_indices = np.arange(stride-1,positions_raw[0].index.shape[0],stride,dtype=int)
-print(row_indices)
 times = []
 phi_gap_fraction = []
 
 count = 0
 
-overlap_neighbours = np.zeros([len(row_indices), len(ranks), len(ranks)], dtype = bool)
+overlap_neighbours_1 = np.zeros([len(row_indices), len(ranks), len(ranks)], dtype = bool)
 overlap_neighbours_2 = np.zeros([len(row_indices), len(ranks), len(ranks)], dtype = bool)
+overlap_neighbours_3 = np.zeros([len(row_indices), len(ranks), len(ranks)], dtype = bool)
 
 for indt, ind in enumerate(row_indices):
     # we now have one particular timepoint 
@@ -115,61 +114,29 @@ for indt, ind in enumerate(row_indices):
     # now the axis 0 here is the rank axis which we want to remove
     phi_all = np.array(phi_all)
 
-    phi_identity = np.ones(phi_all.shape)*-1
-    phi_rankwise = np.ones(phi_all[0].shape)*-1
-    for ind_r, rank in enumerate(ranks):
-        phi_identity[rank][phi_all[rank] > 0.05] = rank
-    phi_rankwise = np.max(phi_identity, axis = 0)    
-    np.save(out_dir + '/phi_field' +  '{:06.3f}'.format(time),phi_rankwise)
-    
-    phi_empty = np.sum(phi_all, axis = 0)
-    gap_threshold = 0.2
-    phi_empty[phi_empty >= gap_threshold] = 1.0 #if a cell exist then this is 1
-    phi_empty[phi_empty < gap_threshold] = 0.0 #if not then it is zero
-    
-    phi_gap = np.sum(phi_empty)
-    phi_gap_fraction.append(phi_gap/len(phi_empty.flatten()))
-    
     
     
     #phi_glob = np.max(phi_all,axis=0)
     
     #finding out if cells are neighbours by phasefield overlap
     #NOTE: this method depends on interpolation step size
-    overlap_thres = 0.01 #for interp steps = 200, domain = 100, use 0.01
-    overlap_thres_2 = 0.05 #for interp steps = 200, domain = 100, use 0.01
+    overlap_thres1 = 0.01 #for interp steps = 200, domain = 100, use 0.01
+    overlap_thres2 = 0.001 #for interp steps = 200, domain = 100, use 0.01
+    overlap_thres3 = 0.0001 #for interp steps = 200, domain = 100, use 0.01
     for indr, rank in enumerate(ranks):
         for indr2, rank2 in enumerate(ranks):
             if rank != rank2:
                 overlap = np.sum(np.multiply(phi_all[indr], phi_all[indr2]))
-                if overlap > overlap_thres:
-                    overlap_neighbours[indt][indr][indr2] = 1
-                if overlap > overlap_thres_2:
+                if overlap > overlap_thres1:
+                    overlap_neighbours_1[indt][indr][indr2] = 1
+                if overlap > overlap_thres2:
                     overlap_neighbours_2[indt][indr][indr2] = 1
+                if overlap > overlap_thres3:
+                    overlap_neighbours_3[indt][indr][indr2] = 1
        
     
-    """
-    # global phasefield, given by a lot of 1s and something in between
-
-    phi_glob = np.max(phi_all,axis=0)
-    # this is more interesting -> this locally gives the rank index the contributed to the max, ie the cell
-    rank_max = np.argmax(phi_all,axis=0)
-    phi_field = rank_max
-    print(rank_max)
-    print(phi_glob.shape)
-    print(rank_max.shape)
-    print(np.max(rank_max))
-    print(len(phi_all))
-    #phi_field = rank_max
-    #phi_field[phi_field==rank_max] = ranks[rank_max, :]
-    np.save(out_dir + '/phi_field' +  '{:06.3f}'.format(time),phi_field)
-    np.save(out_dir + '/phi_glob' +  '{:06.3f}'.format(time),phi_glob)
-    """
 np.save(out_dir + '/timesteps',np.array(times))
-np.save(out_dir + '/overlap_neighbours',np.array(overlap_neighbours))
+np.save(out_dir + '/overlap_neighbours_1',np.array(overlap_neighbours_1))
+np.save(out_dir + '/overlap_neighbours_2',np.array(overlap_neighbours_2))
+np.save(out_dir + '/overlap_neighbours_3',np.array(overlap_neighbours_3))
 
-np.save(out_dir + '/timesteps',np.array(times))
-np.save(out_dir + '/overlap_neigh',np.array(overlap_neighbours_2))
-
-phi_gap_fraction = np.array(phi_gap_fraction)
-np.save(out_dir + '/phi_gap_fraction', phi_gap_fraction)

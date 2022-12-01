@@ -4,8 +4,8 @@
 #SBATCH --mail-type=end
 #SBATCH --mail-user=harish_p.jain@mailbox.tu-dresden.de
 #SBATCH --time=16:00:00
-#SBATCH --error=/beegfs/ws/1/haja565a-neo_workspace3/shape5.err
-#SBATCH --output=/beegfs/ws/1/haja565a-neo_workspace3/shape5.out
+#SBATCH --error=/beegfs/ws/1/haja565a-workspace/shape1.err
+#SBATCH --output=/beegfs/ws/1/haja565a-workspace/shape1.out
 #SBATCH -A wir
 #SBATCH -p haswell
 #SBATCH --mem-per-cpu=2500
@@ -13,6 +13,9 @@
 module load VTK/8.2.0-intel-2020a-Python-3.8.2
 module load matplotlib/3.2.1-intel-2020a-Python-3.8.2
 module load ParaView/5.9.0-RC1-egl-mpi-Python-3.8
+
+srun python compute_shapeprop.py /beegfs/ws/1/haja565a-workspace/phd10052022/out_set23_In_3_Ca_4_a_1_D_0_v_5_Al_0/
+#srun python compute_shapeprop.py /beegfs/ws/1/haja565a-workspace/phd10052022/out_set27SHEAR_In_3_Ca_3_a_1_D_1_v_5_Al_7/
 
 #srun python compute_shapeprop.py /beegfs/ws/1/haja565a-neo_workspace3/phd10052022/out_set17_In_3_Ca_3_a_0_D_0_v_5_Al_2/
 #srun python compute_shapeprop.py /beegfs/ws/1/haja565a-neo_workspace3/phd10052022/out_set17_In_3_Ca_3_a_0_D_0_v_5_Al_7/

@@ -25,7 +25,7 @@ print(sys.argv)
 ## Change the vbalues below based on how you run the simulations
 endTimestep = np.inf
 stride = 100#25#100
-a_ = 1.5#1.0 #1.5
+a_ = 1.0#1.5#1.0 #1.5
 Ca_ = 20e-2
 In_ = 10e-2
 
@@ -244,7 +244,7 @@ if quantity == 'stress':
             
             
             #for cell_k in [cell_k for cell_k in rank if cell_k!=cell_n]:#considers all cells 
-            for cell_k in np.where(neighbours[cell_n]==1)[0]: #considers only neighbours
+            for cell_k in np.where(neighbours[cell_n]==1)[0]: #considers only neighbours, dependent on method of neighbour determination
                 fi, mui = f_mu_IN_nk(phi_cell[cell_n], phi_cell[cell_k], In=In_, a=a_)
                 f_ += np.copy(fi)
                 isotropic += fi

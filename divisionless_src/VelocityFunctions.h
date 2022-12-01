@@ -47,4 +47,13 @@ namespace AMDiS
     };
 
   }
+
+  inline auto shearY(double domainDimensiony_)
+  {
+    return [domainDimensiony_](WorldVector<double> const& x, double v0_)
+    {
+      return v0_*std::abs((domainDimensiony_/2.0 - x[1]))/(domainDimensiony_/2.0);
+    };
+
+  }
 }
