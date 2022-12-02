@@ -1,0 +1,14 @@
+#!/bin/bash
+#SBATCH -J out#{INDEX}
+#SBATCH --ntasks=100
+#SBATCH --mail-type=end
+#SBATCH --mail-user=harish_p.jain@mailbox.tu-dresden.de
+#SBATCH --time=15:00:00
+#SBATCH --error=/beegfs/ws/1/haja565a-my_workspace/phd24022201_vtu_v1_0/out#{INDEX}.err
+#SBATCH --output=/beegfs/ws/1/haja565a-my_workspace/phd24022201_vtu_v1_0/out#{INDEX}.out
+#SBATCH -A wir
+#SBATCH -p haswell
+#SBATCH --mem-per-cpu=2500
+
+module load amdis
+srun /home/haja565a/softwares/cell_growth_division/build/divisionless_model #{INIT_FILE}
