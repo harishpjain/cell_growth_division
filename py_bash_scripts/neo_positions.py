@@ -30,7 +30,7 @@ result_dir = pos_input_dir
 
 domain_dimension = np.array([100, 100])
 delta_t = 0.005 #timestep size in simulations
-stride = 25 #number of timesteps between saved vtu files
+stride = 100 #number of timesteps between saved vtu files
 
 del_t = delta_t*stride #accounting for both timestep size and the stride
 
@@ -109,7 +109,7 @@ for filename in glob.glob(file_pattern):
     positions_raw.append(tmp[['time','rank','x0','x1','r','S0','S1','v0','v1', 'vel_angle', 'nematic_angle', 'total_interaction', 'neighbours', 'confine_interaction', 'growth_rate', 'S0full', 'S1full']])
     # we also need to extract the rank to build the bridge to vtk files
     ranks.append(int(re.findall(r'\d+', filename)[-1]))
-stride = 25 #time gap between vtu data
+stride = 100 #time gap between vtu data
 ranks = np.array(ranks)
 sorted_index = np.argsort(ranks)
 def sort_ranks(elem):
@@ -120,7 +120,7 @@ ranks = ranks[sorted_index]
 
 #rolling_average
 rolling_average = True
-rolling_window  = 25
+rolling_window  = 100
 if(rolling_average):
     print('rolling average performed over a window: ' + str(rolling_window))
     postfix = '_roll_' + str(rolling_window) + '_'

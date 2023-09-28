@@ -5,8 +5,6 @@
 #include <cstdio>
 #include <random>
 
-#include <chrono>
-
 #include <mpi14/Collective.hpp>
 
 #include "InitialFunctions.h"
@@ -22,8 +20,6 @@
 #include "HL_SignedDistTraverse.h"
 #include "compositeFEM/CFE_Integration.h"
 #include "extensions/RefinementExpression.h"
-
-
 
 #include<typeinfo>
 
@@ -50,7 +46,6 @@ public:
     Parameters::get("phase->Ca", Ca_);
     Parameters::get("global->v0", v0_);
     Parameters::get("global->D", angleDiffusivity_);
-    Parameters::get("global->alignmentRate", alignmentRate_);
     Parameters::get("phase->allen_growth", allen_growth_);
   	Parameters::get("phase->growth_factor", growth_factor_);
     Parameters::get("phase->division_volume", volume_threshold_);
@@ -64,7 +59,6 @@ public:
     Parameters::get("phase->con_inhibition_limit", con_inhibiting_limit_);
     Parameters::get("phase->confinement_size", confinement_size_);
     Parameters::get("phase->confinement_shape", confinementShape_);
-    Parameters::get("phase->elongation_vel", elongation_vel_);
   }
 
   virtual void initData() override
@@ -91,17 +85,12 @@ public:
     std::vector<double> rand_angles(N);
     std::generate(rand_angles.begin(), rand_angles.end(), [](){ return std::rand()/double(RAND_MAX)*2.0*M_PI; });
     theta_ = rand_angles[rank_];
-    theta_vec_.resize(comm().size());
-    theta_vec_[rank_] = rand_angles[rank_];
+
 
     reinit_.reset(new HL_SignedDistTraverse("reinit", 2));
     refinement_.reset(new extensions::RefinementExpression(getProblem()->getMesh()));
     verletList_.reset(new VerletList(getFeSpace(0)->getMesh(), comm_));
 	
-    Parameters::get("phase->x_elon_scale", x_elon_scale_);
-    Parameters::get("phase->y_elon_scale", y_elon_scale_);
-    Parameters::get("phase->d_elon_scale", d_elon_scale_);
-
 
     // OUTPUT DIRECTORIES
     directory_ = ".";
@@ -128,7 +117,7 @@ public:
     Parameters::get(getMesh()->getName() + "->dimension",domainDimension_);
     if (writeData_) {
         std::ofstream out(filename_positions_);
-        out << "time,rank,x0,x1,r,S0,S1,v0,v1,vel_angle,nematic_angle,total_interaction,neighbours,confine_interaction,growth_rate,S0full,S1full\n";
+        out << "time,rank,x0,x1,r,S0,S1,v0,v1, vel_angle, nematic_angle, total_interaction, neighbours, confine_interaction, growth_rate\n";
     }
 
     if (confined_==1){
@@ -182,12 +171,6 @@ public:
     }
     else if(setup_.compare("multi_ring")==0){
       MultiCellMultiRing(adaptInfo);
-    }
-    else if(setup_.compare("read_cells")==0){
-      readCellsARH(adaptInfo);
-    }
-    else if(setup_.compare("elongated_rectangles")==0){
-      elongatedRectangleInitial(adaptInfo);
     }
     else
       TEST_EXIT(false)("Undefined setup.");  
@@ -326,21 +309,22 @@ public:
       if(rank_<numInitialCells_ && rank_ >0){
         double orientation_ = (rank_-1) * angle_difference_;
         alive_ = 1;
-
-
-        position[0] = domainDimension_[0]*(0.5 + 0.30*std::cos(orientation_ * M_PI / 180.0));
-        position[1] = domainDimension_[1]*(0.5 + 0.30*std::sin(orientation_ * M_PI / 180.0));
+        position[0] = domainDimension_[0]*(0.5 + 0.15*std::cos(orientation_ * M_PI / 180.0));
+        position[1] = domainDimension_[1]*(0.5 + 0.15*std::sin(orientation_ * M_PI / 180.0));
         
+        //growth_factor_ = 0.0;
+        
+        //size for cell collision
+
 
         double a = 0.25 * resize * domainDimension_[0];
         double b = 0.25 * resize * domainDimension_[1];
 
-
-        /*if (std::max(a, b) * numInitialCells_ * 2 > 6 * 0.25 * domainDimension_[0])
+        if (std::max(a, b) * numInitialCells_ * 2 > 6 * 0.25 * domainDimension_[0])
         {
           std::cerr << "Too many cells " << std::endl;
           std::abort();
-        }*/
+        }
 
         *getProblem()->getSolution(0) << function_(rotatedEllipse(position, eps_, domainDimension_[0], 0.0, a, b, false), X());
 
@@ -367,28 +351,6 @@ public:
       }
     }
   }
-
-  void readCellsARH(AdaptInfo *adaptInfo)
-  {
-    /*
-    Important note: To read the arh files, the macro mesh must match.
-    */
-    *getProblem()->getSolution(0) << function_(noCell(), X()); //initialise empty fields
-    alive_ = 0;
-    /*
-    Parameters::get(name_ + "->initial->numCells", numInitialCells_);
-    std::string arhDirectory_;
-    Parameters::get(name_ + "->initial->arh_directory", arhDirectory_);
-    if(rank_ < numInitialCells_)
-    {
-      std::string arh_filename{arhDirectory_ + "/p" + std::to_string(rank_) + ".arh"};
-      std::cout << arh_filename + "\n";
-      auto &ownPhase = *getProblem()->getSolution(0);
-      AMDiS::io::readFile(arh_filename, ownPhase);
-    } 
-    */
-  } 
-
   void MultiCellMultiRing(AdaptInfo *adaptInfo){
     std::cout << "initialise some cells and rankTrees" << std::endl;
     
@@ -512,8 +474,6 @@ public:
       }
     
   }
-
-  
   void singularInitialCell(AdaptInfo *adaptInfo){
     /*
     * Create single cell for activity treshold experiment
@@ -699,59 +659,10 @@ public:
     double sizeY = domainDimension_[1] / Nx; //size in dim 1
 
     WorldVector<double> position;
-    //position[0] = (row % 2 == 0 ? 0.5 * sizeX + column * sizeX : column * sizeX);
-    position[0] = 0.5 * sizeX + column * sizeX;
+    position[0] = (row % 2 == 0 ? 0.5 * sizeX + column * sizeX : column * sizeX);
+
     position[1] = 0.5 * sizeY + row * sizeY;
 
-    sizeX *= resize;
-    sizeY *= resize;
-
-    *getProblem()->getSolution(0) << function_(rectangle(position, eps_, domainDimension_[0], sizeX, sizeY), X());
-   
-    for (int _rep = 0; _rep < 5; ++_rep)
-    {
-      calcSignedDist(adaptInfo);
-
-      // refine/coarsen local mesh along interface
-      refinement_->refine(5, function_(indicator2(getMesh()->getName() + "->phase", 3 * eps_),
-                                       valueOf(*tmp_lagrange1_)));
-
-      *getProblem()->getSolution(0) << function_(rectangle(position, eps_, domainDimension_[0], sizeX, sizeY), X()); 
-    }
-  }
-
-  void elongatedRectangleInitial(AdaptInfo *adaptInfo){
-    /*
-    Create dense rectangles in hexagonal alignment. Size is determined by 
-    dimension and rescaled.
-    */
-    double resize = 1.0;
-    Parameters::get(name_ + "->initial->resize", resize);
-
-    int num_cells = 1;
-    Parameters::get("number of cells", num_cells);
-
-    int Nx = std::floor(std::sqrt(num_cells));
-    int Ny = std::floor(Nx/2);
-    Nx *= 2;
-
-    int column = rank_ % Nx; //column
-    int row = rank_ / Nx;     //row
-
-    double sizeX = domainDimension_[0] / Nx; //size in dim 0
-    double sizeY = domainDimension_[1] / Ny; //size in dim 1
-
-    WorldVector<double> position;
-    bool hexagonal_pack = 0;
-    Parameters::get(name_ + "->initial->hexagonal_packing", hexagonal_pack);
-    if (hexagonal_pack){
-      position[0] = (row % 2 == 0 ? 0.25 * sizeX + column * sizeX : column * sizeX);
-      position[1] = 0.5 * sizeY + row * sizeY;
-    }else {
-      //position[0] = (row % 2 == 0 ? 0.5 * sizeX + column * sizeX : column * sizeX);
-      position[0] = 0.5 * sizeX + column * sizeX;
-      position[1] = 0.5 * sizeY + row * sizeY;
-    }
     sizeX *= resize;
     sizeY *= resize;
 
@@ -808,11 +719,10 @@ public:
 
       std::random_device rd;
       std::mt19937 generator(rd()); 
-      std::normal_distribution<double> distribution(meanSize,meanSize/3.0);//5.0, 4.0
+      std::normal_distribution<double> distribution(meanSize,meanSize/4.0);
         
       for (int i = 0; i < Nx; i++)
-        sizes.push_back(distribution(generator)); //gaussian
-        //sizes.push_back(meanSize); //non gaussian
+        sizes.push_back(distribution(generator));
       
       // Now we normalize
       double size_sum = std::accumulate(sizes.begin(), sizes.end(), 0.0);
@@ -923,77 +833,49 @@ public:
     FUNCNAME("PhaseFieldProblem::initTimestep()");
     MSG("start (PhaseFieldProblem::initTimestep) = %20.16e\n", mpi14::now());
 
+
     Super::initTimestep(adaptInfo);
-
-    if (setup_.compare("read_cells")==0 && adaptInfo->getTimestepNumber()==100)
-    {
-      /*cells are read only from the 100th timestep*/
-      Parameters::get(name_ + "->initial->numCells", numInitialCells_);
-      std::string arhDirectory_;
-      Parameters::get(name_ + "->initial->arh_directory", arhDirectory_);
-      if(rank_ < numInitialCells_)
-      {
-      std::string arh_filename{arhDirectory_ + "/p" + std::to_string(rank_) + ".arh"};
-      std::cout << arh_filename + "\n";
-      auto &ownPhase = *getProblem()->getSolution(0);
-      AMDiS::io::readFile(arh_filename, ownPhase);
-      alive_ = 1;
-      }   
+    if (setup_.compare("binary_Lea")==0 && adaptInfo->getTime()<=8.0){
+    *advection_[0] << v0_*0.0;
+    *advection_[1] << v0_*(-1.0+rank_*2.0);
     }
-
-
-    if(adaptInfo->getTimestepNumber() > 0){
-      std::random_device rd_theta;
-      std::mt19937 generator_theta(rd_theta()); 
-
-      std::normal_distribution<double> distribution_theta(0,1);    
-      
-      //theta_ += angleDiffusivity_ * distribution_theta(generator_theta);
-      //theta_ += std::sqrt(2.0 * angleDiffusivity_) * distribution_theta(generator_theta) * (*getTau()) ;out4
-      theta_ += std::sqrt(2.0 * angleDiffusivity_* (*getTau())) * distribution_theta(generator_theta);//out5 and out7
-
-      //std::normal_distribution<double> distribution_theta(0, angleDiffusivity_* std::sqrt(2.0 *(*getTau()))); 
-      //theta_ += distribution_theta(generator_theta);
+    else if(setup_.compare("three_collision")==0 && adaptInfo->getTime()<=8.0){
+      if(rank_==0){
+        *advection_[0]<<v0_*0.0;
+        *advection_[1]<<v0_*(1.0);
+      }
+      else if(rank_==1){
+        *advection_[0] << -v0_*std::sqrt(3)*0.5;
+        *advection_[1] << -v0_*0.5;
+      }
+      else{
+        *advection_[0] << v0_*std::sqrt(3)*0.5;
+        *advection_[1] << -v0_*0.5;
+      }
     }
+    else{
+    // Random advection term, Wiener process w.r.t old direction of advection
+
+    std::random_device rd;
+    std::mt19937 generator(rd()); 
+
+    std::normal_distribution<double> distribution(0,1);    
     
-    double theta_temp_ = theta_vec_[rank_];
-    
-    
-    if(elongation_vel_ == 0)
-    { 
-    //here changes are made to elongate cell in direction of its elongation
-    *advection_[0] << v0_ * std::cos(theta_) * (0.5*valueOf(getProblem()->getSolution(0)) + 0.5);
-    *advection_[1] << v0_ * std::sin(theta_) * (0.5*valueOf(getProblem()->getSolution(0)) + 0.5);
-    }
-    else if(elongation_vel_ == 1)
-    { 
-      //here changes are made to elongate cell in direction of its elongation
-      
-      *advection_[0] << function_(elongateVelocity(x_elon_scale_, y_elon_scale_, d_elon_scale_), X(), getPosition(), v0_, theta_, radius_) * std::cos(theta_) * (0.5*valueOf(getProblem()->getSolution(0)) + 0.5);
-      *advection_[1] << function_(elongateVelocity(x_elon_scale_, y_elon_scale_, d_elon_scale_), X(), getPosition(), v0_, theta_, radius_) * std::sin(theta_) * (0.5*valueOf(getProblem()->getSolution(0)) + 0.5);
-    }
-    else if(elongation_vel_ == 2)
-    {
-      *advection_[0] << function_(elongateVelocityAlt(getPosition(), v0_, theta_+(M_PI/2), 0.25), X()) * std::cos(theta_) * (0.5*valueOf(getProblem()->getSolution(0)) + 0.5);
-      *advection_[1] << function_(elongateVelocityAlt(getPosition(), v0_, theta_+(M_PI/2), 0.25), X()) * std::sin(theta_) * (0.5*valueOf(getProblem()->getSolution(0)) + 0.5);
-    }
-    else if((elongation_vel_ == 3))
-    {
-      //shear flow along Y direction
-      *advection_[0] << function_(shearY(domainDimension_[1]), X(), v0_) * std::cos(0.0);
-      *advection_[1] << function_(shearY(domainDimension_[1]), X(), v0_) * std::sin(0.0);
+    theta_ += angleDiffusivity_ * distribution(generator);
+    ct = std::cos(theta_);
+    st = std::sin(theta_);
+    *advection_[0] << v0_ * std::cos(theta_) * (0.5*valueOf(getProblem()->getSolution(0)) + 0.5); //uncomment this
+    *advection_[1] << v0_ * std::sin(theta_) * (0.5*valueOf(getProblem()->getSolution(0)) + 0.5); //uncomment this
     }
 
 
-        // Compute elongation
+
+    // Compute elongation
     nematic_tensor_[0] = 0.125 * integrate(derivativeOf(getProblem()->getSolution(0),1) * derivativeOf(getProblem()->getSolution(0),1)); 
     nematic_tensor_[0] += -0.125 * integrate(derivativeOf(getProblem()->getSolution(0),0) * derivativeOf(getProblem()->getSolution(0),0));
 
     nematic_tensor_[1] = (-0.25) * integrate(derivativeOf(getProblem()->getSolution(0),0) * derivativeOf(getProblem()->getSolution(0),1));
 
-
-    nematic_tensor_full_[0] = nematic_tensor_[0];
-    nematic_tensor_full_[1] = nematic_tensor_[1];
     // normalize
     double norm_q = std::sqrt(2.0 * nematic_tensor_[0] * nematic_tensor_[0] + 2 * nematic_tensor_[1] * nematic_tensor_[1]);
     nematic_tensor_[0] *= (1.0 / norm_q);
@@ -1001,27 +883,16 @@ public:
 
     major_axis_angle_ = atan2(nematic_tensor_[1], nematic_tensor_[0]) * 180.0 / (2*M_PI);
 
-    double major_axis_angle_rad_ = major_axis_angle_ *(2*M_PI) / (360.0);
-    
-    //Now, we determine the head of the cell from two possible head direction: can be simplified further I think.
-    if((std::fabs(major_axis_angle_rad_ - theta_) > (M_PI/2)) && major_axis_angle_rad_ < M_PI){
-      major_axis_angle_rad_ = major_axis_angle_rad_+ M_PI;
-    }else if((std::fabs(major_axis_angle_rad_ - theta_) > (M_PI/2)) && major_axis_angle_rad_ > M_PI){
-      major_axis_angle_rad_ = major_axis_angle_rad_- M_PI;
+    if(elongation_vel){ 
+      //here changes are made to elongate cell in direction of its elongation
+      double major_axis_angle_rad_ = major_axis_angle_ *(2*M_PI) / (360.0);
+      *advection_[0] << function_(elongateVelocity(getPosition(), v0_, theta_,0.25), X())* std::cos(theta_+M_PI/2) * (0.5*valueOf(getProblem()->getSolution(0)) + 0.5);
+      *advection_[1] << function_(elongateVelocity(getPosition(), v0_, theta_, 0.25), X())* std::sin(theta_+M_PI/2) * (0.5*valueOf(getProblem()->getSolution(0)) + 0.5);
     }
-    
-    double angle_correction = (major_axis_angle_rad_ - theta_)*alignmentRate_*(*getTau());
-    if(adaptInfo->getTimestepNumber() > 200)
-    {
-      theta_ += angle_correction;
-    }
-    
-
 
     Timer t;
     // calculate phase-field from lagrange[1] signed-distance function
-    // do not comment the below line, it updates the position
-    *tmp_lagrange2_ << tanh(valueOf(*tmp_lagrange1_) / (-std::sqrt(2.0) * eps_)); // interpolate function back to lagrange 2 feSpace
+    ///***tmp_lagrange2_ << tanh(valueOf(*tmp_lagrange1_) / (-std::sqrt(2.0) * eps_)); // interpolate function back to lagrange 2 feSpace
 
     /*
     AMDiS::Constant One(1.0);
@@ -1094,8 +965,6 @@ public:
         }
       }
     }
-
-
   }
 
   virtual void closeTimestep(AdaptInfo *adaptInfo) override
@@ -1104,7 +973,6 @@ public:
     MSG("start (PhaseFieldProblem::closeTimestep) = %20.16e\n", mpi14::now());
 
     calcSignedDist(adaptInfo, true);
-
 
     Timer t;
     // refine/coarsen local mesh along interface
@@ -1131,7 +999,7 @@ public:
     //*getProblem()->getSolution(0) << max(-1.0, min(1.0, valueOf(*getProblem()->getSolution(0))));
 
     // Possibly write the velocity ...
-    bool writeVelocities = false;
+    bool writeVelocities = true;
     Parameters::get("main->write velocities", writeVelocities);
 
     // Update cell position
@@ -1172,10 +1040,8 @@ public:
       out << adaptInfo->getTime() << ',' << rank_ << ',' << center[0] << ',' << center[1] 
         << ',' << radius_ << ',' << nematic_tensor_[0] << ',' << nematic_tensor_[1] << ',' 
         << velocityValues_[0] << ',' << velocityValues_[1] << ',' << theta_*(360.0 / (2*M_PI)) << ',' << major_axis_angle_ 
-        << ',' << total_interactions << ',' << neighbours << ','<< confinement_interaction_ << ',' << actual_growth_factor_ 
-        << ',' << nematic_tensor_full_[0] << ',' << nematic_tensor_full_[1]<< '\n';
+        << ','<< total_interactions << ',' << neighbours << ','<< confinement_interaction_ << ',' << actual_growth_factor_ << '\n';
     }
-
     Super::closeTimestep(adaptInfo);
   }
 
@@ -1350,10 +1216,6 @@ public:
     return nematic_tensor_;
   }
 
-  double* getThetaPtr(){
-    return &theta_;
-  }
-
   double* getGrowthFactor(){
     return &f_growth_;
   }
@@ -1428,7 +1290,7 @@ protected:
 
   std::vector<int> aliveCells_; //list of all cells which are alive
   std::vector<int> waitingCells_; //list of cells waiting to be born
-  std::vector<float> volumeList_; //list of volumes of all cells
+  std::vector<double> volumeList_; //list of volumes of all cells
   int latestWaitingCell_;
   int alive_ = 0; //1 = alive, 2 = dead, 0 = not born yet
 
@@ -1438,17 +1300,15 @@ protected:
 
   // nematic deformation tensor
   WorldVector<double> nematic_tensor_;
-  WorldVector<double> nematic_tensor_full_; //non normalised nematic tensor
-  double major_axis_angle_ = 0.0;
+  double major_axis_angle_;
 
   // Advection stuff
   //std::unique_ptr<WorldVector<DOFVector<double>>> advection_;
   WorldVector<DOFVector<double>*> advection_;
   WorldVector<DOFVector<double>*>& adref_ = advection_; 
-  double theta_ = 0.0;
-  std::vector<double> theta_vec_; 
-  double angleDiffusivity_ = 1.0; // How much can we change in a single step?
-  double alignmentRate_ = 0.5; //Rate at which the velocity angle aligns with elongation
+  double theta_;
+  double angleDiffusivity_; // How much can we change in a single step?
+  
   // velocity
   WorldVector<double> velocityValues_;
 
@@ -1463,16 +1323,10 @@ protected:
 
   double timesteptest = 0;
 
-  int elongation_vel_ = 1; //if true, the cells elongate in direction of motion
+  bool elongation_vel = true; //if true, the cells elongate in direction of motion
   
   double ct = 0.0;
   double st = 0.0;
-
-  double angle_relaxation_coeff = 0.1;
-  double cell_stretch_factor = 0.25;
-  double x_elon_scale_ = 0.0;
-  double y_elon_scale_ = 0.0;
-  double d_elon_scale_ = 0.0;
 };
 
 } // namespace base_problems

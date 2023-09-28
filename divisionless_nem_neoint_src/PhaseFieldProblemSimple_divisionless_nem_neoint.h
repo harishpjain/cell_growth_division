@@ -65,6 +65,7 @@ public:
     Parameters::get("phase->confinement_size", confinement_size_);
     Parameters::get("phase->confinement_shape", confinementShape_);
     Parameters::get("phase->elongation_vel", elongation_vel_);
+    Parameters::get("global->gamma_active", gamma_active_);
   }
 
   virtual void initData() override
@@ -76,6 +77,9 @@ public:
     // advection is computed using a brownian motion
     advection_[0]  = new DOFVector<double>(getFeSpace(0), "velocity_x");
     advection_[1]  = new DOFVector<double>(getFeSpace(0), "velocity_y");
+
+    active_force_[0]  = new DOFVector<double>(getFeSpace(0), "activeforce_x");
+    active_force_[1]  = new DOFVector<double>(getFeSpace(0), "activeforce_y");
     // elongation tensor, used in postprocessing to evaluate the shape of cells
     nematic_tensor_[0]  = 1.0;
     nematic_tensor_[1]  = 0.0;
@@ -959,33 +963,10 @@ public:
     double theta_temp_ = theta_vec_[rank_];
     
     
-    if(elongation_vel_ == 0)
-    { 
-    //here changes are made to elongate cell in direction of its elongation
-    *advection_[0] << v0_ * std::cos(theta_) * (0.5*valueOf(getProblem()->getSolution(0)) + 0.5);
-    *advection_[1] << v0_ * std::sin(theta_) * (0.5*valueOf(getProblem()->getSolution(0)) + 0.5);
-    }
-    else if(elongation_vel_ == 1)
-    { 
-      //here changes are made to elongate cell in direction of its elongation
-      
-      *advection_[0] << function_(elongateVelocity(x_elon_scale_, y_elon_scale_, d_elon_scale_), X(), getPosition(), v0_, theta_, radius_) * std::cos(theta_) * (0.5*valueOf(getProblem()->getSolution(0)) + 0.5);
-      *advection_[1] << function_(elongateVelocity(x_elon_scale_, y_elon_scale_, d_elon_scale_), X(), getPosition(), v0_, theta_, radius_) * std::sin(theta_) * (0.5*valueOf(getProblem()->getSolution(0)) + 0.5);
-    }
-    else if(elongation_vel_ == 2)
-    {
-      *advection_[0] << function_(elongateVelocityAlt(getPosition(), v0_, theta_+(M_PI/2), 0.25), X()) * std::cos(theta_) * (0.5*valueOf(getProblem()->getSolution(0)) + 0.5);
-      *advection_[1] << function_(elongateVelocityAlt(getPosition(), v0_, theta_+(M_PI/2), 0.25), X()) * std::sin(theta_) * (0.5*valueOf(getProblem()->getSolution(0)) + 0.5);
-    }
-    else if((elongation_vel_ == 3))
-    {
-      //shear flow along Y direction
-      *advection_[0] << function_(shearY(domainDimension_[1]), X(), v0_) * std::cos(0.0);
-      *advection_[1] << function_(shearY(domainDimension_[1]), X(), v0_) * std::sin(0.0);
-    }
 
 
-        // Compute elongation
+
+    // Compute elongation
     nematic_tensor_[0] = 0.125 * integrate(derivativeOf(getProblem()->getSolution(0),1) * derivativeOf(getProblem()->getSolution(0),1)); 
     nematic_tensor_[0] += -0.125 * integrate(derivativeOf(getProblem()->getSolution(0),0) * derivativeOf(getProblem()->getSolution(0),0));
 
@@ -1015,8 +996,34 @@ public:
     {
       theta_ += angle_correction;
     }
-    
 
+    *active_force_[0] << gamma_active_*(nematic_tensor_full_[0]*(derivativeOf(getProblem()->getSolution(0),0)) + nematic_tensor_full_[1]*(derivativeOf(getProblem()->getSolution(0),1)));
+    *active_force_[1] << gamma_active_*(nematic_tensor_full_[1]*(derivativeOf(getProblem()->getSolution(0),0)) - nematic_tensor_full_[0]*(derivativeOf(getProblem()->getSolution(0),1)));
+    
+    if(elongation_vel_ == 0)
+    { 
+    //here changes are made to elongate cell in direction of its elongation
+    *advection_[0] << v0_ * std::cos(theta_) * (0.5*valueOf(getProblem()->getSolution(0)) + 0.5) + valueOf(active_force_[0]);
+    *advection_[1] << v0_ * std::sin(theta_) * (0.5*valueOf(getProblem()->getSolution(0)) + 0.5) + valueOf(active_force_[1]);
+    }
+    else if(elongation_vel_ == 1)
+    { 
+      //here changes are made to elongate cell in direction of its elongation
+      
+      *advection_[0] << function_(elongateVelocity(x_elon_scale_, y_elon_scale_, d_elon_scale_), X(), getPosition(), v0_, theta_, radius_) * std::cos(theta_) * (0.5*valueOf(getProblem()->getSolution(0)) + 0.5);
+      *advection_[1] << function_(elongateVelocity(x_elon_scale_, y_elon_scale_, d_elon_scale_), X(), getPosition(), v0_, theta_, radius_) * std::sin(theta_) * (0.5*valueOf(getProblem()->getSolution(0)) + 0.5);
+    }
+    else if(elongation_vel_ == 2)
+    {
+      *advection_[0] << function_(elongateVelocityAlt(getPosition(), v0_, theta_+(M_PI/2), 0.25), X()) * std::cos(theta_) * (0.5*valueOf(getProblem()->getSolution(0)) + 0.5);
+      *advection_[1] << function_(elongateVelocityAlt(getPosition(), v0_, theta_+(M_PI/2), 0.25), X()) * std::sin(theta_) * (0.5*valueOf(getProblem()->getSolution(0)) + 0.5);
+    }
+    else if((elongation_vel_ == 3))
+    {
+      //shear flow along Y direction
+      *advection_[0] << function_(shearY(domainDimension_[1]), X(), v0_) * std::cos(0.0);
+      *advection_[1] << function_(shearY(domainDimension_[1]), X(), v0_) * std::sin(0.0);
+    }
 
     Timer t;
     // calculate phase-field from lagrange[1] signed-distance function
@@ -1445,12 +1452,18 @@ protected:
   //std::unique_ptr<WorldVector<DOFVector<double>>> advection_;
   WorldVector<DOFVector<double>*> advection_;
   WorldVector<DOFVector<double>*>& adref_ = advection_; 
+  
   double theta_ = 0.0;
   std::vector<double> theta_vec_; 
   double angleDiffusivity_ = 1.0; // How much can we change in a single step?
   double alignmentRate_ = 0.5; //Rate at which the velocity angle aligns with elongation
   // velocity
   WorldVector<double> velocityValues_;
+
+  //active forces
+  WorldVector<DOFVector<double>*> active_force_;
+  double gamma_active_ = 0.0; // coefficient of the active force
+
 
   //confinement
   std::unique_ptr<DOFVector<double>> confinementPF_; //confinement phasefield

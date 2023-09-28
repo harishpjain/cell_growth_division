@@ -1,23 +1,22 @@
 #!/bin/bash
 
 # Job name:
-#SBATCH --job-name=demojob
+#SBATCH --job-name=phd20230220
 #
 # Project:
 #SBATCH --account=nn8100k
 #
 # Wall time limit:
-#SBATCH --time=00-24:00:00
+#SBATCH --time=00-23:00:00
 #
 # Other parameters:
-# SBATCH --qos=normal
 
 #SBATCH --nodes=4
 #SBATCH --ntasks-per-node=25
 
 # Error and log files
-#SBATCH --error=/cluster/projects/nn8100k/harish_workspace/error_files/nemdemo107.err
-#SBATCH --output=/cluster/projects/nn8100k/harish_workspace/log_files/nemdemo107.out
+#SBATCH --error=/cluster/projects/nn8100k/harish_workspace/error_files/outd#{INDEX}.err
+#SBATCH --output=/cluster/projects/nn8100k/harish_workspace/log_files/outd#{INDEX}.err
 
 ## Set up job environment:
 set -o errexit  # Exit the script on any error
@@ -29,6 +28,4 @@ module load ParMETIS/4.0.3-iimpi-2020a
 module load CMake/3.15.3-GCCcore-8.3.0
 
 ## Do some work:
-# srun ./build/divisionless_model init/neoinit1.2d
-# srun ./build/divisionless_nem_neoint_model init/neoinit_nematic_2.2d
-srun ./build/divisionless_nem_neoint_model init/neoinit_nematic_3.2d
+srun /cluster/home/harishpj/softwares/cell_growth_division/build/divisionless_nem_model #{INIT_FILE}

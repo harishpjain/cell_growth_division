@@ -39,7 +39,7 @@ else:
 if len(sys.argv) > 3:
     stride = int(sys.argv[3])
 else:
-    stride = 25
+    stride = 100
 
 positions_raw = []
 ranks = []
@@ -84,6 +84,11 @@ count = 0
 overlap_neighbours = np.zeros([len(row_indices), len(ranks), len(ranks)], dtype = bool)
 overlap_neighbours_2 = np.zeros([len(row_indices), len(ranks), len(ranks)], dtype = bool)
 
+for indt, ind in enumerate(row_indices):
+    # we now have one particular timepoint 
+    time = positions_raw[0].iloc[ind]['time']
+    print(time)
+    
 for indt, ind in enumerate(row_indices):
     # we now have one particular timepoint 
     time = positions_raw[0].iloc[ind]['time']

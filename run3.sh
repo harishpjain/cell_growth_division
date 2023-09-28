@@ -1,14 +1,34 @@
 #!/bin/bash
-#SBATCH -J out79b
-#SBATCH --ntasks=4
-#SBATCH --mail-type=end
-#SBATCH --mail-user=harish_p.jain@mailbox.tu-dresden.de
-#SBATCH --time=3:00:00
-#SBATCH --error=/scratch/ws/1/haja565a-workspace1/collision/out79b.err
-#SBATCH --output=/scratch/ws/1/haja565a-workspace1/collision/out79b.out
-#SBATCH -A wir
-#SBATCH -p haswell
-#SBATCH --mem-per-cpu=2500
 
-module load amdis
-srun ./build/modified_elongation_model init/init3.2d
+# Job name:
+#SBATCH --job-name=demojob
+#
+# Project:
+#SBATCH --account=nn8100k
+#
+# Wall time limit:
+#SBATCH --time=00-08:00:00
+#
+# Other parameters:
+# SBATCH --qos=normal
+
+#SBATCH --nodes=2
+#SBATCH --ntasks-per-node=15
+
+# Error and log files
+#SBATCH --error=/cluster/projects/nn8100k/harish_workspace/error_files/nemdemo125.err
+#SBATCH --output=/cluster/projects/nn8100k/harish_workspace/log_files/nemdemo125.out
+
+## Set up job environment:
+set -o errexit  # Exit the script on any error
+set -o nounset  # Treat any unset variables as an error
+
+module --quiet purge  # Reset the modules to the system default
+module load PETSc/3.12.4-intel-2020a-Python-3.8.2
+module load ParMETIS/4.0.3-iimpi-2020a
+module load CMake/3.15.3-GCCcore-8.3.0
+
+## Do some work:
+# srun ./build/divisionless_model init/neoinit1.2d
+# srun ./build/divisionless_nem_neoint_model init/neoinit_nematic_2.2d
+srun ./build/divisionless_nem_neoint_model init/neoinit_nematic_4.2d

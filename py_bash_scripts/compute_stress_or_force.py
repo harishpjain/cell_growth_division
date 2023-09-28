@@ -28,17 +28,41 @@ stride = 100#25#100
 a_ = 1.0#1.5#1.0 #1.5
 Ca_ = 20e-2
 In_ = 10e-2
+a_rep_ = 1.0
+a_adh_ = 1.5
+potential_type_ = 2
 
 if len(sys.argv) > 3:
     print('using customised Ca')
     Ca_ = float(sys.argv[3])
+
+if len(sys.argv) > 4:
+    
+    if (sys.argv[4] == 'old'):
+        potential_type_ = 1
+        print('using new potential')
+    elif (sys.argv[4] == 'new'):
+        potential_type_ = 2
+        print('using new potential')
+        
+
+if len(sys.argv) > 5:
+    print('using customised a or a_rep')
+    a_ = float(sys.argv[5])
+    a_rep_ = float(sys.argv[5])
+
+if len(sys.argv) > 5:
+    print('using customised a_adh')
+    a_adh_ = float(sys.argv[5])
+
 pbc=True
 domain_size = np.array([100.0,100.0])
 confined = False
+new_interaction = False #False - old B*w interaction and True - new interaction
 
 quantity = 'force'
-if int(sys.argv[2]) == 1:
-    quantity = 'stress'
+if int(sys.argv[2]) == 1: 
+    quantity = 'stress'  #also saves energy
     print('checkpoint 1: stress')
 if int(sys.argv[2]) == 2:
     print('checkpoint 1: force from stored mu')
@@ -140,6 +164,27 @@ def grad_phi(phi_n, dx=dx, pbc=True):
     
     return np.array([grad_phix, grad_phiy])
 
+def curvature(phi_n, dx=dx, pbc=True):
+    if pbc:
+        grad_phix = np.gradient(np.pad((phi_n+1.0)/2.0, 2, mode="wrap"), dx, axis=0)[2:-2, 2:-2]
+        grad_phiy = np.gradient(np.pad((phi_n+1.0)/2.0, 2, mode="wrap"), dx, axis=1)[2:-2, 2:-2]
+
+        grad_norm = np.sqrt(grad_phix**2 + grad_phiy**2)
+
+        grad_phixx = np.gradient(np.pad(grad_phix, 2, mode="wrap"), dx, axis=0)[2:-2, 2:-2]
+        grad_phiyy = np.gradient(np.pad(grad_phiy, 2, mode="wrap"), dx, axis=1)[2:-2, 2:-2]
+
+        laplace_phi = grad_phixx+grad_phiyy
+
+        grad_of_grad_norm_x = np.gradient(np.pad(grad_norm, 2, mode="wrap"), dx, axis=0)[2:-2, 2:-2]
+        grad_of_grad_norm_y = np.gradient(np.pad(grad_norm, 2, mode="wrap"), dx, axis=1)[2:-2, 2:-2]
+
+        grad_phi_prod_grad_of_grad_norm = grad_phix*grad_of_grad_norm_x + grad_phiy*grad_of_grad_norm_y
+        curv_ = (laplace_phi - grad_phi_prod_grad_of_grad_norm/grad_norm)/grad_norm
+        curv_[grad_norm < 0.001] = 0.0
+        return curv_
+        
+
 def g(phi_n):
     #return 3/(2*(1-phi_n)*(1+phi_n))
     return 1
@@ -189,6 +234,14 @@ def f_IN_nk(phi_n, phi_k, In=10e-2, a=1.5):
     f = (1/In)*((phi_n+1)/2)*(w)
     return f
 
+def f_mu_IN_nk_neo(phi_n, phi_k, In=10e-2, a_rep=1.0, a_adh=1.5):
+    #returns interaction free energy density 
+    f_rep = 0.5*a_rep*((phi_n+1)**2)*((phi_k+1)**2)
+    f_adh = 0.5*a_adh*((phi_k**2 - 1)**2)*((phi_n**2 - 1)**2)
+    mu_rep = a_rep*(phi_n+1)*((phi_k+1)**2)
+    mu_adh = 2.0*a_adh*(phi_n**3 - phi_n)*((phi_k**2 - 1)**2)
+    return (f_adh + f_rep)/In, (mu_adh + mu_rep)/In
+
 if quantity == 'stress':
     #####for ind in row_indices:
     for time in times_:
@@ -231,6 +284,9 @@ if quantity == 'stress':
         sigma_11 = np.zeros(phi_cell[0].shape)
         sigma_01 = np.zeros(phi_cell[0].shape)
         free_energy = np.zeros(phi_cell[0].shape)
+
+        #curvature_cell0 = np.zeros(phi_cell[0].shape)
+        #curvature_cell1 = np.zeros(phi_cell[0].shape)
         
         for cell_n in ranks:
             grad_phi_ = grad_phi(phi_cell[cell_n], dx=dx, pbc=True)
@@ -245,7 +301,10 @@ if quantity == 'stress':
             
             #for cell_k in [cell_k for cell_k in rank if cell_k!=cell_n]:#considers all cells 
             for cell_k in np.where(neighbours[cell_n]==1)[0]: #considers only neighbours, dependent on method of neighbour determination
-                fi, mui = f_mu_IN_nk(phi_cell[cell_n], phi_cell[cell_k], In=In_, a=a_)
+                if potential_type_ == 2:
+                    fi, mui = f_mu_IN_nk_neo(phi_cell[cell_n], phi_cell[cell_k], In=In_, a_rep=a_rep_, a_adh = a_adh_)
+                elif potential_type_ == 1:
+                    fi, mui = f_mu_IN_nk(phi_cell[cell_n], phi_cell[cell_k], In=In_, a=a_)
                 f_ += np.copy(fi)
                 isotropic += fi
                 isotropic -= 2*mui*(phi_cell[cell_n]+1)/2
@@ -257,12 +316,20 @@ if quantity == 'stress':
             sigma_11 += isotropic - epsilon*grad_phi_[1]**2
             sigma_01 += -epsilon*grad_phi_[0]*grad_phi_[1]
             free_energy += f_
+
+            #if cell_n == 0:
+            #    curvature_cell0 = curvature(phi_cell[cell_n], dx=dx, pbc=True)
+            #if cell_n == 1:
+            #    curvature_cell1 = curvature(phi_cell[cell_n], dx=dx, pbc=True)
             
         np.save(out_dir + '/free_energy' + '_{:06.3f}'.format(time), free_energy)
             
-        np.save(out_dir + '/sigma_00' + '_{:06.3f}'.format(time), sigma_00)
-        np.save(out_dir + '/sigma_11' + '_{:06.3f}'.format(time), sigma_11)
-        np.save(out_dir + '/sigma_01' + '_{:06.3f}'.format(time), sigma_01)
+        #np.save(out_dir + '/sigma_00' + '_{:06.3f}'.format(time), sigma_00)
+        #np.save(out_dir + '/sigma_11' + '_{:06.3f}'.format(time), sigma_11)
+        #np.save(out_dir + '/sigma_01' + '_{:06.3f}'.format(time), sigma_01)
+
+        #np.save(out_dir + '/curvature_cell0' + '_{:06.3f}'.format(time), curvature_cell0)
+        #np.save(out_dir + '/curvature_cell1' + '_{:06.3f}'.format(time), curvature_cell1)
             
     np.save(out_dir + '/timesteps',np.array(times))
     np.save(out_dir + '/ranks',np.array(ranks))

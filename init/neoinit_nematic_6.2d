@@ -3,7 +3,7 @@ parallel->log main rank: 1
 number of cells: 100
 
 postfix: 
-output: /cluster/projects/nn8100k/harish_workspace/phd10052022/demo1
+output: /cluster/projects/nn8100k/harish_workspace/neoinit68
 macroMesh->macro file name:       ./macro/macro_100_100.per.2d
 %macroMesh->macro file name:       ./macro/circle_macro.2d
 macroMesh->periodic file:         ./macro/macro_100_100.per
@@ -12,11 +12,11 @@ macroMesh->global refinements:        4
 macroMesh->dimension: [100,100]
 
 macroMesh->phase->interface refinements: 10 %10
-macroMesh->phase->bulk refinements: 4 %6
+macroMesh->phase->bulk refinements: 6 %6
 macroMesh->phase->outer refinements: 0
 
 macroMesh->global->interface refinements: 8 %10
-macroMesh->global->bulk refinement: 4
+macroMesh->global->bulk refinements: 4
 macroMesh->global->outer refinements: 0
 
 % ----------- BEGIN OF SIMULATION SETUP ------------------
@@ -34,32 +34,37 @@ macroMesh->global->outer refinements: 0
 % 'multi_cell' :multiple cells grow and divide. change parameter initial->numCells
 % 'multi_ring' : similar to multi_cell but has two outer rings of cells. 
 % 'elongated_rectangles' : elongated cells stacked in cubic manner
+% 'read_cells' : read arh files of cells. Make sure the macro mesh is same
 
-main->setup: collective
+main->setup: read_cells
 main->fixed point iterations: 1
 main->write interaction term: 0
 main->write volume: 0
-main->write neighbors:0
+main->write neighbors:1
 main->write positions: 1
-main->center of mass:1  
+main->center of mass:0  
 main->cahn-hilliard: 1
 
 % Global (coupling) parameters 
-global->v0: 1.0  % 2.5
-global->D: 0.01 %0.1
+global->v0: 0.0 %0.5  % 2.5
+global->D: 0.0 %0.01
+global->alignmentRate: 1.0 %0.5
+global->gamma_active: 0.0 %0.5 %coefficent of active nematic force
 
 % Phasefield parameters
 phase->epsilon: 0.15
 phase->gamma: 1.0 %1.0
-phase->Ca: 10.0e-2 %1.5e-2
-phase->In:  5.0e-2%5.0e-2  %2.5e-2 % Coefficient for interaction combined
+phase->Ca: 20.0e-2 %1.5e-2
+phase->In: 10.0e-2%2.5e-2  %2.5e-2 % Coefficient for interaction combined
 phase->allen_growth: 0.0  %-0.001
 %phase->cutTimeStep: Inf  %disabled
 phase->division_volume: 135.0  %volume where the division is triggered. (491.0 for resize 0.1)
-phase->growth_factor: 0.0%0.3	  %growth in correction term
+phase->growth_factor: 0.0	  %growth in correction term
 phase->apoptosis_index: 1000      %generation for which the cell dies
 phase->contact_inhibition_of_growth: 1
-phase->interaction_a: 1.5
+phase->interaction_a: 7.5
+phase->interaction_a_adh: 0.1
+phase->interaction_a_rep: 1.0
 phase->inhibition_limit: 10000.0  %L1 norm of interactions for which growth rate is 0
 phase->growth_type: 3            % 1 - adhoc, 3 - operator based non normalised, 4-hybrid of 1 and 3
 phase->Gr: 0.5  %energy penalisation for growth. This is not growth rate. Keep at 0.5 for exponential growth with growth rate = growth factor
@@ -77,18 +82,21 @@ phase->y_elon_scale: 0.0
 phase->d_elon_scale: 0.0625
 
 % Interaction potential parameters
-phase->interaction->potential: 7                      % 0 - no attraction, 1 - exponential attraction, 2 - trigonometric attraction, 3 - quartic att_and_rep
+phase->interaction->potential: 15                    % 0 - no attraction, 1 - exponential attraction, 2 - trigonometric attraction, 3 - quartic att_and_rep
                                                     % 4- odd no attraction, 5 % odd quartic att and rep, 6 - attractionAndRepulsion with B = (phi+1)/2
+                                                    % 7 - master thesis explicit, %8 - new interaction implicit, %9 - master thesis implicit variant 1
 %added this on my own
-phase->initial->gaussian: 1
+phase->initial->gaussian: 0
+phase->initial->hexagonal_packing: 0
 % Start with rectangles instead of spheres, works for collective and t1
 phase->initial->rectangles: 1
-phase->initial->sigma: 1.5
+phase->initial->sigma: 0.0
          
 % Resizing coefficient
-phase->initial->resize: 0.99 %0.995 is low gap
+phase->initial->resize: 0.99 %0.99
 
 phase->initial->numCells: 100 % number of initial cells
+phase->initial->arh_directory: /cluster/projects/nn8100k/harish_workspace/saved_states/hexatic_random
 
 % Parameters for collective experiment
 phase->initial->collective->packFrac: 0.9
@@ -101,8 +109,8 @@ arh->file_prefix: ${output}/data/rank_
 %adapt->start time:             0.0
 %adapt->end time:               20
 
-adapt->sequence->timesteps:  [5e-3]%, 1.e-2]%, 2.e-2, 5.e-2]%, 1.e-1]
-adapt->sequence->number of timesteps: [5000]%, 800]%, 800, 800]%, 800]
+adapt->sequence->timesteps:  [5e-3]%[5e-3]%, 1.e-2]%, 2.e-2, 5.e-2]%, 1.e-1]
+adapt->sequence->number of timesteps: [1000]%, 800]%, 800, 800]%, 800]
 adapt->sequence->calc end time: 1
 
 %adapt->number of timesteps: 0
@@ -142,18 +150,20 @@ phase->space->output->ParaView format:             1
 phase->space->output->ParaView mode:               1
 phase->space->output->ParaView animation:          1
 phase->space->output->ParaView create subdirectory: 1
-phase->space->output->write every i-th timestep:   1000
+phase->space->output->write every i-th timestep:   100
 phase->space->output->append index:                1
 phase->space->output->index length:                6
 phase->space->output->index decimals:              3
 phase->space->output->ARH format:                  0
 
+
+sendDOF->space->output->write arh: 1 %if 1 then arh files are saved
 sendDOF->space->output->filename:			${output}/sendDOF${postfix}_
 sendDOF->space->output->ParaView format:             1
 sendDOF->space->output->ParaView mode:               1
 sendDOF->space->output->ParaView animation:          1
 sendDOF->space->output->ParaView create subdirectory: 1
-sendDOF->space->output->write every i-th timestep:   1000
+sendDOF->space->output->write every i-th timestep:   9999
 sendDOF->space->output->append index:                1
 sendDOF->space->output->index length:                6
 sendDOF->space->output->index decimals:              3
@@ -261,7 +271,7 @@ signedDist->output->precision: 6
 signedDist->output->ParaView animation:          1
 signedDist->output->ParaView mode:               1
 signedDist->output->ParaView create subdirectory: 1
-signedDist->output->write every i-th timestep:   100
+signedDist->output->write every i-th timestep:   200
 signedDist->output->append index:                1
 signedDist->output->index length:                6
 signedDist->output->index decimals:              3
