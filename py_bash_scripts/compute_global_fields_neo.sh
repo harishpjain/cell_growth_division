@@ -1,13 +1,14 @@
 #!/bin/bash
 
 # Job name:
-#SBATCH --job-name=Ca3Al7v5
+#SBATCH --job-name=Ca5ar2v0
 #
 # Project:
 #SBATCH --account=nn8100k
 #
 # Wall time limit:
-#SBATCH --time=00-06:00:00
+#SBATCH --time=00-18:00:00
+##SBATCH --time=00-06:00:00
 #
 # Other parameters:
 # SBATCH --qos=short
@@ -16,8 +17,8 @@
 #SBATCH --ntasks-per-node=1
 
 # Error and log files
-#SBATCH --error=/cluster/projects/nn8100k/harish_workspace/error_files/Ca3Al7v10.err
-#SBATCH --output=/cluster/projects/nn8100k/harish_workspace/log_files/Ca3Al7v10.out
+#SBATCH --error=/cluster/projects/nn8100k/harish_workspace/error_files/Ca5ar2v0.err
+#SBATCH --output=/cluster/projects/nn8100k/harish_workspace/log_files/Ca5ar2v0.out
 
 ## Set up job environment:
 set -o errexit  # Exit the script on any error
@@ -26,7 +27,8 @@ set -o nounset  # Treat any unset variables as an error
 module --quiet purge  # Reset the modules to the system default
 
 # load the Anaconda3
-module load Anaconda3/2022.05
+#module load Anaconda3/2022.05
+module load Anaconda3/2023.07-2
 
 # Set the ${PS1} (needed in the source of the Anaconda environment)
 export PS1=\$
@@ -53,9 +55,10 @@ conda activate /cluster/projects/nn8100k/condastuff/myenv
 # example srun python compute_stress_or_force.py /cluster/projects/nn8100k/harish_workspace/neoinit107/ 1 20e-2 2 1.0 0.5
 
 
-srun python compute_phi_field.py /cluster/projects/nn8100k/harish_workspace/phd20230614/o20230614_set5_In3Ca3aa0ar0D0v10Al7Ga3Init0/
-srun python neo_positions.py /cluster/projects/nn8100k/harish_workspace/phd20230614/o20230614_set5_In3Ca3aa0ar0D0v10Al7Ga3Init0/ 100
-srun python compute_stress_or_force.py /cluster/projects/nn8100k/harish_workspace/phd20230614/o20230614_set5_In3Ca3aa0ar0D0v10Al7Ga3Init0/ 1 20.0e-2 2 1.0 1.0
+#srun python compute_phi_field.py /cluster/projects/nn8100k/harish_workspace/phd20230614/o20230614_set7_In3Ca3aa0ar0D0v10Al0Ga3Init1/
+#srun python neo_positions.py /cluster/projects/nn8100k/harish_workspace/phd20230614/o20230614_set7_In3Ca3aa0ar0D0v10Al0Ga3Init1/ 100
+#srun python compute_stress_or_force.py /cluster/projects/nn8100k/harish_workspace/phd20230614/o20230614_set7_In3Ca3aa0ar0D0v10Al0Ga3Init1/ 1 20.0e-2 2 1.0 1.0
 #different version of python needed to run shapeprop
-module load ParaView/5.8.0-foss-2020a-Python-3.8.2-mpi 
-srun python3.8 compute_shapeprop.py /cluster/projects/nn8100k/harish_workspace/phd20230614/o20230614_set5_In3Ca3aa0ar0D0v10Al7Ga3Init0/
+#module load ParaView/5.8.0-foss-2020a-Python-3.8.2-mpi 
+module load ParaView/5.10.1-foss-2022a-mpi
+srun python3.8 compute_shapeprop.py /cluster/projects/nn8100k/harish_workspace/phd20230614/o20230614_set7_In3Ca3aa0ar0D0v10Al0Ga3Init1/

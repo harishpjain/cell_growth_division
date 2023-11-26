@@ -385,7 +385,7 @@ namespace AMDiS {
           if (isPositive){
             target_t1[localIndices_t1[i]] += f1(vec1[localIndices_t1[i]], basisFcts2->evalUh(coords2, localCoeffs2));
             target_t2[localIndices_t1[i]] += f2(vec1[localIndices_t1[i]], basisFcts2->evalUh(coords2, localCoeffs2));
-            interaction_t1 +=   target_t1[localIndices_t1[i]];
+            interaction_t1 += target_t1[localIndices_t1[i]];
           }  
         }
       }
@@ -396,7 +396,13 @@ namespace AMDiS {
 
     return interaction_t1;
   }
-
+    //delete feSpace1;
+    //delete feSpace2;
+    //delete feSpace_t1;
+    //delete elInfo1_t1;
+    //delete elInfo2_t1;
+    //delete elInfoSmall_t1;
+    //delete elInfoLarge_t1;
   
   template <class UnaryFunction>
   double transfer_mm(DOFVector<double> const& source, DOFVector<double>& target, int macroIndex, UnaryFunction f)

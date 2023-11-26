@@ -3,6 +3,7 @@ cmake_minimum_required(VERSION 3.1)
 
 find_package(AMDIS REQUIRED SEQUENTIAL)
 find_package(mpi14 REQUIRED)
+set (CMAKE_CXX_STANDARD 14)
 
 add_executable(random_model 
   src/AdaptInstationarySeq.cc 
@@ -49,3 +50,21 @@ supracell_src/AdaptInstationarySeq.cc
 target_include_directories(supracell_model  PRIVATE ${CMAKE_SOURCE_DIR})
 target_link_libraries(supracell_model  PRIVATE AMDiS mpi14)
 target_compile_definitions(supracell_model  PRIVATE HAVE_MPI)
+
+add_executable(divisionless_nem_model 
+  divisionless_nem_src/AdaptInstationarySeq.cc 
+  include/ContourWriter.cc 
+  divisionless_nem_src/Coupling_divisionless_nem_phase.h
+  divisionless_nem_src/box_migration.cc)
+target_include_directories(divisionless_nem_model  PRIVATE ${CMAKE_SOURCE_DIR})
+target_link_libraries(divisionless_nem_model  PRIVATE AMDiS mpi14)
+target_compile_definitions(divisionless_nem_model  PRIVATE HAVE_MPI)
+
+add_executable(divisionless_nem_neoint_model 
+  divisionless_nem_neoint_src/AdaptInstationarySeq.cc 
+  include/ContourWriter.cc 
+  divisionless_nem_neoint_src/Coupling_divisionless_nem_neoint_phase.h
+  divisionless_nem_neoint_src/box_migration.cc)
+target_include_directories(divisionless_nem_neoint_model  PRIVATE ${CMAKE_SOURCE_DIR})
+target_link_libraries(divisionless_nem_neoint_model  PRIVATE AMDiS mpi14)
+target_compile_definitions(divisionless_nem_neoint_model  PRIVATE HAVE_MPI)

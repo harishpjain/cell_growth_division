@@ -181,7 +181,11 @@ namespace AMDiS
         
         for (std::size_t j = 0; j < macrovector[i].size(); ++j) {
           int macroIndex = this->rankToMacros_[i].second[j];
-          
+          //MSG(typeid(macroIndex).name());
+          //MSG(typeid(vec).name());
+          //MSG(typeid(&this->refinementManager_).name());
+          //MSG(typeid(macrovector).name());
+
           this->coarseningManager_.globalCoarsen(vec.getFeSpace()->getMesh(), -20);
           macrovector[i][j].apply(macroIndex, vec, &this->refinementManager_);
           
@@ -210,10 +214,10 @@ namespace AMDiS
       std::vector<std::vector<MacroData>> macrovector(numRanks);
       for (std::size_t i = 0; i < numRanks; ++i) {
         int r = rankToMacros_[i].first;
-        requests.push_back( comm_.irecv(macrovector[i], r, tag_macrodata_) );
+        requests.push_back(comm_.irecv(macrovector[i], r, tag_macrodata_));
         requestRanks.push_back(r);
       }
-
+      MSG("start2 (MacroCommunicator::gather) = %20.16e\n", mpi14::now());
       mpi14::wait_all_apply(requests.begin(), requests.end(), [&requestRanks,&contributions,begin=requests.begin(),apply,&macrovector,&vec,this](auto it)
       {
         std::size_t i = std::distance(begin, it);
@@ -227,6 +231,18 @@ namespace AMDiS
         }
         contributions.push_back(std::make_pair(requestRanks[i],value));
       });
+      MSG("start3 (MacroCommunicator::gather) = %20.16e\n", mpi14::now());
+      // Print information about the current node
+            int rank;
+      MPI_Comm_rank(comm_, &rank);
+
+      // Get the total number of nodes and name of the current node
+      int comm_size;
+      char processor_name[MPI_MAX_PROCESSOR_NAME];
+      int name_len;
+      MPI_Comm_size(comm_, &comm_size);
+      MPI_Get_processor_name(processor_name, &name_len);
+      printf("Rank %d running on %s\n", rank, processor_name);
     }
 
 

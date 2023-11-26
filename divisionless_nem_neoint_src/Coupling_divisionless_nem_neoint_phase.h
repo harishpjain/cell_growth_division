@@ -303,28 +303,44 @@ namespace AMDiS { namespace base_problems {
     {
       FUNCNAME("PhaseFieldGlobal::initTimestep()");
       MSG("start (PhaseFieldGlobal::initTimestep) = %20.16e\n", mpi14::now());
-      
+      MSG(":A:");
       //phaseProb_.initTimestep(adaptInfo);
+      
+      int rank;
+      MPI_Comm_rank(comm(), &rank);
+
+      // Get the total number of nodes and name of the current node
+      int comm_size;
+      char processor_name[MPI_MAX_PROCESSOR_NAME];
+      int name_len;
+      MPI_Comm_size(comm(), &comm_size);
+      MPI_Get_processor_name(processor_name, &name_len);
+
+      // Print information about the current node
+      printf("Rank %d running on %s\n", rank, processor_name);
+      printf("Comm size%d \n", comm_size);
+
 
       Timer t;
+      MPI_Barrier(phaseProb_.comm()); //added 1
       #ifdef DEBUG_PERFORMANCE
             MPI_Barrier(phaseProb_.comm());
       #endif
       MSG("time (barrier0) = %e\n", t.elapsed());
 
       t.reset();
-
-      if(adaptInfo->getTimestepNumber() % 3 == 0)
+      MSG(":B:");
+      if(adaptInfo->getTimestepNumber() % 1 == 0)
       { 
         //calculating interactions only every few time steps 
         *phaseProb_.tmp_lagrange2_ << tanh(valueOf(*phaseProb_.tmp_lagrange1_) / (-std::sqrt(2.0) * eps_));
         DOFVector<double> const& phi_i = *phaseProb_.tmp_lagrange2_;
         communicator_->scatter(phi_i);
-        
+        MPI_Barrier(phaseProb_.comm()); //added 1
         // calculate interaction term
         DOFVector<double> phi_j(globalProb_.getProblem()->getFeSpace(0), "phi");
         phi_j.setCoarsenOperation(NO_OPERATION);
-
+        MSG(":C:");
         if(potential_ == 7)
         {
           // Gather interaction terms
@@ -347,26 +363,6 @@ namespace AMDiS { namespace base_problems {
         }
         if((potential_ == 8) || (potential_ == 10))
         {
-          /*
-                    // Gather interaction terms
-          interaction_->set(0.0);
-          auto& interaction = *interaction_;
-          
-          // Store contributions by repulsion term for each other cell
-          // to clarify which one is actually a neighbour
-          //std::vector<std::pair<std::size_t,double>> contributions;
-          contributions.clear();
-
-          communicator_->gather_and_deliver(phi_j, contributions, [&phi_i, &interaction_rep_, pj_sqr=this->phij_hat_sqr()](int macroIndex, DOFVector<double> const& phi_j)
-            {
-              return transfer_mm(phi_j, interaction_rep_, macroIndex, [pj_sqr](double p_j)
-              {
-                return pj_sqr(p_j);
-              });
-            });      
-
-            
-          */
           // Gather interaction terms
           //store product of rescaled phi_i and phi_j
           interaction_->set(0.0);
@@ -393,15 +389,6 @@ namespace AMDiS { namespace base_problems {
               {
                 return pj_sqr(p_j);
               });
-              //transfer_mm(phi_j, interaction_adh, macroIndex, [pj_dw](double p_j)
-              //{
-              //  return pj_dw(p_j);
-              //});
-              //transfer_mm(phi_j, interaction_rep, macroIndex, [pj_sqr](double p_j)
-              //{
-              //  return pj_sqr(p_j);
-              //});
-
               return transfer_mm(phi_i, phi_j, interaction, macroIndex, [phij_prod](double p_i, double p_j)
               {
                 return phij_prod(p_i, p_j);
@@ -438,14 +425,6 @@ namespace AMDiS { namespace base_problems {
             {
               return bj_(p_j);
             });
-            //transfer_mm(phi_j, interaction_adh, macroIndex, [pj_dw](double p_j)
-            //{
-            //  return pj_dw(p_j);
-            //});
-            //transfer_mm(phi_j, interaction_rep, macroIndex, [pj_sqr](double p_j)
-            //{
-            //  return pj_sqr(p_j);
-            //});
 
             return transfer_mm(phi_i, phi_j, interaction, macroIndex, [phij_prod](double p_i, double p_j)
             {
@@ -578,20 +557,21 @@ namespace AMDiS { namespace base_problems {
             });             
 
         }
-
+        MSG(":pre pre D:");
         if(potential_ == 16) //new potential implicit everything in transfer_mm
         {
           // Gather interaction terms
+          MSG("pre:D:");
           interaction_impl_lhs_->set(0.0);
           interaction_impl_rhs_->set(0.0);
           auto& interaction_impl_lhs = *interaction_impl_lhs_;
           auto& interaction_impl_rhs = *interaction_impl_rhs_;
-          
+          MPI_Barrier(phaseProb_.comm()); //added 1
           // Store contributions by repulsion term for each other cell
           // to clarify which one is actually a neighbour
           //std::vector<std::pair<std::size_t,double>> contributions;
           contributions.clear();
-
+          MSG(":D:");
           communicator_->gather_and_deliver(phi_j, contributions, [&phi_i, &interaction_impl_lhs, &interaction_impl_rhs, neo_pot_impl_lhs_=this->neo_pot_impl_lhs(), neo_pot_impl_rhs_=this->neo_pot_impl_rhs()](int macroIndex, DOFVector<double> const& phi_j)
             {
               return transfer_mm_dual_binary_part2(phi_i, phi_j, interaction_impl_rhs, interaction_impl_lhs, macroIndex, [neo_pot_impl_rhs_](double p_i, double p_j)
@@ -602,18 +582,19 @@ namespace AMDiS { namespace base_problems {
                 return neo_pot_impl_lhs_(p_i,p_j);
               });
             });                 
-
+          MSG(":E:");
         }
         MSG("time (gather-scatter) = %e\n", t.elapsed());
         MPI_Barrier(comm());
       }
+      MSG(":pre F:");
       // ----- Neighbour and Interaction output from here ------------
       std::string directory_ = ".";
       std::string postfix_ = "";
       Parameters::get("output", directory_);
       Parameters::get("postfix", postfix_);
       postfix_ += "_p" + std::to_string(comm().rank());
-      
+      MSG(":F:");
 
       int writeNeighbours = 0;
       Parameters::get("main->write neighbors",writeNeighbours);
@@ -686,8 +667,6 @@ namespace AMDiS { namespace base_problems {
         //  phaseProb_.actual_growth_factor_ = phaseProb_.growth_factor_; 
         //}
       }     
-
-
 
       phaseProb_.initTimestep(adaptInfo);
       globalProb_.initTimestep(adaptInfo); //why did I remove this line before?

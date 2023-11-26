@@ -50,10 +50,12 @@ if len(sys.argv) > 5:
     print('using customised a or a_rep')
     a_ = float(sys.argv[5])
     a_rep_ = float(sys.argv[5])
+    print(a_rep_)
 
 if len(sys.argv) > 5:
     print('using customised a_adh')
-    a_adh_ = float(sys.argv[5])
+    a_adh_ = float(sys.argv[6])
+    print(a_adh_)
 
 pbc=True
 domain_size = np.array([100.0,100.0])
@@ -150,7 +152,7 @@ times = []
 times_ = np.load(sys.argv[1] + '/global_fields_200/timesteps.npy')
 count = 0
 
-neighbours_arr = load_files.get_neighbour_relations(sys.argv[1], 0, 30000, stride) #reading out neighbour relations
+neighbours_arr = load_files.get_neighbour_relations(sys.argv[1], 0, 90000, stride) #reading out neighbour relations
 
 
 print('checkpoint 2')
