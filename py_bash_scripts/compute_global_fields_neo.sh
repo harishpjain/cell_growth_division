@@ -17,8 +17,8 @@
 #SBATCH --ntasks-per-node=1
 
 # Error and log files
-#SBATCH --error=/cluster/projects/nn8100k/harish_workspace/error_files/Ca5ar2v0.err
-#SBATCH --output=/cluster/projects/nn8100k/harish_workspace/log_files/Ca5ar2v0.out
+#SBATCH --error=/cluster/projects/nn8100k/harish_workspace/error_files/Ca5ar2v20.err
+#SBATCH --output=/cluster/projects/nn8100k/harish_workspace/log_files/Ca5ar2v20.out
 
 ## Set up job environment:
 set -o errexit  # Exit the script on any error
@@ -55,10 +55,14 @@ conda activate /cluster/projects/nn8100k/condastuff/myenv
 # example srun python compute_stress_or_force.py /cluster/projects/nn8100k/harish_workspace/neoinit107/ 1 20e-2 2 1.0 0.5
 
 
-#srun python compute_phi_field.py /cluster/projects/nn8100k/harish_workspace/phd20230614/o20230614_set7_In3Ca3aa0ar0D0v10Al0Ga3Init1/
-#srun python neo_positions.py /cluster/projects/nn8100k/harish_workspace/phd20230614/o20230614_set7_In3Ca3aa0ar0D0v10Al0Ga3Init1/ 100
-#srun python compute_stress_or_force.py /cluster/projects/nn8100k/harish_workspace/phd20230614/o20230614_set7_In3Ca3aa0ar0D0v10Al0Ga3Init1/ 1 20.0e-2 2 1.0 1.0
+#srun python compute_phi_field.py /cluster/projects/nn8100k/harish_workspace/phd20230614/o20230614_set9_In3Ca3aa0ar0D0v5Al0Ga3Init1dt0/
+#srun python neo_positions.py /cluster/projects/nn8100k/harish_workspace/phd20230614/o20230614_set9_In3Ca3aa0ar0D0v5Al0Ga3Init1dt0/ 100
+#srun python compute_stress_or_force.py /cluster/projects/nn8100k/harish_workspace/phd20230614/o20230614_set9_In3Ca3aa0ar0D0v5Al0Ga3Init1dt0/ 1 20.0e-2 2 1.0 1.0
 #different version of python needed to run shapeprop
 #module load ParaView/5.8.0-foss-2020a-Python-3.8.2-mpi 
 module load ParaView/5.10.1-foss-2022a-mpi
-srun python3.8 compute_shapeprop.py /cluster/projects/nn8100k/harish_workspace/phd20230614/o20230614_set7_In3Ca3aa0ar0D0v10Al0Ga3Init1/
+#srun python3.8 compute_shapeprop.py /cluster/projects/nn8100k/harish_workspace/phd20230614/o20230614_set9_In3Ca3aa0ar0D0v5Al0Ga3Init1dt0/
+srun python compute_shapeprop.py /cluster/projects/nn8100k/harish_workspace/phd20230614/o20230614_set9_In3Ca3aa0ar0D0v5Al0Ga3Init1dt1/
+srun python compute_shapeprop.py /cluster/projects/nn8100k/harish_workspace/phd20230614/o20230614_set9_In3Ca3aa0ar0D0v5Al0Ga3Init1dt2/
+srun python compute_shapeprop.py /cluster/projects/nn8100k/harish_workspace/phd20230614/o20230614_set9_In3Ca3aa0ar0D0v5Al0Ga3Init1dt3/
+srun python compute_shapeprop.py /cluster/projects/nn8100k/harish_workspace/phd20230614/o20230614_set9_In3Ca3aa0ar0D0v5Al0Ga3Init1dt4/

@@ -1,0 +1,101 @@
+#!/bin/bash
+
+# Job name:
+#SBATCH --job-name=postproc_#{SHORTNAME}
+
+# Project:
+#SBATCH --account=nn8100k
+
+# Wall time limit:
+#SBATCH --time=00-18:00:00
+
+# Other parameters:
+# SBATCH --qos=short
+
+#SBATCH --nodes=1
+#SBATCH --ntasks-per-node=1
+
+# Error and log files
+#SBATCH --error=/cluster/projects/nn8100k/harish_workspace/error_files/postproc/#{SHORTNAME}.err
+#SBATCH --output=/cluster/projects/nn8100k/harish_workspace/log_files/postproc/#{SHORTNAME}.out
+
+## Set up job environment:
+set -o errexit  # Exit the script on any error
+set -o nounset  # Treat any unset variables as an error
+
+module --quiet purge  # Reset the modules to the system default
+
+
+# %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+# %%%%%%%%%%%%%%%%%%                                   Loading anaconda                                %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+# %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+# load the Anaconda3
+module load Anaconda3/2023.07-2
+
+# Set the ${PS1} (needed in the source of the Anaconda environment)
+export PS1=\$
+
+# Source the conda environment setup
+# The variable ${EBROOTANACONDA3} or ${EBROOTMINICONDA3}
+# So use one of the following lines
+# comes with the module load command
+# source ${EBROOTMINICONDA3}/etc/profile.d/conda.sh
+source ${EBROOTANACONDA3}/etc/profile.d/conda.sh
+
+# Deactivate any spill-over environment from the login node
+conda deactivate &>/dev/null
+
+# Activate the environment by using the full path (not name)
+# to the environment. The full path is listed if you do
+# conda info --envs at the command prompt.
+conda activate /cluster/projects/nn8100k/condastuff/myenv
+# %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+
+
+# %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+# %%%%%%%%%%%%%%%%%%                  finding phifield, neopositions and energy                        %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+# %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+# syntax for compute stress or force
+# srun python compute_stress_or_force.py PATH A Ca B (a or a_rep) a_adh
+# A - stress and energy = 1, always choose 1
+# B - old or new potential, old = 1, new = 2
+# example srun python compute_stress_or_force.py /cluster/projects/nn8100k/harish_workspace/neoinit107/ 1 20e-2 2 1.0 0.5
+
+
+srun python compute_phi_field.py /cluster/projects/nn8100k/harish_workspace/phd20230614/#{LONGNAME}/
+srun python neo_positions.py /cluster/projects/nn8100k/harish_workspace/phd20230614/#{LONGNAME}/ 100
+srun python compute_stress_or_force.py /cluster/projects/nn8100k/harish_workspace/phd20230614/#{LONGNAME}/ 1 #{Ca} #{POTENTIAL} #{A_REP_or_A} #{A_ADH}
+# %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+
+# %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+# %%%%%%%%%%%%%%%%%%                  Finding the shape index                                          %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+# %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+#different version of python needed to run shapeprop
+module load ParaView/5.10.1-foss-2022a-mpi
+srun python compute_shapeprop.py /cluster/projects/nn8100k/harish_workspace/phd20230614/#{LONGNAME}/
+# %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+
+# %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+# %%%%%%%%%%%%%%%%%%                                   animating                                       %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+# %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+#animating the simulation
+module --quiet purge
+module load Anaconda3/2023.07-2
+export PS1=\$
+source ${EBROOTANACONDA3}/etc/profile.d/conda.sh
+conda deactivate &>/dev/null
+conda activate /cluster/projects/nn8100k/condastuff/python2
+srun python /cluster/home/harishpj/softwares/python_viz/animation3.py 100 /cluster/projects/nn8100k/harish_workspace/phd20230614/#{LONGNAME}/
+# %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+
+# %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+# %%%%%%%%%%%%%%%%%%            compressing data folder and deleting it                                %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+# %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+#compressing and deleting the data folder
+tar -cvf /cluster/projects/nn8100k/harish_workspace/phd20230614/#{LONGNAME}/data.tar /cluster/projects/nn8100k/harish_workspace/phd20230614/#{LONGNAME}/data
+rm -r /cluster/projects/nn8100k/harish_workspace/phd20230614/#{LONGNAME}/data
+# %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

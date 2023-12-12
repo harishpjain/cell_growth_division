@@ -17,8 +17,8 @@
 # SBATCH --ntasks-per-node=25
 
 # Error and log files
-#SBATCH --error=/cluster/projects/nn8100k/harish_workspace/error_files/save2.err
-#SBATCH --output=/cluster/projects/nn8100k/harish_workspace/log_files/save2.out
+#SBATCH --error=/cluster/projects/nn8100k/harish_workspace/error_files/save3.err
+#SBATCH --output=/cluster/projects/nn8100k/harish_workspace/log_files/save3.out
 
 ## Set up job environment:
 #set -o errexit  # Exit the script on any error
@@ -38,8 +38,9 @@ module --quiet purge
 #module load intel/2022a
 #module load ParMETIS/4.0.3-iimpi-2022a
 #module load iimpi/2022a
-module load SuiteSparse/5.10.1-foss-2021b-METIS-5.1.0 
-module load OpenMPI/4.1.1-GCC-11.2.0
+module load SuiteSparse/5.10.1-intel-2022a-METIS-5.1.0
+#module load Boost.MPI/1.79.0-iimpi-2022a
+#module load OpenMPI/4.1.1-GCC-11.2.0
 
 #module unload Boost/1.79.0-GCC-11.3.0
 #module load Boost.MPI/1.79.0-gompi-2022a
@@ -51,4 +52,4 @@ module load OpenMPI/4.1.1-GCC-11.2.0
 
 #mpirun -np 50 valgrind --leak-check=full --track-origins=yes --log-file=/cluster/projects/nn8100k/harish_workspace/error_files/valgrind_output.%p ./build/divisionless_nem_neoint_model init/neoinit_nematic_5.2d
 
-srun -n100 ./build/divisionless_nem_neoint_model init/neoinit_nematic_5.2d
+srun -n100 ./build2/divisionless_nem_neoint_model init/neoinit_nematic_5.2d

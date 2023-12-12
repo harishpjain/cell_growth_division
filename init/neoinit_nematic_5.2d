@@ -3,7 +3,7 @@ parallel->log main rank: 1
 number of cells: 100
 
 postfix: 
-output: /cluster/projects/nn8100k/harish_workspace/saved_states/saved_1_0_hexatic_random_p2
+output: /cluster/projects/nn8100k/harish_workspace/saved_states/demosave2
 macroMesh->macro file name:       ./macro/macro_100_100.per.2d
 %macroMesh->macro file name:       ./macro/circle_macro.2d
 macroMesh->periodic file:         ./macro/macro_100_100.per
@@ -42,7 +42,7 @@ main->write interaction term: 0
 main->write volume: 0
 main->write neighbors:1
 main->write positions: 1
-main->center of mass:0  
+main->center of mass:1  
 main->cahn-hilliard: 1
 
 % Global (coupling) parameters 

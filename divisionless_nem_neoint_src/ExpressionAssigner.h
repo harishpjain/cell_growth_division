@@ -396,13 +396,6 @@ namespace AMDiS {
 
     return interaction_t1;
   }
-    //delete feSpace1;
-    //delete feSpace2;
-    //delete feSpace_t1;
-    //delete elInfo1_t1;
-    //delete elInfo2_t1;
-    //delete elInfoSmall_t1;
-    //delete elInfoLarge_t1;
   
   template <class UnaryFunction>
   double transfer_mm(DOFVector<double> const& source, DOFVector<double>& target, int macroIndex, UnaryFunction f)

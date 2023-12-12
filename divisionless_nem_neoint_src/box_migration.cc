@@ -15,11 +15,11 @@ using namespace AMDiS;
 int main(int argc, char** argv)
 {
   AMDiS::init(argc, argv);
-  //MPI_Init(&argc, &argv);//added
   mpi14::Environment env(argc, argv);
   mpi14::Communicator world;
 
-  MSG("rank = %f\n", world.rank());
+  //MSG("rank = %f\n", world.rank());
+  //MSG("size = %f\n", world.size());
 
   Timer t;
   std::srand(std::time(0) + world.rank());
@@ -62,5 +62,4 @@ int main(int argc, char** argv)
   MSG("time (total) = %e\n", t.elapsed());
 
   AMDiS::finalize();
-  //MPI_Finalize();//added
 }

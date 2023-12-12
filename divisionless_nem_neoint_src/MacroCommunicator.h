@@ -51,9 +51,8 @@ namespace AMDiS
     {
       MeshStructure structureCode;
       structureCode.init(code_, codeSize_);
-
       structureCode.fitMeshToStructure(vec.getFeSpace()->getMesh(), refinementManager, false, macroIndex);
-	    //std::cerr << values_[0] << "\n";
+      //std::cerr << values_[0] << "\n";
       DOFSerializer dofSerializer(vec.getFeSpace()->getAdmin());
       dofSerializer.scatter(macroIndex, values_, &vec, false); 
 	 }
@@ -201,7 +200,7 @@ namespace AMDiS
     // receive data from neighbouring ranks, apply to DOFVector and return contributions
     // expect 'apply' to have return argument in the form of contribution/(rank and macro)
     template <class Operation>
-    void gather_and_deliver(DOFVector<double>& vec, std::vector<std::pair<std::size_t,double>>& contributions, Operation apply)
+    void gather_and_deliver(DOFVector<double>& vec, std::vector<std::pair<std::size_t,double>>& contributions, Operation apply_)
     {
       FUNCNAME("MacroCommunicator::gather()");
       MSG("start (MacroCommunicator::gather) = %20.16e\n", mpi14::now());
@@ -217,8 +216,7 @@ namespace AMDiS
         requests.push_back(comm_.irecv(macrovector[i], r, tag_macrodata_));
         requestRanks.push_back(r);
       }
-      MSG("start2 (MacroCommunicator::gather) = %20.16e\n", mpi14::now());
-      mpi14::wait_all_apply(requests.begin(), requests.end(), [&requestRanks,&contributions,begin=requests.begin(),apply,&macrovector,&vec,this](auto it)
+      mpi14::wait_all_apply(requests.begin(), requests.end(), [&requestRanks,&contributions,begin=requests.begin(),apply_,&macrovector,&vec,this](auto it)
       {
         std::size_t i = std::distance(begin, it);
 
@@ -227,10 +225,12 @@ namespace AMDiS
           int macroIndex = this->rankToMacros_[i].second[j];
           this->coarseningManager_.globalCoarsen(vec.getFeSpace()->getMesh(), -20);
           macrovector[i][j].apply(macroIndex, vec, &this->refinementManager_);
-          value += apply(macroIndex, vec);
+          value += apply_(macroIndex, vec);
+          //value += apply(macroIndex, vec, &this->refinementManager_);
         }
         contributions.push_back(std::make_pair(requestRanks[i],value));
       });
+      /*
       MSG("start3 (MacroCommunicator::gather) = %20.16e\n", mpi14::now());
       // Print information about the current node
             int rank;
@@ -243,6 +243,7 @@ namespace AMDiS
       MPI_Comm_size(comm_, &comm_size);
       MPI_Get_processor_name(processor_name, &name_len);
       printf("Rank %d running on %s\n", rank, processor_name);
+      */
     }
 
 

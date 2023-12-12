@@ -961,17 +961,12 @@ public:
     }
     
     double theta_temp_ = theta_vec_[rank_];
-    
-    
-
-
 
     // Compute elongation
     nematic_tensor_[0] = 0.125 * integrate(derivativeOf(getProblem()->getSolution(0),1) * derivativeOf(getProblem()->getSolution(0),1)); 
     nematic_tensor_[0] += -0.125 * integrate(derivativeOf(getProblem()->getSolution(0),0) * derivativeOf(getProblem()->getSolution(0),0));
 
     nematic_tensor_[1] = (-0.25) * integrate(derivativeOf(getProblem()->getSolution(0),0) * derivativeOf(getProblem()->getSolution(0),1));
-
 
     nematic_tensor_full_[0] = nematic_tensor_[0];
     nematic_tensor_full_[1] = nematic_tensor_[1];
@@ -981,18 +976,17 @@ public:
     nematic_tensor_[1] *= (1.0 / norm_q);
 
     major_axis_angle_ = atan2(nematic_tensor_[1], nematic_tensor_[0]) * 180.0 / (2*M_PI);
-
     double major_axis_angle_rad_ = major_axis_angle_ *(2*M_PI) / (360.0);
     
     //Now, we determine the head of the cell from two possible head direction: can be simplified further I think.
     if((std::fabs(major_axis_angle_rad_ - theta_) > (M_PI/2)) && major_axis_angle_rad_ < M_PI){
-      major_axis_angle_rad_ = major_axis_angle_rad_+ M_PI;
+      major_axis_angle_rad_ += M_PI;
     }else if((std::fabs(major_axis_angle_rad_ - theta_) > (M_PI/2)) && major_axis_angle_rad_ > M_PI){
-      major_axis_angle_rad_ = major_axis_angle_rad_- M_PI;
+      major_axis_angle_rad_ -= M_PI;
     }
     
     double angle_correction = (major_axis_angle_rad_ - theta_)*alignmentRate_*(*getTau());
-    if(adaptInfo->getTimestepNumber() > 200)
+    if(adaptInfo->getTimestepNumber() > 200)//alignment starts after 200 timesteps
     {
       theta_ += angle_correction;
     }
@@ -1155,11 +1149,10 @@ public:
       std::ofstream velocityFile;
       velocityFile.open(filename, std::ios::app);
       velocityFile << adaptInfo->getTime() << " " << velocity << "\n";
-
       velocityFile.close();
     }
 
-    if (writeData_){   //maybe this line is changed
+    if (writeData_){   
       std::ofstream out(filename_positions_, std::ios_base::app);
       //WorldVector<double> S;
       //S[0] = integrate(valueOf(nematic_tensor_[0]));

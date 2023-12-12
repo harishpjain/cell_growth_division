@@ -44,12 +44,12 @@ aa_ind = [0]
 ar_ind = [0] #[0]
 In_ind = [3]
 Ca_ind = [3]
-D_ind = [0]
+D_ind = [1]
 v_ind = [5] #[11, 12, 13, 14, 15, 16, 17, 18, 19, 20]#, 4, 3, 2 ,1]
 alpha_ind = [0]
 gamma_ind = [3]
 ini_ind = [1] #[1]
-dt_ind = [0, 1, 2, 3, 4]
+dt_ind = [0]#, 1]#, 2, 3, 4]
 
 multi_exp = ['a', 'b', 'c', 'd', 'e']
 multi_indA = 0
@@ -77,10 +77,10 @@ for indI in In_ind:
                                 for indInit in ini_ind:
                                     for inddt in dt_ind:
                                         ##### change ELONGATION_VEL PARAMETER FROM 3 to 0 to change from shear to no shear 
-                                        out_dir_full = out_dir + 'o20230614_set9_In' + str(indI) + 'Ca' + str(indC) + 'aa' + str(indAa) + 'ar' + str(indAr) + 'D' + str(indD) + 'v' + str(indV) + 'Al' + str(indAl) + 'Ga' +  str(indGa) + 'Init' + str(indInit) + 'dt' + str(inddt)
+                                        out_dir_full = out_dir + 'o20230614_set14_In' + str(indI) + 'Ca' + str(indC) + 'aa' + str(indAa) + 'ar' + str(indAr) + 'D' + str(indD) + 'v' + str(indV) + 'Al' + str(indAl) + 'Ga' +  str(indGa) + 'Init' + str(indInit) + 'dt' + str(inddt)
                                         #out_dir_full = out_dir + 'out_set28' + multi_exp[multi_indA] +  '_In_' + str(indI) + '_Ca_' + str(indC) + '_a_' + str(indA) + '_D_' + str(indD) + '_v_' + str(indV) + '_Al_' +  str(indAl)
                                         print(out_dir_full)
-                                        name = 'out20230614_set9_In' + str(indI) + 'Ca' + str(indC) + 'aa' + str(indAa) + 'ar' + str(indAr) + 'D' + str(indD) + 'v' + str(indV) + 'Al' +  str(indAl) + 'Ga' +  str(indGa) + 'Init' + str(indInit) + 'dt' + str(inddt)
+                                        name = 'out20230614_set14_In' + str(indI) + 'Ca' + str(indC) + 'aa' + str(indAa) + 'ar' + str(indAr) + 'D' + str(indD) + 'v' + str(indV) + 'Al' +  str(indAl) + 'Ga' +  str(indGa) + 'Init' + str(indInit) + 'dt' + str(inddt)
                                         #name = multi_exp[multi_indA] + 'In_' + str(indI) + '_Ca_' + str(indC) + '_a_' + str(indA) + '_D_' + str(indD) + '_v_' + str(indV) + '_Al_' + str(indAl)
                                         print(name)
                                         print('Ca>', Ca[indC])
