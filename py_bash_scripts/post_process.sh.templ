@@ -7,14 +7,16 @@
 #SBATCH --account=nn8100k
 
 # Wall time limit:
-#SBATCH --time=00-18:00:00
+#SBATCH --time=00-01:00:00
 
 # Other parameters:
-# SBATCH --qos=short
+# SBATCH --qos=bigmem
 
 #SBATCH --nodes=1
-#SBATCH --ntasks-per-node=1
-
+#SBATCH --ntasks-per-node=5
+#SBATCH --ntasks=5 
+# %Note 5 tasks seems to run faster than 10 tasks. 5 is twice as fast as 10. It might have to do with overhead costs. If more than 10 tasks used, then the memory is insufficient and the job crashes
+# SBATCH -n 1
 # Error and log files
 #SBATCH --error=/cluster/projects/nn8100k/harish_workspace/error_files/postproc/#{SHORTNAME}.err
 #SBATCH --output=/cluster/projects/nn8100k/harish_workspace/log_files/postproc/#{SHORTNAME}.out
@@ -63,9 +65,9 @@ conda activate /cluster/projects/nn8100k/condastuff/myenv
 # example srun python compute_stress_or_force.py /cluster/projects/nn8100k/harish_workspace/neoinit107/ 1 20e-2 2 1.0 0.5
 
 
-srun python compute_phi_field.py /cluster/projects/nn8100k/harish_workspace/phd20230614/#{LONGNAME}/
+srun -n32 python compute_phi_field_parallel.py /cluster/projects/nn8100k/harish_workspace/phd20230614/#{LONGNAME}/
 srun python neo_positions.py /cluster/projects/nn8100k/harish_workspace/phd20230614/#{LONGNAME}/ 100
-srun python compute_stress_or_force.py /cluster/projects/nn8100k/harish_workspace/phd20230614/#{LONGNAME}/ 1 #{Ca} #{POTENTIAL} #{A_REP_or_A} #{A_ADH}
+srun python compute_stress_or_force_parallel2.py /cluster/projects/nn8100k/harish_workspace/phd20230614/#{LONGNAME}/ 1 #{Ca} #{POTENTIAL} #{A_REP_or_A} #{A_ADH}
 # %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 
@@ -88,7 +90,7 @@ export PS1=\$
 source ${EBROOTANACONDA3}/etc/profile.d/conda.sh
 conda deactivate &>/dev/null
 conda activate /cluster/projects/nn8100k/condastuff/python2
-srun python /cluster/home/harishpj/softwares/python_viz/animation3.py 100 /cluster/projects/nn8100k/harish_workspace/phd20230614/#{LONGNAME}/
+#srun python /cluster/home/harishpj/softwares/python_viz/animation3.py 100 /cluster/projects/nn8100k/harish_workspace/phd20230614/#{LONGNAME}/
 # %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 
@@ -96,6 +98,6 @@ srun python /cluster/home/harishpj/softwares/python_viz/animation3.py 100 /clust
 # %%%%%%%%%%%%%%%%%%            compressing data folder and deleting it                                %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 # %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 #compressing and deleting the data folder
-tar -cvf /cluster/projects/nn8100k/harish_workspace/phd20230614/#{LONGNAME}/data.tar /cluster/projects/nn8100k/harish_workspace/phd20230614/#{LONGNAME}/data
-rm -r /cluster/projects/nn8100k/harish_workspace/phd20230614/#{LONGNAME}/data
+#tar -cvf /cluster/projects/nn8100k/harish_workspace/phd20230614/#{LONGNAME}/data.tar /cluster/projects/nn8100k/harish_workspace/phd20230614/#{LONGNAME}/data
+#rm -r /cluster/projects/nn8100k/harish_workspace/phd20230614/#{LONGNAME}/data
 # %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

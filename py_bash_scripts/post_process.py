@@ -5,9 +5,9 @@ import subprocess
 import time
 import numpy as np
 
-longname='o20230614_set13_In3Ca3aa0ar0D0v0Al0Ga3Init1dt0'
-shortname='o20230614_set13_In3Ca3aa0ar0D0v0Al0Ga3Init1dt0'
-Ca='20e-2'
+longname='o20230614_set13_In3Ca0aa0ar0D0v0Al0Ga3Init1dt0'
+shortname='o20230614_set13_In3Ca0aa0ar0D0v0Al0Ga3Init1dt0'
+Ca='5e-2'
 potential= '2'#1 for old(master thesis) and 2 for new
 a_rep_or_a = '1.0'#'a_rep' for new potential and 'a' for old potential
 a_adh = '1.0'#'a_ash' for new potential and '' for old potential

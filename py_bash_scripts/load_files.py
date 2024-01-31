@@ -30,7 +30,7 @@ def get_neighbour_relations(input_dir, start_ind, end_ind, stride):
     ranks = load_ranks(input_dir)
     neighbours_arr = np.zeros([len(np.arange(start_ind, end_ind, stride)), len(ranks), len(ranks)], dtype=int)
     for indc, cell in enumerate(ranks):
-        print(indc)
+        #print(indc)
         filename = input_dir + '/neighbours_p' + str(cell) + '.dat'
         with open(filename) as file:
             lines = file.readlines()

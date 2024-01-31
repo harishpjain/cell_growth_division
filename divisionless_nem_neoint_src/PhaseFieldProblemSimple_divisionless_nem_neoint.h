@@ -814,10 +814,10 @@ public:
       std::mt19937 generator(rd()); 
       std::normal_distribution<double> distribution(meanSize,meanSize/3.0);//5.0, 4.0
         
-      for (int i = 0; i < Nx; i++)
-        sizes.push_back(distribution(generator)); //gaussian
-        //sizes.push_back(meanSize); //non gaussian
-      
+      for (int i = 0; i < Nx; i++){
+        //sizes.push_back(distribution(generator)); //gaussian
+        sizes.push_back(meanSize); //non gaussian
+      }
       // Now we normalize
       double size_sum = std::accumulate(sizes.begin(), sizes.end(), 0.0);
       double norm_factor = domainDimension_[0]/size_sum;
@@ -991,14 +991,15 @@ public:
       theta_ += angle_correction;
     }
 
-    *active_force_[0] << gamma_active_*(nematic_tensor_full_[0]*(derivativeOf(getProblem()->getSolution(0),0)) + nematic_tensor_full_[1]*(derivativeOf(getProblem()->getSolution(0),1)));
-    *active_force_[1] << gamma_active_*(nematic_tensor_full_[1]*(derivativeOf(getProblem()->getSolution(0),0)) - nematic_tensor_full_[0]*(derivativeOf(getProblem()->getSolution(0),1)));
-    
+
     if(elongation_vel_ == 0)
     { 
-    //here changes are made to elongate cell in direction of its elongation
-    *advection_[0] << v0_ * std::cos(theta_) * (0.5*valueOf(getProblem()->getSolution(0)) + 0.5) + valueOf(active_force_[0]);
-    *advection_[1] << v0_ * std::sin(theta_) * (0.5*valueOf(getProblem()->getSolution(0)) + 0.5) + valueOf(active_force_[1]);
+      //here changes are made to elongate cell in direction of its elongation
+      *active_force_[0] << gamma_active_*(nematic_tensor_full_[0]*(derivativeOf(getProblem()->getSolution(0),0)) + nematic_tensor_full_[1]*(derivativeOf(getProblem()->getSolution(0),1)));
+      *active_force_[1] << gamma_active_*(nematic_tensor_full_[1]*(derivativeOf(getProblem()->getSolution(0),0)) - nematic_tensor_full_[0]*(derivativeOf(getProblem()->getSolution(0),1)));
+      
+      *advection_[0] << v0_ * std::cos(theta_) * (0.5*valueOf(getProblem()->getSolution(0)) + 0.5) + valueOf(active_force_[0]);
+      *advection_[1] << v0_ * std::sin(theta_) * (0.5*valueOf(getProblem()->getSolution(0)) + 0.5) + valueOf(active_force_[1]);
     }
     else if(elongation_vel_ == 1)
     { 
@@ -1017,6 +1018,24 @@ public:
       //shear flow along Y direction
       *advection_[0] << function_(shearY(domainDimension_[1]), X(), v0_) * std::cos(0.0);
       *advection_[1] << function_(shearY(domainDimension_[1]), X(), v0_) * std::sin(0.0);
+    }
+    else if((elongation_vel_ == 4))
+    {
+      //Half cells are passive
+      if(rank_%2==0)
+      {
+        //here changes are made to elongate cell in direction of its elongation
+        *active_force_[0] << gamma_active_*(nematic_tensor_full_[0]*(derivativeOf(getProblem()->getSolution(0),0)) + nematic_tensor_full_[1]*(derivativeOf(getProblem()->getSolution(0),1)));
+        *active_force_[1] << gamma_active_*(nematic_tensor_full_[1]*(derivativeOf(getProblem()->getSolution(0),0)) - nematic_tensor_full_[0]*(derivativeOf(getProblem()->getSolution(0),1)));
+      
+        *advection_[0] << v0_ * std::cos(theta_) * (0.5*valueOf(getProblem()->getSolution(0)) + 0.5) + valueOf(active_force_[0]);
+        *advection_[1] << v0_ * std::sin(theta_) * (0.5*valueOf(getProblem()->getSolution(0)) + 0.5) + valueOf(active_force_[1]);
+      }
+      else
+      {
+        *advection_[0] << 0.0 * (0.5*valueOf(getProblem()->getSolution(0)) + 0.5);
+        *advection_[1] << 0.0 * (0.5*valueOf(getProblem()->getSolution(0)) + 0.5);
+      }
     }
 
     Timer t;
